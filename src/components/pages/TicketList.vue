@@ -1,7 +1,7 @@
 <template>
     <layout-div>
         <div class="container">
-            <h2 class="text-center mt-5 mb-3" :style="{ color: '#060389' }">Ticket Manager</h2>
+            <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Ticket Manager</h2>
             <div class="card">
                 <div class="card-header">
                     <router-link to="/user/create" class="btn btn-outline-primary">
