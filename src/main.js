@@ -14,7 +14,7 @@ import TicketEdit from './components/pages/TicketEdit';
 import TicketView from './components/pages/TicketView';
 import UserRegister from './components/pages/UserRegister';
 import UserLogin from './components/pages/UserLogin';
-
+import store from './store'; 
 // axios.defaults.baseURL = process.env.VUE_APP_API_URL
 // axios.interceptors.request.use(function (config) {
 //     config.headers['Authorization'] = `Bearer ${process.env.VUE_APP_API_KEY}`;
@@ -22,7 +22,7 @@ import UserLogin from './components/pages/UserLogin';
 // });
 axios.defaults.baseURL = process.env.VUE_APP_API_URL;
 axios.interceptors.request.use(function (config) {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -58,4 +58,8 @@ const router = createRouter({
     routes
 });
 
-createApp(App).use(router).mount('#app');
+// createApp(App).use(router).mount('#app');
+const app = createApp(App);
+app.use(store);                    // Use the Vuex store
+app.use(router);                   // Use Vue Router
+app.mount('#app');
