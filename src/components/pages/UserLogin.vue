@@ -58,7 +58,7 @@ import Swal from 'sweetalert2'
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import { reactive } from 'vue';
-
+import { mapActions } from 'vuex';
 export default {
     name: 'UserLogin',
     components: {
@@ -104,10 +104,6 @@ export default {
     },
     data() {
         return {
-            // project: {
-            //     password: '',
-            //     userName: ''
-            // },
             isSaving: false,
             passwordFieldType: 'password',
         };
@@ -116,6 +112,7 @@ export default {
         togglePasswordVisibility() {
             this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
         },
+        ...mapActions(['login']),
         userLogin() {
             this.v$.$touch(); // Trigger validation for all fields
             if (this.v$.$invalid) {
@@ -124,15 +121,21 @@ export default {
             this.isSaving = true
             axios.post('/api/login', this.project)
                 .then(response => {
-                    const token = response.data.data.accessToken;
-                    console.log(token);
-                    localStorage.setItem('authToken', token);
+                    // const token = response.data.data.accessToken;
+                    // console.log(token);
+                    // localStorage.setItem('authToken', token);
+                  
                     Swal.fire({
                         icon: 'success',
                         title: 'Login successfully!',
                         showConfirmButton: true,
                         timer: 1500,
                     }).then(() => {
+                        const authData = {
+                     token: response.data.data.accessToken,
+                     user: JSON.stringify(response.data.data.loginDtoResponse.userName),
+                     };
+                     this.login(authData);
                         this.$router.push('/user/list');
                     })
                     this.isSaving = false
