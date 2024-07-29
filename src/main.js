@@ -12,9 +12,9 @@ import TicketList from './components/pages/TicketList';
 import TicketCreate from './components/pages/TicketCreate';
 import TicketEdit from './components/pages/TicketEdit';
 import TicketView from './components/pages/TicketView';
-import UserRegister from './components/pages/UserRegister';
 import UserLogin from './components/pages/UserLogin';
 import store from './store'; 
+import UserRegisterTemplate from './components/pages/UserRegisterTemplate.vue';
 // axios.defaults.baseURL = process.env.VUE_APP_API_URL
 // axios.interceptors.request.use(function (config) {
 //     config.headers['Authorization'] = `Bearer ${process.env.VUE_APP_API_KEY}`;
@@ -37,7 +37,7 @@ const routes = [
         component: LayoutDiv,
         children: [
             { path: '', component: UserLogin },
-            { path: 'register', component: UserRegister },
+            { path: 'register', component: UserRegisterTemplate },
         ]
     },
     {
