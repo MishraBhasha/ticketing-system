@@ -1,6 +1,6 @@
 <template>
   <div>   
-    <AppHeader @toggle-sidebar="toggleSidebar" />
+    <AppHeader :isSidebarCollapsed="isSidebarCollapsed" @toggle-sidebar="toggleSidebar" />
     <AppSidebar :isCollapsed="isSidebarCollapsed" />
     <div :class="['main-content', { collapsed: isSidebarCollapsed }]">
       <slot></slot>

@@ -4,7 +4,9 @@
       <ul class="navbar-nav">
         <li class="nav-item fw-semibold d-none d-lg-block">
           <div class="d-flex align-items-center">
-            <i class="toggleIconClass bi bi-blockquote-right fs-3 me-3 text-white" @click="$emit('toggle-sidebar')"></i>
+            <i v-if="isSidebarCollapsed" class="bi bi-justify-left fs-3 me-3 text-white"
+              @click="$emit('toggle-sidebar')"></i>
+            <i v-else class="bi bi-justify-right fs-3 me-3 text-white" @click="$emit('toggle-sidebar')"></i>
             <img :src="logoSrc" alt="Logo" height="50" width="180" class="logo" />
           </div>
         </li>
@@ -30,11 +32,16 @@
 </template>
 
 <script>
-// import logo from '@/assets/G-Logo.png'; // Import the logo
-import logo from '@/assets/Tlogo.png'; // Import the logo
+import logo from '@/assets/Tlogo.png';
 
 export default {
   name: 'AppHeader',
+  props: {
+    isSidebarCollapsed: {
+      type: Boolean,
+      required: true
+    }
+  },
   data() {
     return {
       logoSrc: logo
