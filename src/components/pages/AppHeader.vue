@@ -3,25 +3,13 @@
     <div class="navbar-menu-wrapper d-flex align-items-top m-2">
       <ul class="navbar-nav">
         <li class="nav-item fw-semibold d-none d-lg-block">
-          <span class="text-white fw-bold">
-            <img :src="logoSrc" alt="Logo" />
-          </span>&nbsp;&nbsp;
-          <i class="bi bi-blockquote-right fs-3" @click="$emit('toggle-sidebar')"></i>
+          <div class="d-flex align-items-center">
+            <i class="toggleIconClass bi bi-blockquote-right fs-3 me-3 text-white" @click="$emit('toggle-sidebar')"></i>
+            <img :src="logoSrc" alt="Logo" height="50" width="180" class="logo" />
+          </div>
         </li>
       </ul>
 
-      <!-- <ul class="navbar-nav ms-auto">
-        <li class="nav-item dropdown d-lg-block user-dropdown">
-          <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-person-circle"></i>
-          </a>
-          <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-            <a class="dropdown-item" @click="logout">
-              <h5>Logout <i class="bi bi-sign-turn-slight-right"></i></h5>
-            </a>
-          </div>
-        </li>
-      </ul> -->
       <ul class="navbar-nav ms-auto">
         <li class="nav-item dropdown d-lg-block user-dropdown">
           <a class="nav-link dropdown-toggle text-white" id="UserDropdown" href="#" data-bs-toggle="dropdown"
@@ -42,7 +30,8 @@
 </template>
 
 <script>
-import logo from '@/assets/G-Logo.png'; // Import the logo
+// import logo from '@/assets/G-Logo.png'; // Import the logo
+import logo from '@/assets/Tlogo.png'; // Import the logo
 
 export default {
   name: 'AppHeader',

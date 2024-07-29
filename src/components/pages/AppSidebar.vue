@@ -62,6 +62,7 @@ export default {
     background-color: #c5b3e6;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     transition: width 0.3s;
+    overflow: hidden;
 }
 
 .sidebar-collapsed {
@@ -80,5 +81,15 @@ li {
 .active {
     background-color: #3f3cfa;
     color: #e3e6e9;
+}
+
+.nav-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav-link.active {
+  color: #e3e6e9;
 }
 </style>
