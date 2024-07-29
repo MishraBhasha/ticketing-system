@@ -122,7 +122,7 @@ export default {
                         showConfirmButton: true,
                         timer: 1500,
                     }).then(() => {
-                        this.$router.push('user/list');
+                        this.$router.push('/user/list');
                     })
                     this.isSaving = false
                     this.project.password = ""
