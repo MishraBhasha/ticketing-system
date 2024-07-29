@@ -1,9 +1,14 @@
 <template>
   <header class="fixed-top header">
-    <div class="navbar-menu-wrapper d-flex align-items-top">
+    <div class="navbar-menu-wrapper d-flex align-items-top m-2">
       <ul class="navbar-nav">
         <li class="nav-item fw-semibold d-none d-lg-block">
-          <h1 class="welcome-text"><span class="text-white fw-bold">TS</span></h1>
+          <!-- <h1 class="welcome-text"> -->
+            <span class="text-white fw-bold">
+              <img :src="logoSrc" alt="Logo" />
+            </span>&nbsp;&nbsp;
+          <!-- </h1> -->
+          <i class="bi bi-blockquote-right fs-3" @click="$emit('toggle-sidebar')"></i>
         </li>
       </ul>
       <ul class="navbar-nav ms-auto">
@@ -18,8 +23,15 @@
 </template>
 
 <script>
+import logo from '@/assets/G-Logo.png'; // Import the logo
+
 export default {
   name: 'AppHeader',
+  data() {
+    return {
+      logoSrc: logo
+    };
+  }
 };
 </script>
 
