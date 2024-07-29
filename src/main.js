@@ -3,6 +3,8 @@ import App from './App.vue'
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { createRouter, createWebHistory } from 'vue-router';
 import LayoutDiv from './components/LayoutDiv.vue';
 import MainLayout from './components/MainLayout.vue';
