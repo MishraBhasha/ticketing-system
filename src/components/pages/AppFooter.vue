@@ -20,7 +20,7 @@ export default {
   position: fixed;
   bottom: 0;
   width: 100%;
-  background-color: #c5b3e6;
+  background-color: #d7d1e2;
 }
 
 .end {
