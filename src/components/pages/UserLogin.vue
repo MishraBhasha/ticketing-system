@@ -6,25 +6,29 @@
                     <form @submit.prevent="userLogin">
                         <h2 class="text-center m-5">Login</h2>
                         <div class="d-grid gap-2 col-9 mx-auto m-5">
-                            <div class="input-field">
+                            <div class="input-group">
                                 <input v-model="project.userName" type="text" class="form-control shadow" id="userName"
                                     placeholder="Email Id" name="userName" @blur="handleBlur('userName')"
                                     @input="handleInput('userName')" />
-                                <div v-if="touched.userName && !v$.project.userName.$pending && v$.project.userName.$error"
-                                    class="text-danger">
-                                    Email Id is required.
-                                </div>
+                            </div>
+                            <div v-if="touched.userName && !v$.project.userName.$pending && v$.project.userName.$error"
+                                class="text-danger">
+                                Email Id is required.
                             </div>
                         </div>
                         <div class="d-grid gap-2 col-9 mx-auto m-5">
-                            <div class="input-field">
-                                <input v-model="project.password" type="text" class="form-control shadow" id="password"
-                                    placeholder="Password" name="password" @blur="handleBlur('password')"
+                            <div class="input-group">
+                                <input v-model="project.password" :type="passwordFieldType" class="form-control shadow"
+                                    id="password" placeholder="Password" name="password" @blur="handleBlur('password')"
                                     @input="handleInput('password')" />
-                                <div v-if="touched.password && !v$.project.password.$pending && v$.project.password.$error"
-                                    class="text-danger">
-                                    Password is required.
-                                </div>
+                                <span class="input-group-text">
+                                    <i :class="['bi', passwordFieldType === 'password' ? 'bi-eye-slash' : 'bi-eye', 'toggle-password']"
+                                        @click="togglePasswordVisibility"></i>
+                                </span>
+                            </div>
+                            <div v-if="touched.password && !v$.project.password.$pending && v$.project.password.$error"
+                                class="text-danger">
+                                Password is required.
                             </div>
                         </div>
 
@@ -105,9 +109,13 @@ export default {
             //     userName: ''
             // },
             isSaving: false,
+            passwordFieldType: 'password',
         };
     },
     methods: {
+        togglePasswordVisibility() {
+            this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+        },
         userLogin() {
             this.v$.$touch(); // Trigger validation for all fields
             if (this.v$.$invalid) {

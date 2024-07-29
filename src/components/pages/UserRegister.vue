@@ -2,24 +2,23 @@
   <layout-div>
     <div class="container mt-4">
       <div class="row justify-content-center">
-        <div class="col-md-8 border rounded shadow p-4" :style="{ backgroundColor: '#e8e8b3' }">
+        <div class="col-md-9 border rounded shadow p-4" :style="{ backgroundColor: '#e8e8b3' }">
           <form action="">
             <h3 class="text-center m-5">User Registration Form</h3>
-            <div class="row">
-              <div class="col-md-6">
+            <div class="row m-2">
 
+              <div class="col-md-6">
                 <div class="input-field">
                   <label htmlFor="firstName">First Name</label>
                   <input v-model="project.firstName" type="text" class="form-control" id="firstName" name="firstName" />
                 </div>
-
                 <div class="input-field">
                   <label htmlFor="lastName">Last Name</label>
                   <input v-model="project.lastName" type="text" class="form-control" id="lastName" name="lastName" />
                 </div>
               </div>
-              <div class="col-md-6">
 
+              <div class="col-md-6">
                 <div class="input-field">
                   <label htmlFor="companyName">Company Name</label>
                   <input v-model="project.companyName" type="text" class="form-control" id="companyName"
@@ -30,63 +29,63 @@
                   <input v-model="project.phoneNumber" type="text" class="form-control" id="phoneNumber"
                     name="phoneNumber" />
                 </div>
-              </div>
-              <div class="col-md-6">
 
-                <label htmlFor="emailId">EmailId</label>
+              </div>
+
+              <div class="col-md-6">
                 <div class="input-field">
+                  <label htmlFor="emailId">EmailId</label>
                   <input v-model="project.emailId" type="text" class="form-control" id="emailId" name="emailId" />
                 </div>
-
                 <div class="input-field">
                   <label htmlFor="address">Address</label>
                   <input v-model="project.address" type="text" class="form-control" id="address" name="address" />
                 </div>
               </div>
 
-
               <div class="col-md-6">
-
                 <div class="input-field">
                   <label for="password">Password</label>
                   <div class="input-group">
-                    <input v-model="project.password" class="form-control" id="password" name="password"
-                       />
-                       <!-- :type="showPassword ? 'text' : 'password'" -->
-                    <!-- <button class="btn btn-secondary" type="button" @click="togglePasswordVisibility">
-                      <i :class="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
-                    </button> -->
+                    <input v-model="project.password" :type="passwordFieldType" class="form-control" id="password"
+                      placeholder="Password" name="password" />
+                    <span class="input-group-text">
+                      <i :class="['bi', passwordFieldType === 'password' ? 'bi-eye-slash' : 'bi-eye', 'toggle-password']"
+                        @click="togglePasswordVisibility('password')"></i>
+                    </span>
                   </div>
+
                 </div>
+
                 <div class="input-field">
                   <label htmlFor="confirmPassword">Confirm Password</label>
                   <div class="input-group">
-                    <input v-model="project.confirmPassword" class="form-control" id="confirmPassword"
-                      name="confirmPassword"  />
-<!-- :type="user.showConfirmPassword ? 'text' : 'confirmPassword'" -->
-                    <!-- <button class="btn btn-secondary" type="button" @click="togglePasswordVisibility">
-                      <i :class="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
-                    </button> -->
+                    <input v-model="project.confirmPassword" :type="confirmPasswordFieldType" class="form-control"
+                      id="confirmPassword" placeholder="confirmPassword" name="confirmPassword" />
+                    <span class="input-group-text">
+                      <i :class="['bi', confirmPasswordFieldType === 'password' ? 'bi-eye-slash' : 'bi-eye', 'toggle-password']"
+                        @click="togglePasswordVisibility('confirmPassword')"></i>
+                    </span>
                   </div>
                 </div>
               </div>
-              <div class="d-grid gap-2 col-6 mx-auto m-5">
 
-                <div class="text-center">
-                  <button type="submit" class="btn btn-primary" @click="userRegister()" :disabled="isSaving">
-                    Register
-                  </button>
-                </div>
-                <div class="text-center">
-                  <router-link to="/">
-                    <button class="btn btn-link">Sign In</button>
-                  </router-link>
-                </div>
+            </div>
+            <div class="d-grid gap-2 col-6 mx-auto m-5">
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary" @click="userRegister()" :disabled="isSaving">
+                  Register
+                </button>
+              </div>
+              <div class="text-center">
+                <router-link to="/">
+                  <button class="btn btn-link">Sign In</button>
+                </router-link>
               </div>
             </div>
-          </form>
-        </div>
+        </form>
       </div>
+    </div>
     </div>
   </layout-div>
 </template>
@@ -113,14 +112,22 @@ export default {
         confirmPassword: '',
         userName: ''
       },
-      // user: {
-        showPassword: false,
-        // showConfirmPassword: false,
-      // },
       isSaving: false,
+      passwordFieldType: 'password',
+      confirmPasswordFieldType: 'password',
     };
   },
   methods: {
+    togglePasswordVisibility(field) {
+      if (field === 'password') {
+        this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+      } else if (field === 'confirmPassword') {
+        this.confirmPasswordFieldType = this.confirmPasswordFieldType === 'password' ? 'text' : 'password';
+      }
+    },
+    // togglePasswordVisibility() {
+    //   this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+    // },
     userRegister() {
       this.project.userName = this.project.emailId;
       this.isSaving = true
@@ -155,12 +162,6 @@ export default {
           return error
         });
     },
-    togglePasswordVisibility() {
-      this.showPassword = !this.showPassword;
-    },
-    // passwordVisibility() {
-    //   this.showConfirmPassword = !this.showConfirmPassword;
-    // }
   },
 }
 </script>

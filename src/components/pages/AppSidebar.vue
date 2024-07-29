@@ -79,7 +79,7 @@ li {
 }
 
 .active {
-    background-color: #3f3cfa;
+    background-color: #0a0799;
     color: #e3e6e9;
 }
 
