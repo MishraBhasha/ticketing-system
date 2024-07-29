@@ -15,8 +15,9 @@
       <ul class="navbar-nav ms-auto">
         <li class="nav-item dropdown d-lg-block user-dropdown">
           <a class="nav-link dropdown-toggle text-white" id="UserDropdown" href="#" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            <i class="bi bi-person-circle fs-2"></i>
+            aria-expanded="false">         
+            <i class="bi bi-person-circle fs-2"></i>{{formattedEmail}}
+            <!-- {{ user.replace(/"/g, '') }} -->
           </a>
           <ul class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
             <li>
@@ -44,10 +45,21 @@ export default {
   },
   data() {
     return {
-      logoSrc: logo
+      logoSrc: logo,
+      user: JSON.parse(localStorage.getItem('user')) || '',
     };
   },
+  computed: {
+    formattedEmail() {
+      const email = this.user.replace(/"/g, '');
+      return email.split('@')[0]; // Extract the part before '@'
+    }
+  },
+  mounted() {
+    console.log('User:', this.user.replace(/"/g, ''));
+  },
   methods: {
+
     logout() {
       this.$router.push('/');
     }

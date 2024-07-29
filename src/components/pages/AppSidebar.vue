@@ -19,12 +19,12 @@
             <li class="nav-item" :class="{ active: activePath === '/user/create' }" @click="setActive('/user/create')">
                 <router-link to="/user/create" class="nav-link">Create Ticket</router-link>
             </li>
-            <li class="nav-item" :class="{ active: activePath === '/user/edit' }" @click="setActive('/user/edit')">
+            <!-- <li class="nav-item" :class="{ active: activePath === '/user/edit' }" @click="setActive('/user/edit')">
                 <router-link to="/user/edit" class="nav-link">Edit Ticket</router-link>
             </li>
             <li class="nav-item" :class="{ active: activePath === '/user/view' }" @click="setActive('/user/view')">
                 <router-link to="/user/view" class="nav-link">View Ticket</router-link>
-            </li>
+            </li> -->
         </ul>
     </div>
 </template>
@@ -79,8 +79,9 @@ li {
 }
 
 .active {
-    background-color: #0a0799;
-    color: #e3e6e9;
+    font-weight: bold;
+    background-color: #060389;
+    color: rgb(255, 255, 255);
 }
 
 .nav-link {
@@ -90,6 +91,6 @@ li {
 }
 
 .nav-link.active {
-  color: #e3e6e9;
+    color: rgb(255, 255, 255);
 }
 </style>

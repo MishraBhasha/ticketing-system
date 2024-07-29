@@ -124,7 +124,7 @@ export default {
                     // const token = response.data.data.accessToken;
                     // console.log(token);
                     // localStorage.setItem('authToken', token);
-                  
+
                     Swal.fire({
                         icon: 'success',
                         title: 'Login successfully!',
@@ -132,10 +132,11 @@ export default {
                         timer: 1500,
                     }).then(() => {
                         const authData = {
-                     token: response.data.data.accessToken,
-                     user: JSON.stringify(response.data.data.loginDtoResponse.userName),
-                     };
-                     this.login(authData);
+                            token: response.data.data.accessToken,
+                            user: JSON.stringify(response.data.data.loginDtoResponse.userName),
+                            // name: JSON.stringify(response.data.data.loginDtoResponse.firstName),
+                        };
+                        this.login(authData);
                         this.$router.push('/user/list');
                     })
                     this.isSaving = false
