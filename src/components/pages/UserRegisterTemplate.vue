@@ -2,7 +2,7 @@
   <layout-div>
     <div class="container mt-4">
       <div class="row justify-content-center">
-        <div class="col-md-8 border rounded shadow p-4" :style="{ backgroundColor: '#e8e8b3' }">
+        <div class="col-md-9 border rounded shadow p-4" :style="{ backgroundColor: '#e8e8b3' }">
           <form @submit.prevent="userRegister">
             <h3 class="text-center m-5">User Registration Form</h3>
             <div class="row">
@@ -70,7 +70,14 @@
               <div class="col-md-6">
                 <div class="input-field">
                   <label for="password">Password</label>
-                  <input v-model="project.password" class="form-control" id="password" name="password" type="password"/>
+                  <div class="input-group">
+                    <input v-model="project.password" class="form-control" id="password" name="password"
+                      :type="passwordFieldType" />
+                    <span class="input-group-text">
+                      <i :class="['bi', passwordFieldType === 'password' ? 'bi-eye-slash' : 'bi-eye', 'toggle-password']"
+                        @click="togglePasswordVisibility('password')"></i>
+                    </span>
+                  </div>
                   <div v-if="showErrors && !v$.project.password.$pending && !v$.project.password.$model"
                     class="text-danger">
                     Password is required.
@@ -78,8 +85,14 @@
                 </div>
                 <div class="input-field">
                   <label for="confirmPassword">Confirm Password</label>
-                  <input v-model="project.confirmPassword" class="form-control" id="confirmPassword"
-                    name="confirmPassword" type="password"/>
+                  <div class="input-group">
+                    <input v-model="project.confirmPassword" class="form-control" id="confirmPassword"
+                      name="confirmPassword" :type="confirmPasswordFieldType" />
+                    <span class="input-group-text">
+                      <i :class="['bi', confirmPasswordFieldType === 'password' ? 'bi-eye-slash' : 'bi-eye', 'toggle-password']"
+                        @click="togglePasswordVisibility('confirmPassword')"></i>
+                    </span>
+                  </div>
                   <div v-if="showErrors && !v$.project.confirmPassword.$pending && !v$.project.confirmPassword.$model"
                     class="text-danger">
                     Confirm Password is required.

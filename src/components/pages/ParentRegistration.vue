@@ -1,17 +1,14 @@
-<template>
-    <div>
+<ng-container>
       <UserRegister />
-    </div>
-  </template>
-  
-  <script>
-  import UserRegister from './UserRegisterTemplate.vue';
-  
-  export default {
-    name: 'ParentRegistration',
-    components: {
-      UserRegister,
-    },
-  };
-  </script>
-  
+</ng-container>
+
+<script>
+import UserRegister from './UserRegisterTemplate.vue';
+
+export default {
+  name: 'ParentRegistration',
+  components: {
+    UserRegister,
+  },
+};
+</script>
