@@ -1,7 +1,7 @@
 <template>
     <layout-div>
         <div class="container">
-            <h2 class="text-center mt-5 mb-3">Ticket Manager</h2>
+            <h2 class="text-center mt-5 mb-3" :style="{ color: '#060389' }">Ticket Manager</h2>
             <div class="card">
                 <div class="card-header">
                     <router-link to="/user/create" class="btn btn-outline-primary">
@@ -9,8 +9,8 @@
                     </router-link>
                 </div>
                 <div class="card-body">
-                    <table class="table table-success table-bordered">
-                        <thead class="table-danger">
+                    <table class="table table-bordered">
+                        <thead>
                             <tr>
                                 <th>Sl No</th>
                                 <th>Ticket Name</th>
@@ -28,17 +28,18 @@
                                 <td>{{ ticket.ticketName }}</td>
                                 <td>{{ formatDate(ticket.createdOn) }}</td>
                                 <td>{{ ticket.commentBox }}</td>
-                                <td>{{ ticket.priorityName }}</td>
+                                <td :class="getPriorityClass(ticket.priorityName)">
+                                    {{ ticket.priorityName }}
+                                </td>
                                 <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
                                 <td>{{ ticket.status }}</td>
                                 <td>
                                     <!-- <router-link :to="`/show/${ticket.id}`"
                                         class="btn btn-outline-info mx-1">Show</router-link> -->
-                                    <router-link :to="`/edit/${ticket.id}`"
-                                        class="btn btn-sm btn-outline-success mx-1">Edit</router-link>
-                                    <button @click="handleDelete(ticket.id)" className="btn btn-outline-danger mx-1">
-                                        Delete
-                                    </button>
+                                    <router-link :to="`/edit/${ticket.id}`">
+                                        <i class="bi bi-pencil-fill text-primary mx-2"></i>
+                                    </router-link>
+                                    <i class="bi bi-trash3-fill text-danger" @click="handleDelete(ticket.id)"></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -119,7 +120,41 @@ export default {
                         });
                 }
             })
+        },
+        getPriorityClass(priorityName) {
+            switch (priorityName) {
+                case 'low':
+                    return 'priority-low';
+                case 'medium':
+                    return 'priority-medium';
+                case 'high':
+                    return 'priority-high';
+                default:
+                    return '';
+            }
         }
     },
 };
 </script>
+
+<style scoped>
+th {
+    color: rgb(255, 255, 255);
+    background-color: #060389;
+}
+
+.priority-low {
+    font-weight: bold;
+    color: rgb(189, 189, 8);
+}
+
+.priority-medium {
+    font-weight: bold;
+    color: rgb(14, 167, 78);
+}
+
+.priority-high {
+    font-weight: bold;
+    color: red;
+}
+</style>

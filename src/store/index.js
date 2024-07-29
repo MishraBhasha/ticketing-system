@@ -5,8 +5,7 @@ const store = createStore({
   state() {
     return {
       token: localStorage.getItem('token') || '',
-      user: JSON.parse(localStorage.getItem('user')) || '',
-      
+      user: JSON.parse(localStorage.getItem('userName')) || '',  
     };
   },
   mutations: {

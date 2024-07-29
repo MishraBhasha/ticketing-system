@@ -1,6 +1,6 @@
 <template>
     <layout-div>
-        <h2 class="text-center mt-5 mb-3">Create New Ticket</h2>
+        <h2 class="text-center mt-5 mb-3" :style= "{color: '#060389'}">Create New Ticket</h2>
         <div class="card shadow">
             <!-- <div class="card-header">
                 <router-link class="btn btn-outline-info float-right" to="/">
