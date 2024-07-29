@@ -9,8 +9,8 @@
                             <div class="input-field">
                                 <input v-model="project.userName" type="text" class="form-control shadow" id="userName"
                                     placeholder="Email Id" name="userName" @blur="handleBlur('userName')"
-                                    @input="handleInput('userName')"/>
-                                    <div v-if="touched.userName && !v$.project.userName.$pending && v$.project.userName.$error"
+                                    @input="handleInput('userName')" />
+                                <div v-if="touched.userName && !v$.project.userName.$pending && v$.project.userName.$error"
                                     class="text-danger">
                                     Email Id is required.
                                 </div>
@@ -19,10 +19,9 @@
                         <div class="d-grid gap-2 col-9 mx-auto m-5">
                             <div class="input-field">
                                 <input v-model="project.password" type="text" class="form-control shadow" id="password"
-                                    placeholder="Password" name="password"
-                                    @blur="handleBlur('password')"
+                                    placeholder="Password" name="password" @blur="handleBlur('password')"
                                     @input="handleInput('password')" />
-                                    <div v-if="touched.password && !v$.project.password.$pending && v$.project.password.$error"
+                                <div v-if="touched.password && !v$.project.password.$pending && v$.project.password.$error"
                                     class="text-danger">
                                     Password is required.
                                 </div>
@@ -31,7 +30,8 @@
 
                         <div class="d-grid gap-2 col-6 mx-auto mb-5">
                             <div class="mt-3 text-center">
-                                <button type="submit" class="btn btn-primary" @click="userLogin()" :disabled="v$.$invalid">
+                                <button type="submit" class="btn btn-primary" @click="userLogin()"
+                                    :disabled="v$.$invalid">
                                     Login
                                 </button>
                             </div>
@@ -116,6 +116,9 @@ export default {
             this.isSaving = true
             axios.post('/api/login', this.project)
                 .then(response => {
+                    const token = response.data.data.accessToken;
+                    console.log(token);
+                    localStorage.setItem('authToken', token);
                     Swal.fire({
                         icon: 'success',
                         title: 'Login successfully!',

@@ -15,10 +15,20 @@ import TicketView from './components/pages/TicketView';
 import UserRegister from './components/pages/UserRegister';
 import UserLogin from './components/pages/UserLogin';
 
-axios.defaults.baseURL = process.env.VUE_APP_API_URL
+// axios.defaults.baseURL = process.env.VUE_APP_API_URL
+// axios.interceptors.request.use(function (config) {
+//     config.headers['Authorization'] = `Bearer ${process.env.VUE_APP_API_KEY}`;
+//     return config;
+// });
+axios.defaults.baseURL = process.env.VUE_APP_API_URL;
 axios.interceptors.request.use(function (config) {
-    config.headers['Authorization'] = `Bearer ${process.env.VUE_APP_API_KEY}`;
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+    }
     return config;
+}, function (error) {
+    return Promise.reject(error);
 });
 
 const routes = [

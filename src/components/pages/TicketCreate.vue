@@ -50,16 +50,16 @@
                                 <label for="ticketType" class="form-label">Ticket Type</label>
                                 <select id="ticketType" v-model="form.ticketType" class="form-select shadow" required>
                                     <option value="" disabled>Select Ticket Type</option>
-                                    <option value="bug">Bug</option>
+                                    <option value=1>Bug</option>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label for="priority" class="form-label">Priority</label>
                                 <select id="priority" v-model="form.priority" class="form-select shadow" required>
                                     <option value="" disabled>Select Priority</option>
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
+                                    <option value=1>Low</option>
+                                    <option value=2>Medium</option>
+                                    <option value=2>High</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -147,7 +147,7 @@ export default {
                         showConfirmButton: true,
                         timer: 1500,
                     }).then(() => {
-                        this.$router.push('/list');
+                        this.$router.push('/user/list');
                     })
                     this.isSaving = false
                     this.resetForm();
