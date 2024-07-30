@@ -9,6 +9,22 @@
                     </router-link>
                 </div>
                 <div class="card-body">
+
+                    <ul class="nav nav-underline">
+                        <li class="nav-item" v-for="tab in tabs" :key="tab.name">
+                            <a class="nav-link" :class="{ active: activeTab === tab.name }"
+                                @click="setActiveTab(tab.name)" href="#">
+                                {{ tab.label }}
+                            </a>
+                        </li>
+                        <!-- <li class="nav-item"><a class="nav-link">ALL</a></li>
+                        <li class="nav-item"><a class="nav-link">ASSIGNED</a></li>
+                        <li class="nav-item"><a class="nav-link">SUBMITTED</a></li>
+                        <li class="nav-item"><a class="nav-link">GENERATED</a></li>
+                        <li class="nav-item"><a class="nav-link">APPROVED</a></li>
+                        <li class="nav-item"><a class="nav-link">REJECTED</a></li>
+                        <li class="nav-item"><a class="nav-link">CANCELLED</a></li> -->
+                    </ul>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -61,13 +77,26 @@ export default {
     },
     data() {
         return {
-            tickets: []
+            tickets: [],
+            activeTab: 'ALL',
+            tabs: [
+                { name: 'ALL', label: 'ALL' },
+                { name: 'ASSIGNED', label: 'ASSIGNED' },
+                { name: 'SUBMITTED', label: 'SUBMITTED' },
+                { name: 'GENERATED', label: 'GENERATED' },
+                { name: 'APPROVED', label: 'APPROVED' },
+                { name: 'REJECTED', label: 'REJECTED' },
+                { name: 'CANCELLED', label: 'CANCELLED' },
+            ],
         };
     },
     created() {
         this.fetchTicketList();
     },
     methods: {
+        setActiveTab(tabName) {
+            this.activeTab = tabName;
+        },
         fetchTicketList() {
             axios.get('api/fetchRequestFormRecordsByUserName')
                 .then(response => {
@@ -138,6 +167,11 @@ export default {
 </script>
 
 <style scoped>
+.nav-link.active {
+    font-weight: bolder;
+    color: #060389;
+}
+
 th {
     color: rgb(255, 255, 255);
     background-color: #060389;
