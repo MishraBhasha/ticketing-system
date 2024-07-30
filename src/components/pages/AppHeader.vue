@@ -47,6 +47,7 @@ export default {
     return {
       logoSrc: logo,
       user: JSON.parse(localStorage.getItem('user')) || '',
+      role: localStorage.getItem('role')
     };
   },
   computed: {
@@ -57,6 +58,7 @@ export default {
   },
   mounted() {
     console.log('User:', this.user.replace(/"/g, ''));
+    console.log('Role User:', this.role);
   },
   methods: {
 

@@ -1,30 +1,35 @@
 <template>
     <div :class="['sidebar', { 'sidebar-collapsed': isCollapsed }]">
         <ul class="sidebar-menu">
-            <!--    <li class="nav-item active">
-                <router-link to="/user/list">Ticket List</router-link>
-            </li>
-            <li class="nav-item">
-                <router-link to="/user/create">Create Ticket</router-link>
-            </li>
-            <li class="nav-item">
-                <router-link to="/user/edit">Edit Ticket</router-link>
-            </li>
-            <li class="nav-item">
-                <router-link to="/user/view">View Ticket</router-link>
-            </li> -->
-            <li class="nav-item" :class="{ active: activePath === '/user/list' }" @click="setActive('/user/list')">
-                <router-link to="/user/list" class="nav-link">Ticket List</router-link>
-            </li>
-            <li class="nav-item" :class="{ active: activePath === '/user/create' }" @click="setActive('/user/create')">
-                <router-link to="/user/create" class="nav-link">Create Ticket</router-link>
-            </li>
-            <!-- <li class="nav-item" :class="{ active: activePath === '/user/edit' }" @click="setActive('/user/edit')">
-                <router-link to="/user/edit" class="nav-link">Edit Ticket</router-link>
-            </li>
-            <li class="nav-item" :class="{ active: activePath === '/user/view' }" @click="setActive('/user/view')">
-                <router-link to="/user/view" class="nav-link">View Ticket</router-link>
-            </li> -->
+            <ng-container v-if="role === 'ADMIN'">
+                <li class="nav-item" :class="{ active: activePath === '/user/list' }" @click="setActive('/user/list')">
+                    <router-link to="/user/admin/list" class="nav-link">Dashboard</router-link>
+                </li>
+                <!-- <li class="nav-item" :class="{ active: activePath === '/user/create' }"
+                    @click="setActive('/user/create')">
+                    <router-link to="/user/create" class="nav-link">Raise a Ticket</router-link>
+                </li> -->
+            </ng-container>
+
+            <ng-container v-if="role === 'Employee'">
+                <li class="nav-item" :class="{ active: activePath === '/user/list' }" @click="setActive('/user/list')">
+                    <router-link to="/user/list" class="nav-link">Dashboard</router-link>
+                </li>
+                <!-- <li class="nav-item" :class="{ active: activePath === '/user/create' }"
+                    @click="setActive('/user/create')">
+                    <router-link to="/user/create" class="nav-link">Raise a Ticket</router-link>
+                </li> -->
+            </ng-container>
+
+            <ng-container v-if="role === 'user'">
+                <li class="nav-item" :class="{ active: activePath === '/user/list' }" @click="setActive('/user/list')">
+                    <router-link to="/user/list" class="nav-link">Dashboard</router-link>
+                </li>
+                <li class="nav-item" :class="{ active: activePath === '/user/create' }"
+                    @click="setActive('/user/create')">
+                    <router-link to="/user/create" class="nav-link">Raise a Ticket</router-link>
+                </li>
+            </ng-container>
         </ul>
     </div>
 </template>
@@ -40,7 +45,8 @@ export default {
     },
     data() {
         return {
-            activePath: '/user/list'
+            activePath: '/user/list',
+            role: localStorage.getItem('role')
         };
     },
     methods: {
@@ -85,9 +91,9 @@ li {
 }
 
 .nav-link {
-  display: block;
-  color: inherit;
-  text-decoration: none;
+    display: block;
+    color: inherit;
+    text-decoration: none;
 }
 
 .nav-link.active {

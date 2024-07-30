@@ -1,11 +1,11 @@
 <template>
     <layout-div>
         <div class="container">
-            <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Ticket Manager</h2>
+            <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Raises Ticket List</h2>
             <div class="card">
                 <div class="card-header">
                     <router-link to="/user/create" class="btn btn-outline-primary">
-                        Create New Ticket
+                        Raise New Ticket
                     </router-link>
                 </div>
                 <div class="card-body">
@@ -63,7 +63,7 @@
                                 <td>
                                     <!-- <router-link :to="`/show/${ticket.id}`"
                                         class="btn btn-outline-info mx-1">Show</router-link> -->
-                                    <router-link :to="`/edit/${ticket.id}`">
+                                    <router-link>
                                         <i class="bi bi-pencil-fill text-primary mx-2"></i>
                                     </router-link>
                                     <i class="bi bi-trash3-fill text-danger" @click="handleDelete(ticket.id)"></i>
@@ -99,14 +99,6 @@ export default {
                 { name: 'REJECTED', label: 'REJECTED' },
                 { name: 'CANCELLED', label: 'CANCELLED' },
             ],
-            items: [
-                { id: 1, status: 'Assigned' },
-                { id: 2, status: 'Submitted' },
-                { id: 3, status: 'Generated' },
-                { id: 4, status: 'Approved' },
-                { id: 5, status: 'Rejected' },
-                { id: 6, status: 'Cancelled' },
-            ],
         };
     },
     created() {
@@ -120,6 +112,18 @@ export default {
             axios.get('api/fetchRequestFormRecordsByUserName')
                 .then(response => {
                     this.tickets = response.data.data;
+                    console.log(this.tickets)
+                    return response
+                })
+                .catch(error => {
+                    return error
+                });
+        },
+        getDashboardStatistics() {
+            axios.get('api/getDashboardStatistics')
+                .then(response => {
+                    this.statistic = response.data;
+                    this.allStatistic = response.val;                   
                     console.log(this.tickets)
                     return response
                 })

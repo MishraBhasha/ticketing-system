@@ -132,27 +132,25 @@ export default {
                         timer: 1500,
                     }).then(() => {
                         const authData = {
-                            
+
                             token: response.data.data.accessToken,
                             user: JSON.stringify(response.data.data.loginDtoResponse.userName),
                             // name: JSON.stringify(response.data.data.loginDtoResponse.firstName),
                         };
                         this.login(authData);
                         console.log(response.data.data.loginDtoResponse.role);
-                        const userRole =response.data.data.loginDtoResponse.role;
-
-                    // Redirect based on role
-                    if (userRole === 'ADMIN') {
-                        this.$router.push('/user/admin/list');
-                    } else if (userRole === 'employee') {
-                        this.$router.push('/user/emp/list');
-                    } else if (userRole === 'user') {
-                        this.$router.push('/user/list');
-                    } else {
-                        // Default redirection if role is not recognized
-                        this.$router.push('/');
-                    }
-                        // this.$router.push('/user/list');
+                        const userRole = response.data.data.loginDtoResponse.role;
+                        localStorage.setItem('role', userRole);
+                        // Redirect based on role
+                        if (userRole === 'ADMIN') {
+                            this.$router.push('/user/admin/list');
+                        } else if (userRole === 'Employee') {
+                            this.$router.push('/user/emp/list');
+                        } else if (userRole === 'user') {
+                            this.$router.push('/user/list');
+                        } else {
+                            this.$router.push('/');
+                        }
                     })
                     this.isSaving = false
                     this.project.password = ""

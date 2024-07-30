@@ -43,11 +43,22 @@
                                     {{ ticket.priorityName }}
                                 </td>
                                 <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
-                                <td>{{ ticket.status }}</td>
+                                <td>
+                                    <span class="rounded-pill text-white p-1"
+                                        :class="{
+                                            'bg-warning': ticket.status.toLowerCase() === 'assigned',
+                                            'bg-primary': ticket.status.toLowerCase() === 'submitted',
+                                            'bg-secondary': ticket.status.toLowerCase() === 'generated',
+                                            'bg-success': ticket.status.toLowerCase() === 'approved',
+                                            'bg-dark': ticket.status.toLowerCase() === 'rejected',
+                                            'bg-danger': ticket.status.toLowerCase() === 'cancelled'
+                                        }">{{ ticket.status }}
+                                    </span>
+                                </td>
                                 <td>
                                     <!-- <router-link :to="`/show/${ticket.id}`"
                                         class="btn btn-outline-info mx-1">Show</router-link> -->
-                                    <router-link :to="`/edit/${ticket.id}`">
+                                    <router-link>
                                         <i class="bi bi-pencil-fill text-primary mx-2"></i>
                                     </router-link>
                                     <i class="bi bi-trash3-fill text-danger" @click="handleDelete(ticket.id)"></i>
@@ -77,7 +88,6 @@ export default {
             tabs: [
                 { name: 'ALL', label: 'ALL' },
                 { name: 'ASSIGNED', label: 'ASSIGNED' },
-                { name: 'SUBMITTED', label: 'SUBMITTED' },
                 { name: 'GENERATED', label: 'GENERATED' },
                 { name: 'APPROVED', label: 'APPROVED' },
                 { name: 'REJECTED', label: 'REJECTED' },

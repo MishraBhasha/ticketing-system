@@ -1,6 +1,6 @@
 <template>
     <layout-div>
-        <h2 class="text-center mt-5 mb-3 rounded shadow" :style= "{color: '#060389'}">Create New Ticket</h2>
+        <h2 class="text-center mt-5 mb-3 rounded shadow" :style= "{color: '#060389'}">Raise New Ticket</h2>
         <div class="card rounded">
 
             <!-- <div class="card-header">
