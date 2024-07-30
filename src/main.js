@@ -15,6 +15,9 @@ import TicketView from './components/pages/TicketView';
 import UserLogin from './components/pages/UserLogin';
 import store from './store'; 
 import UserRegisterTemplate from './components/pages/UserRegisterTemplate.vue';
+import AdminTicketList from './components/adminPages/AdminTicketList';
+import EmpTicketList from './components/empPages/EmpTicketList';
+
 // axios.defaults.baseURL = process.env.VUE_APP_API_URL
 // axios.interceptors.request.use(function (config) {
 //     config.headers['Authorization'] = `Bearer ${process.env.VUE_APP_API_KEY}`;
@@ -48,6 +51,8 @@ const routes = [
             { path: 'create', component: TicketCreate },
             { path: 'edit/:id', component: TicketEdit },
             { path: 'view/:id', component: TicketView },
+            { path: 'alist', component: AdminTicketList },
+            { path: 'elist', component: EmpTicketList },
         ],
         meta: { requiresAuth: true }
     },
