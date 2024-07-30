@@ -48,7 +48,18 @@
                                     {{ ticket.priorityName }}
                                 </td>
                                 <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
-                                <td>{{ ticket.status }}</td>
+                                <td>
+                                    <span class="rounded-pill text-white p-1"
+                                        :class="{
+                                            'bg-warning': ticket.status.toLowerCase() === 'assigned',
+                                            'bg-primary': ticket.status.toLowerCase() === 'submitted',
+                                            'bg-secondary': ticket.status.toLowerCase() === 'generated',
+                                            'bg-success': ticket.status.toLowerCase() === 'approved',
+                                            'bg-dark': ticket.status.toLowerCase() === 'rejected',
+                                            'bg-danger': ticket.status.toLowerCase() === 'cancelled'
+                                        }">{{ ticket.status }}
+                                    </span>
+                                </td>
                                 <td>
                                     <!-- <router-link :to="`/show/${ticket.id}`"
                                         class="btn btn-outline-info mx-1">Show</router-link> -->
@@ -87,6 +98,14 @@ export default {
                 { name: 'APPROVED', label: 'APPROVED' },
                 { name: 'REJECTED', label: 'REJECTED' },
                 { name: 'CANCELLED', label: 'CANCELLED' },
+            ],
+            items: [
+                { id: 1, status: 'Assigned' },
+                { id: 2, status: 'Submitted' },
+                { id: 3, status: 'Generated' },
+                { id: 4, status: 'Approved' },
+                { id: 5, status: 'Rejected' },
+                { id: 6, status: 'Cancelled' },
             ],
         };
     },
