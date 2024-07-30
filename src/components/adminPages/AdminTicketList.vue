@@ -43,7 +43,18 @@
                                     {{ ticket.priorityName }}
                                 </td>
                                 <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
-                                <td>{{ ticket.status }}</td>
+                                <td>
+                                    <span class="rounded-pill text-white p-1"
+                                        :class="{
+                                            'bg-warning': ticket.status.toLowerCase() === 'assigned',
+                                            'bg-primary': ticket.status.toLowerCase() === 'submitted',
+                                            'bg-secondary': ticket.status.toLowerCase() === 'generated',
+                                            'bg-success': ticket.status.toLowerCase() === 'approved',
+                                            'bg-dark': ticket.status.toLowerCase() === 'rejected',
+                                            'bg-danger': ticket.status.toLowerCase() === 'cancelled'
+                                        }">{{ ticket.status }}
+                                    </span>
+                                </td>
                                 <td>
                                     <a data-bs-toggle="modal" data-bs-target="#exampleModal" @click="openModal(ticket)">
                                         <i class="bi bi-pencil-fill text-primary mx-2"></i>
@@ -62,7 +73,7 @@
             </div>
         </div>
         <!--Modal-->
-        <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -409,9 +420,19 @@ export default {
             timer: 1500
           }).then(() => {
              // Close the modal using Bootstrap's Modal instance
-             const modalElement = document.getElementById('exampleModal');
+            //  const modalElement = document.getElementById('exampleModal');
+            // const modalInstance = Modal.getInstance(modalElement);
+            // modalInstance.hide();
+            // Close the modal using Bootstrap's Modal instance
+            const modalElement = document.getElementById('exampleModal');
             const modalInstance = Modal.getInstance(modalElement);
             modalInstance.hide();
+            modalElement.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+              backdrop.remove();
+            }
             this.fetchTicketList();
             // Redirect to /user/alist using Vue Router
             // this.$router.push('/user/alist'); 
