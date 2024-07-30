@@ -51,8 +51,8 @@ const routes = [
             { path: 'create', component: TicketCreate },
             { path: 'edit/:id', component: TicketEdit },
             { path: 'view/:id', component: TicketView },
-            { path: 'alist', component: AdminTicketList },
-            { path: 'elist', component: EmpTicketList },
+            { path: 'admin/list', component: AdminTicketList },
+            { path: 'emp/list', component: EmpTicketList },
         ],
         meta: { requiresAuth: true }
     },
