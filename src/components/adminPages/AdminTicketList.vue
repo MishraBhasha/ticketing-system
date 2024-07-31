@@ -2,7 +2,17 @@
     <layout-div>
         <div class="container">
             <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Ticket Manager</h2>
-            <div class="card">
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
+                        @input="filterTickets">
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+
+
+            <div class="card mt-3">
                 <div class="card-body">
 
                     <ul class="nav nav-underline">
@@ -34,8 +44,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(ticket, i) in tickets" :key="ticket.id">
-                                <td>{{ i + 1 }}</td>
+                            <tr v-for="(ticket, i) in filteredTickets" :key="ticket.id">
+                                <td>{{ i + 1 + (currentPage - 1) * itemsPerPage }}</td>
                                 <td>{{ ticket.ticketName }}</td>
                                 <td>{{ formatDate(ticket.createdOn) }}</td>
                                 <td>{{ ticket.commentBox }}</td>
@@ -195,7 +205,7 @@
                                 <div class="col-md-6">
                                     <label for="status">Status</label>
                                     <select class="form-select" v-model="status">
-                                        <option value="">--select--</option>
+                                        <option value="" disabled selected>--select--</option>
                                         <option value="ASSIGNED" v-if="activeTab === 'SUBMITTED'">ASSIGN</option>
                                         <option value="APPROVED" v-if="activeTab === 'GENERATED'">APPROVE</option>
                                         <option value="REJECTED">REJECT</option>
@@ -205,7 +215,7 @@
                                 <div class="col-md-6" v-if="activeTab === 'SUBMITTED'">
                                     <label>Employee Name</label>
                                     <select class="form-select" v-model="assignedTo">
-                                        <option value="">--select--</option>
+                                        <option value="" disabled selected>--select--</option>
                                         <option v-for="data in listOfEmployee" :key="data.id" :value="data.id">
                                             {{ data.firstName }} {{ data.lastName }}
                                         </option>
@@ -235,6 +245,24 @@
                 </div>
             </div>
         </div>
+        <!--Pagination-->
+        <div class="d-flex justify-content-end mt-3">
+            <ul class="pagination">
+                <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                    <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" :class="{ active: page === currentPage }" v-for="page in totalPages" :key="page">
+                    <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                </li>
+                <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                    <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </layout-div>
 </template>
 
@@ -252,6 +280,12 @@ export default {
         return {
             tickets: [],
             listOfEmployee: [],
+            currentPage: 1,
+            itemsPerPage: 5,
+            totalItems: 0,
+            searchQuery: "",
+            status:'',
+            assignedTo:'',
             activeTab: 'SUBMITTED',
             tabs: [
                 { name: 'SUBMITTED', label: 'SUBMITTED' },
@@ -284,6 +318,8 @@ export default {
     methods: {
         setActiveTab(tabName) {
             this.activeTab = tabName;
+            this.currentPage = 1; // Reset to first page on tab change
+            this.fetchTicketList();
             console.log(this.activeTab)
         },
         openModal(ticket) {
@@ -293,9 +329,16 @@ export default {
         fetchTicketList() {
             axios.get('api/getRequestFormData')
                 .then(response => {
-                    this.tickets = response.data.data;
-                    console.log(this.tickets)
-                    return response
+                    // this.tickets = response.data.data;
+                    // console.log(this.tickets)
+                    // return response
+                    const allTickets = response.data.data;
+                    this.totalItems = allTickets.length; // Calculate total items
+                    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+                    const endIndex = this.currentPage * this.itemsPerPage;
+                    this.tickets = allTickets.slice(startIndex, endIndex);
+                    console.log(this.tickets);
+                    return response;
                 })
                 .catch(error => {
                     return error
@@ -444,6 +487,11 @@ export default {
                     });
                 });
         },
+        changePage(page) {
+            if (page < 1 || page > this.totalPages) return;
+            this.currentPage = page;
+            this.fetchTicketList();
+        },
 
     },
 
@@ -453,7 +501,25 @@ export default {
         },
         formattedCreatedOn() {
             return this.formatDate(this.selectedTicket.createdOn);
-        }
+        },
+        totalPages() {
+            return Math.ceil(this.totalItems / this.itemsPerPage);
+        },
+        filteredTickets() {
+            const query = this.searchQuery.toLowerCase();
+            return this.tickets.filter((ticket) => {
+                return (
+                    ticket.companyName.toLowerCase().includes(query) ||
+                    ticket.address.toLowerCase().includes(query) ||
+                    ticket.personName.toLowerCase().includes(query) ||
+                    ticket.phoneNumber.toLowerCase().includes(query) ||
+                    ticket.emailId.toLowerCase().includes(query) ||
+                    ticket.ticketName.toLowerCase().includes(query) ||
+                    ticket.status.toLowerCase().includes(query) ||
+                    ticket.priorityName.toLowerCase().includes(query)
+                );
+            });
+        },
     }
 };
 </script>
