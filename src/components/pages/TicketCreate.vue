@@ -5,8 +5,8 @@
       <div class="card-body">
         <form @submit.prevent="handleSubmit">
           <div class="row">
-            <div class="col-md-4">
-              <div class="mb-3">
+            <div class="col-md-4 mb-3">
+              <!-- <div class="mb-3"> -->
                 <label for="companyName" class="form-label">Company Name</label>
                 <input
                   type="text"
@@ -18,7 +18,9 @@
                 />
                 <div v-if="errors.companyName" class="text-danger">{{ errors.companyName }}</div>
               </div>
-              <div class="mb-3">
+            <div class="col-md-4 mb-3">
+
+              <!-- <div class="mb-3"> -->
                 <label for="address" class="form-label">Address</label>
                 <input
                   type="text"
@@ -30,7 +32,9 @@
                 />
                 <div v-if="errors.address" class="text-danger">{{ errors.address }}</div>
               </div>
-              <div class="mb-3">
+            <div class="col-md-4 mb-3">
+
+              <!-- <div class="mb-3"> -->
                 <label for="personName" class="form-label">Person Name</label>
                 <input
                   type="text"
@@ -42,9 +46,9 @@
                 />
                 <div v-if="errors.personName" class="text-danger">{{ errors.personName }}</div>
               </div>
-            </div>
-            <div class="col-md-4">
-              <div class="mb-3">
+            <!-- </div> -->
+            <div class="col-md-4 mb-3">
+              <!-- <div class="mb-3"> -->
                 <label for="mobileNumber" class="form-label">Mobile Number</label>
                 <input
                   type="tel"
@@ -56,7 +60,9 @@
                 />
                 <div v-if="errors.mobileNumber" class="text-danger">{{ errors.mobileNumber }}</div>
               </div>
-              <div class="mb-3">
+            <div class="col-md-4 mb-3">
+
+              <!-- <div class="mb-3"> -->
                 <label for="emailId" class="form-label">Email Id</label>
                 <input
                   type="email"
@@ -68,7 +74,9 @@
                 />
                 <div v-if="errors.emailId" class="text-danger">{{ errors.emailId }}</div>
               </div>
-              <div class="mb-3">
+            <div class="col-md-4 mb-3">
+
+              <!-- <div class="mb-3"> -->
                 <label for="expectedDeliveryDate" class="form-label">Expected Delivery Date</label>
                 <input
                   type="date"
@@ -80,9 +88,9 @@
                 />
                 <div v-if="errors.expectedDeliveryDate" class="text-danger">{{ errors.expectedDeliveryDate }}</div>
               </div>
-            </div>
-            <div class="col-md-4">
-              <div class="mb-3">
+            <!-- </div> -->
+            <div class="col-md-4 mb-3">
+              <!-- <div class="mb-3"> -->
                 <label for="ticketType" class="form-label">Ticket Type</label>
                 <select
                   id="ticketType"
@@ -96,7 +104,9 @@
                 </select>
                 <div v-if="errors.ticketType" class="text-danger">{{ errors.ticketType }}</div>
               </div>
-              <div class="mb-3">
+            <div class="col-md-4 mb-3">
+
+              <!-- <div class="mb-3"> -->
                 <label for="priority" class="form-label">Priority</label>
                 <select
                   id="priority"
@@ -112,11 +122,13 @@
                 </select>
                 <div v-if="errors.priority" class="text-danger">{{ errors.priority }}</div>
               </div>
-              <div class="mb-3">
+            <div class="col-md-4 mb-3">
+
+              <!-- <div class="mb-3"> -->
                 <label for="fileUpload" class="form-label">Upload File</label>
                 <input type="file" id="fileUpload" @change="handleFileUpload" class="form-control shadow" />
               </div>
-            </div>
+            <!-- </div> -->
             <div class="col-md-12">
               <div class="mb-3">
                 <label for="commentBox" class="form-label">Comment Box</label>
