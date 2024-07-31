@@ -1,7 +1,7 @@
 <template>
     <div :class="['sidebar', { 'sidebar-collapsed': isCollapsed }]">
         <ul class="sidebar-menu">
-            <ng-container v-if="role === 'ADMIN'">
+            <template v-if="role === 'ADMIN'">
                 <li class="nav-item" :class="{ active: activePath === '/user/list' }" @click="setActive('/user/list')">
                     <router-link to="/user/admin/list" class="nav-link">Dashboard</router-link>
                 </li>
@@ -9,9 +9,9 @@
                     @click="setActive('/user/create')">
                     <router-link to="/user/create" class="nav-link">Raise a Ticket</router-link>
                 </li> -->
-            </ng-container>
+            </template>
 
-            <ng-container v-if="role === 'Employee'">
+            <template v-if="role === 'Employee'">
                 <li class="nav-item" :class="{ active: activePath === '/user/list' }" @click="setActive('/user/list')">
                     <router-link to="/user/list" class="nav-link">Dashboard</router-link>
                 </li>
@@ -19,9 +19,9 @@
                     @click="setActive('/user/create')">
                     <router-link to="/user/create" class="nav-link">Raise a Ticket</router-link>
                 </li> -->
-            </ng-container>
+            </template>
 
-            <ng-container v-if="role === 'user'">
+            <template v-if="role === 'user'">
                 <li class="nav-item" :class="{ active: activePath === '/user/list' }" @click="setActive('/user/list')">
                     <router-link to="/user/list" class="nav-link">Dashboard</router-link>
                 </li>
@@ -29,7 +29,7 @@
                     @click="setActive('/user/create')">
                     <router-link to="/user/create" class="nav-link">Raise a Ticket</router-link>
                 </li>
-            </ng-container>
+            </template>
         </ul>
     </div>
 </template>

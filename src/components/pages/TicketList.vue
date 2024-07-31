@@ -12,18 +12,12 @@
 
                     <ul class="nav nav-underline">
                         <li class="nav-item" v-for="tab in tabs" :key="tab.name">
-                            <a class="nav-link" :class="{ active: activeTab === tab.name }"
+                            <a class="nav-link m-2" :class="{ active: activeTab === tab.name }"
                                 @click="setActiveTab(tab.name)" href="#">
                                 {{ tab.label }}
-                            </a>
+                                <span class="badge bg-primary text-white rounded-pill">{{ allStatistic[tab.label.toUpperCase()] ?? 0 }}</span>
+                            </a>                            
                         </li>
-                        <!-- <li class="nav-item"><a class="nav-link">ALL</a></li>
-                        <li class="nav-item"><a class="nav-link">ASSIGNED</a></li>
-                        <li class="nav-item"><a class="nav-link">SUBMITTED</a></li>
-                        <li class="nav-item"><a class="nav-link">GENERATED</a></li>
-                        <li class="nav-item"><a class="nav-link">APPROVED</a></li>
-                        <li class="nav-item"><a class="nav-link">REJECTED</a></li>
-                        <li class="nav-item"><a class="nav-link">CANCELLED</a></li> -->
                     </ul>
                     <table class="table table-bordered">
                         <thead>
@@ -33,7 +27,7 @@
                                 <th>Req-Date</th>
                                 <th>Comment</th>
                                 <th>Priority</th>
-                                <th>Expected_Delivery-Date</th>
+                                <th>Expected Delivery Date</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -49,7 +43,7 @@
                                 </td>
                                 <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
                                 <td>
-                                    <span class="rounded-pill text-white p-1"
+                                    <span class="badge rounded-pill text-white"
                                         :class="{
                                             'bg-warning': ticket.status.toLowerCase() === 'assigned',
                                             'bg-primary': ticket.status.toLowerCase() === 'submitted',
@@ -99,10 +93,13 @@ export default {
                 { name: 'REJECTED', label: 'REJECTED' },
                 { name: 'CANCELLED', label: 'CANCELLED' },
             ],
+            statistic: {},
+            allStatistic: {}
         };
     },
     created() {
         this.fetchTicketList();
+        this.getDashboardStatistics();
     },
     methods: {
         setActiveTab(tabName) {
@@ -123,8 +120,12 @@ export default {
             axios.get('api/getDashboardStatistics')
                 .then(response => {
                     this.statistic = response.data;
-                    this.allStatistic = response.val;                   
-                    console.log(this.tickets)
+                    const obj = {
+                        ...this.statistic,
+                        ALL: response.val,
+                    };
+                    this.allStatistic = obj.data;
+                    console.log(this.allStatistic.data)
                     return response
                 })
                 .catch(error => {

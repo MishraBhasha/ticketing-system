@@ -1,6 +1,6 @@
-<ng-container>
+<template>
       <UserRegister />
-</ng-container>
+</template>
 
 <script>
 import UserRegister from './UserRegisterTemplate.vue';
