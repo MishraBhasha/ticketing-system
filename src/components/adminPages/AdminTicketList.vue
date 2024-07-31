@@ -1,6 +1,6 @@
 <template>
     <layout-div>
-        <div class="container">
+        <AppLoader v-if="isLoading" />
             <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Ticket Manager</h2>
             <div class="row">
                 <div class="col-md-4"></div>
@@ -20,6 +20,7 @@
                             <a class="nav-link" :class="{ active: activeTab === tab.name }"
                                 @click="setActiveTab(tab.name)" href="#">
                                 {{ tab.label }}
+                                <span class="badge bg-primary text-white rounded-pill">{{ allStatistic[tab.label.toUpperCase()] ?? 0 }}</span>
                             </a>
                         </li>
                         <!-- <li class="nav-item"><a class="nav-link">ALL</a></li>
@@ -80,7 +81,6 @@
                     </table>
                 </div>
             </div>
-        </div>
         <!--Modal-->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -271,10 +271,12 @@ import axios from 'axios';
 import LayoutDiv from '../LayoutDiv.vue';
 import Swal from 'sweetalert2';
 import { Modal } from 'bootstrap';
+import AppLoader from '../pages/AppLoader.vue';
 export default {
     name: 'TicketList',
     components: {
         LayoutDiv,
+        AppLoader
     },
     data() {
         return {
@@ -286,6 +288,10 @@ export default {
             searchQuery: "",
             status:'',
             assignedTo:'',
+            comment:'',
+            statistic: {},
+            allStatistic: {},
+            isLoading: false,
             activeTab: 'SUBMITTED',
             tabs: [
                 { name: 'SUBMITTED', label: 'SUBMITTED' },
@@ -313,6 +319,7 @@ export default {
     },
     created() {
         this.fetchTicketList();
+        this.getDashboardStatistics();
 
     },
     methods: {
@@ -448,6 +455,7 @@ export default {
                 });
         },
         adminAssigned() {
+             this.isLoading = true;
             const payload = {
                 status: this.status,
                 assignedTo: this.assignedTo,
@@ -464,7 +472,7 @@ export default {
                         title: 'Status Updated',
                         text: 'Assigned Successfully!',
                         showConfirmButton: true,
-                        timer: 1500
+                        // timer: 1500
                     }).then(() => {
                         const modalElement = document.getElementById('exampleModal');
                         const modalInstance = Modal.getInstance(modalElement);
@@ -485,6 +493,25 @@ export default {
                         showConfirmButton: false,
                         timer: 1500
                     });
+                })
+                .finally(() => {
+          this.isLoading = false; // Hide loader
+        });
+        },
+        getDashboardStatistics() {
+            axios.get('api/getDashboardStatistics')
+                .then(response => {
+                    this.statistic = response.data;
+                    const obj = {
+                        ...this.statistic,
+                        ALL: response.val,
+                    };
+                    this.allStatistic = obj.data;
+                    console.log(this.allStatistic.data)
+                    return response
+                })
+                .catch(error => {
+                    return error
                 });
         },
         changePage(page) {
