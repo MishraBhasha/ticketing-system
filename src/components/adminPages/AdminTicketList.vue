@@ -44,15 +44,14 @@
                                 </td>
                                 <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
                                 <td>
-                                    <span class="rounded-pill text-white p-1"
-                                        :class="{
-                                            'bg-warning': ticket.status.toLowerCase() === 'assigned',
-                                            'bg-primary': ticket.status.toLowerCase() === 'submitted',
-                                            'bg-secondary': ticket.status.toLowerCase() === 'generated',
-                                            'bg-success': ticket.status.toLowerCase() === 'approved',
-                                            'bg-dark': ticket.status.toLowerCase() === 'rejected',
-                                            'bg-danger': ticket.status.toLowerCase() === 'cancelled'
-                                        }">{{ ticket.status }}
+                                    <span class="rounded-pill text-white p-1" :class="{
+                                        'bg-warning': ticket.status.toLowerCase() === 'assigned',
+                                        'bg-primary': ticket.status.toLowerCase() === 'submitted',
+                                        'bg-secondary': ticket.status.toLowerCase() === 'generated',
+                                        'bg-success': ticket.status.toLowerCase() === 'approved',
+                                        'bg-dark': ticket.status.toLowerCase() === 'rejected',
+                                        'bg-danger': ticket.status.toLowerCase() === 'cancelled'
+                                    }">{{ ticket.status }}
                                     </span>
                                 </td>
                                 <td>
@@ -86,15 +85,15 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field1" class="form-label">Company Name</label>
-                                        <input type="text" class="form-control" id="field1" v-model="selectedTicket.companyName"
-                                        disabled  readOnly />
+                                        <input type="text" class="form-control" id="field1"
+                                            v-model="selectedTicket.companyName" disabled readOnly />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field2" class="form-label">Address</label>
-                                        <input type="text" class="form-control" id="field2" v-model="selectedTicket.address"
-                                        disabled   readonly />
+                                        <input type="text" class="form-control" id="field2"
+                                            v-model="selectedTicket.address" disabled readonly />
                                     </div>
                                 </div>
                             </div>
@@ -102,8 +101,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field1" class="form-label">Person Name</label>
-                                        <input type="text" class="form-control" id="field1" v-model="selectedTicket.personName"
-                                        disabled   readonly />
+                                        <input type="text" class="form-control" id="field1"
+                                            v-model="selectedTicket.personName" disabled readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -111,7 +110,7 @@
                                         <label for="field2" class="form-label">Phone Number</label>
                                         <input type="tel" id="phone" class="form-control"
                                             pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" v-model="selectedTicket.phoneNumber"
-                                            disabled  readonly />
+                                            disabled readonly />
                                     </div>
                                 </div>
                             </div>
@@ -119,56 +118,60 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field1" class="form-label">Email Id</label>
-                                        <input type="text" class="form-control" id="field1" v-model="selectedTicket.emailId"
-                                        disabled  readonly />
+                                        <input type="text" class="form-control" id="field1"
+                                            v-model="selectedTicket.emailId" disabled readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field2" class="form-label">Delivery Date</label>
                                         <input type="date" class="form-control" id="field2"
-                                        v-model="selectedTicket.expectedDeliveryDate" disabled  readonly />
+                                            v-model="selectedTicket.expectedDeliveryDate" disabled readonly />
                                     </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="commentBox" class="form-label">User Status</label>
-                                        <input type="text" class="form-control" v-model="selectedTicket.status" disabled  readonly />
+                                        <input type="text" class="form-control" v-model="selectedTicket.status" disabled
+                                            readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="createdOn" class="form-label">User Submission Date</label>
-                                        <input type="text" :value="formattedUserSubmissionDate" class="form-control" disabled  readonly />
+                                        <input type="text" :value="formattedUserSubmissionDate" class="form-control"
+                                            disabled readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="createdOn" class="form-label">Ticket Type</label>
-                                        <input type="text" v-model="selectedTicket.ticketName" class="form-control" disabled  readonly />
+                                        <input type="text" v-model="selectedTicket.ticketName" class="form-control"
+                                            disabled readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="createdOn" class="form-label">Priority Type</label>
                                         <input type="text" v-model="selectedTicket.priorityName" class="form-control"
-                                        disabled  readonly />
+                                            disabled readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="commentBox" class="form-label">User Comment</label>
                                         <textarea rows="1" cols="20" id="commentBox" v-model="selectedTicket.commentBox"
-                                            class="form-control" placeholder="Enter your comment here..."
-                                            disabled  readonly></textarea>
+                                            class="form-control" placeholder="Enter your comment here..." disabled
+                                            readonly></textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="fileView" class="form-label">User File</label>
                                         <div class="file-item">
-                                            <button class="btn btn-success btn-sm" @click.prevent="downloadFile(selectedTicket.fileId)" target="_blank">
+                                            <button class="btn btn-success btn-sm"
+                                                @click.prevent="downloadFile(selectedTicket.fileId)" target="_blank">
                                                 <i class="fas fa-file-pdf mx-1"></i>Download
                                             </button>
                                         </div>
@@ -178,7 +181,8 @@
                                     <div class="form-group">
                                         <label for="fileView" class="form-label">Resolved File</label>
                                         <div class="file-item">
-                                            <button class="btn btn-success btn-sm" target="_blank" @click.prevent="downloadResolvedFile(selectedTicket.resolvedFileId)">
+                                            <button class="btn btn-success btn-sm" target="_blank"
+                                                @click.prevent="downloadResolvedFile(selectedTicket.resolvedFileId)">
                                                 <i class="fas fa-file-pdf mx-1"></i>Download
                                             </button>
                                         </div>
@@ -238,6 +242,7 @@
 import axios from 'axios';
 import LayoutDiv from '../LayoutDiv.vue';
 import Swal from 'sweetalert2';
+import { Modal } from 'bootstrap';
 export default {
     name: 'TicketList',
     components: {
@@ -246,7 +251,7 @@ export default {
     data() {
         return {
             tickets: [],
-            listOfEmployee:[],
+            listOfEmployee: [],
             activeTab: 'SUBMITTED',
             tabs: [
                 { name: 'SUBMITTED', label: 'SUBMITTED' },
@@ -274,7 +279,7 @@ export default {
     },
     created() {
         this.fetchTicketList();
-        
+
     },
     methods: {
         setActiveTab(tabName) {
@@ -295,7 +300,7 @@ export default {
                 .catch(error => {
                     return error
                 });
-                
+
         },
         fetchEmployeeList() {
             axios.get('api/getEmployeelist')
@@ -307,7 +312,7 @@ export default {
                 .catch(error => {
                     return error
                 });
-                
+
         },
         formatDate(date) {
             const d = new Date(date);
@@ -367,15 +372,15 @@ export default {
             console.log(fileId)
             axios.get(`/api/downloadFile?fileId=${fileId}`, { responseType: 'blob' })
                 .then(response => {
-                const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
-         
-                const newTab = window.open(url, '_blank');
-                if (newTab) {
-                    newTab.focus(); // Focus the new tab if it was successfully opened
-                } else {
-                    console.error('Failed to open new tab');
-                }
-                window.URL.revokeObjectURL(url);
+                    const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+
+                    const newTab = window.open(url, '_blank');
+                    if (newTab) {
+                        newTab.focus(); // Focus the new tab if it was successfully opened
+                    } else {
+                        console.error('Failed to open new tab');
+                    }
+                    window.URL.revokeObjectURL(url);
                 })
                 .catch(error => {
                     console.error(error);
@@ -385,73 +390,63 @@ export default {
             console.log(fileId)
             axios.get(`/api/downloadFile?fileId=${fileId}`, { responseType: 'blob' })
                 .then(response => {
-                const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
-                
-                const newTab = window.open(url, '_blank');
-                if (newTab) {
-                    newTab.focus(); 
-                } else {
-                    console.error('Failed to open new tab');
-                }
-                window.URL.revokeObjectURL(url);
+                    const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+
+                    const newTab = window.open(url, '_blank');
+                    if (newTab) {
+                        newTab.focus();
+                    } else {
+                        console.error('Failed to open new tab');
+                    }
+                    window.URL.revokeObjectURL(url);
                 })
                 .catch(error => {
                     console.error(error);
                 });
         },
         adminAssigned() {
-      const payload = {
-        status: this.status,
-        assignedTo: this.assignedTo,
-        comment: this.comment,
-        requestFormCode:this.selectedTicket.requestFormCode,
-        assignedBy:10
-      };
+            const payload = {
+                status: this.status,
+                assignedTo: this.assignedTo,
+                comment: this.comment,
+                requestFormCode: this.selectedTicket.requestFormCode,
+                assignedBy: 10
+            };
 
-      axios.post('/api/saveRequestFormTrackingRecord', payload)
-        .then(response => {
-            console.log(response)
-          Swal.fire({
-            icon: 'success',
-            title: 'Status Updated',
-            text:'Assigned Successfully!',
-            showConfirmButton: true,
-            timer: 1500
-          }).then(() => {
-             // Close the modal using Bootstrap's Modal instance
-            //  const modalElement = document.getElementById('exampleModal');
-            // const modalInstance = Modal.getInstance(modalElement);
-            // modalInstance.hide();
-            // Close the modal using Bootstrap's Modal instance
-            // const modalElement = document.getElementById('exampleModal');
-            // const modalInstance = Modal.getInstance(modalElement);
-            // modalInstance.hide();
-            // modalElement.classList.remove('show');
-            // document.body.classList.remove('modal-open');
-            // const backdrop = document.querySelector('.modal-backdrop');
-            // if (backdrop) {
-            //   backdrop.remove();
-            // }
-            // this.cleanUpModal();
-            this.fetchTicketList();
-            // Redirect to /user/alist using Vue Router
-            // this.$router.push('/user/alist'); 
-          });
-         
-        })
-        .catch(error => {
-          Swal.fire({
-            icon: 'error',
-            title: 'An error occurred!',
-            text: error.response.data.message,
-            showConfirmButton: false,
-            timer: 1500
-          });
-        });
+            axios.post('/api/saveRequestFormTrackingRecord', payload)
+                .then(response => {
+                    console.log(response)
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Status Updated',
+                        text: 'Assigned Successfully!',
+                        showConfirmButton: true,
+                        timer: 1500
+                    }).then(() => {
+                        const modalElement = document.getElementById('exampleModal');
+                        const modalInstance = Modal.getInstance(modalElement);
+                        modalInstance.hide();
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) {
+                            backdrop.parentNode.removeChild(backdrop);
+                        }
+                        this.fetchTicketList();
+                    });
+
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'An error occurred!',
+                        text: error.response.data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                });
+        },
+
     },
-   
-    },
-    
+
     computed: {
         formattedUserSubmissionDate() {
             return this.formatDate(this.selectedTicket.createdOn);
