@@ -1,81 +1,74 @@
 <template>
     <layout-div>
-        <div class="container">
-            <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Raises Ticket List</h2>
-            <div class="card">
-                <div class="card-header">
-                    <router-link to="/user/create" class="btn btn-outline-primary">
-                        Raise New Ticket
-                    </router-link>
-                </div>
-                <div class="card-body">
 
-                    <ul class="nav nav-underline">
-                        <li class="nav-item" v-for="tab in tabs" :key="tab.name">
-                            <a class="nav-link m-2" :class="{ active: activeTab === tab.name }"
-                                @click="setActiveTab(tab.name)" href="#">
-                                {{ tab.label }}
-                                <span class="badge bg-primary text-white rounded-pill">{{ allStatistic[tab.label.toUpperCase()] ?? 0 }}</span>
-                            </a>                            
-                        </li>
-                    </ul>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Sl No</th>
-                                <th>Ticket Name</th>
-                                <th>Req-Date</th>
-                                <th>Comment</th>
-                                <th>Priority</th>
-                                <th>Expected Delivery Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(ticket, i) in filteredTickets" :key="ticket.id">
+        <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Raises Ticket List</h2>
+        <div class="card">
+            <div class="card-header">
+                <router-link to="/user/create" class="btn btn-outline-primary">
+                    Raise New Ticket
+                </router-link>
+            </div>
+            <div class="card-body">
+
+                <ul class="nav nav-underline">
+                    <li class="nav-item" v-for="tab in tabs" :key="tab.name">
+                        <a class="nav-link m-2" :class="{ active: activeTab === tab.name }"
+                            @click="setActiveTab(tab.name)" href="#">
+                            {{ tab.label }}
+                            <span class="badge bg-primary text-white rounded-pill">{{
+                                allStatistic[tab.label.toUpperCase()] ?? 0 }}</span>
+                        </a>
+                    </li>
+                </ul>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Sl No</th>
+                            <th>Ticket Name</th>
+                            <th>Req-Date</th>
+                            <th>Comment</th>
+                            <th>Priority</th>
+                            <th>Expected Delivery Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(ticket, i) in filteredTickets" :key="ticket.id">
                             <!-- <tr v-for="(ticket, i) in tickets" :key="ticket.id"> -->
-                                <td>{{ i + 1 }}</td>
-                                <td>{{ ticket.ticketName }}</td>
-                                <td>{{ formatDate(ticket.createdOn) }}</td>
-                                <td>{{ ticket.commentBox }}</td>
-                                <td :class="getPriorityClass(ticket.priorityName)">
-                                    {{ ticket.priorityName }}
-                                </td>
-                                <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
-                                <td>
-                                    <span class="badge rounded-pill text-white"
-                                        :class="{
-                                            'bg-warning': ticket.status.toLowerCase() === 'assigned',
-                                            'bg-primary': ticket.status.toLowerCase() === 'submitted',
-                                            'bg-secondary': ticket.status.toLowerCase() === 'generated',
-                                            'bg-success': ticket.status.toLowerCase() === 'approved',
-                                            'bg-dark': ticket.status.toLowerCase() === 'rejected',
-                                            'bg-danger': ticket.status.toLowerCase() === 'cancelled'
-                                        }">{{ ticket.status }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <!-- <router-link :to="`/show/${ticket.id}`"
-                                        class="btn btn-outline-info mx-1">Show</router-link> -->
-                                    <!-- <router-link>
-                                        <i class="bi bi-pencil-fill text-primary mx-2"></i>
-                                    </router-link> -->
-                                    <a data-bs-toggle="modal" data-bs-target="#exampleModal" @click="openModal(ticket)">
-                                        <i class="bi bi-pencil-fill text-primary mx-2"></i>
-                                    </a>
-                                    <i class="bi bi-trash3-fill text-danger" @click="handleDelete(ticket.id)"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ ticket.ticketName }}</td>
+                            <td>{{ formatDate(ticket.createdOn) }}</td>
+                            <td>{{ ticket.commentBox }}</td>
+                            <td :class="getPriorityClass(ticket.priorityName)">
+                                {{ ticket.priorityName }}
+                            </td>
+                            <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
+                            <td>
+                                <span class="badge rounded-pill text-white" :class="{
+                                    'bg-warning': ticket.status.toLowerCase() === 'assigned',
+                                    'bg-primary': ticket.status.toLowerCase() === 'submitted',
+                                    'bg-secondary': ticket.status.toLowerCase() === 'generated',
+                                    'bg-success': ticket.status.toLowerCase() === 'approved',
+                                    'bg-dark': ticket.status.toLowerCase() === 'rejected',
+                                    'bg-danger': ticket.status.toLowerCase() === 'cancelled'
+                                }">{{ ticket.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a data-bs-toggle="modal" data-bs-target="#exampleModal" @click="openModal(ticket)">
+                                    <i class="bi bi-pencil-fill text-primary mx-2"></i>
+                                </a>
+                                <i class="bi bi-trash3-fill text-danger" @click="handleDelete(ticket.id)"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-
-<!--Modal-->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!--Modal-->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -83,19 +76,20 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form  @submit.prevent="update">
+                        <form @submit.prevent="update">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field1" class="form-label">Company Name</label>
-                                        <input type="text" class="form-control" id="field1" v-model="selectedTicket.companyName"/>
+                                        <input type="text" class="form-control" id="field1"
+                                            v-model="selectedTicket.companyName" />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field2" class="form-label">Address</label>
-                                        <input type="text" class="form-control" id="field2" v-model="selectedTicket.address"
-                                        />
+                                        <input type="text" class="form-control" id="field2"
+                                            v-model="selectedTicket.address" />
                                     </div>
                                 </div>
                             </div>
@@ -103,16 +97,15 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field1" class="form-label">Person Name</label>
-                                        <input type="text" class="form-control" id="field1" v-model="selectedTicket.personName"
-                                         />
+                                        <input type="text" class="form-control" id="field1"
+                                            v-model="selectedTicket.personName" />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field2" class="form-label">Phone Number</label>
                                         <input type="tel" id="phone" class="form-control"
-                                            v-model="selectedTicket.phoneNumber"
-                                             />
+                                            v-model="selectedTicket.phoneNumber" />
                                     </div>
                                 </div>
                             </div>
@@ -120,15 +113,15 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field1" class="form-label">Email Id</label>
-                                        <input type="text" class="form-control" id="field1" v-model="selectedTicket.emailId"
-                                         />
+                                        <input type="text" class="form-control" id="field1"
+                                            v-model="selectedTicket.emailId" />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field2" class="form-label">Delivery Date</label>
                                         <input type="date" class="form-control" id="field2"
-                                        v-model="selectedTicket.expectedDeliveryDate"/>
+                                            v-model="selectedTicket.expectedDeliveryDate" />
                                     </div>
                                 </div>
 
@@ -154,22 +147,22 @@
                                     <div class="form-group">
                                         <label for="createdOn" class="form-label">Priority Type</label>
                                         <input type="text" v-model="selectedTicket.priorityName" class="form-control"
-                                        disabled  readonly />
+                                            disabled readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="commentBox" class="form-label">User Comment</label>
                                         <textarea rows="1" cols="20" id="commentBox" v-model="selectedTicket.commentBox"
-                                            class="form-control" placeholder="Enter your comment here..."
-                                            ></textarea>
+                                            class="form-control" placeholder="Enter your comment here..."></textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="fileView" class="form-label">User File</label>
                                         <div class="file-item">
-                                            <button class="btn btn-success btn-sm" @click.prevent="downloadFile(selectedTicket.fileId)" target="_blank">
+                                            <button class="btn btn-success btn-sm"
+                                                @click.prevent="downloadFile(selectedTicket.fileId)" target="_blank">
                                                 <i class="fas fa-file-pdf mx-1"></i>Download
                                             </button>
                                         </div>
@@ -179,68 +172,24 @@
                                     <div class="form-group">
                                         <label for="fileView" class="form-label">Resolved File</label>
                                         <div class="file-item">
-                                            <button class="btn btn-success btn-sm" target="_blank" @click.prevent="downloadResolvedFile(selectedTicket.resolvedFileId)">
+                                            <button class="btn btn-success btn-sm" target="_blank"
+                                                @click.prevent="downloadResolvedFile(selectedTicket.resolvedFileId)">
                                                 <i class="fas fa-file-pdf mx-1"></i>Download
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save</button>
-                            </div>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
                             </div>
                         </form>
-                        <!-- <form @submit.prevent="adminAssigned">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label for="status">Status</label>
-                                    <select class="form-select" v-model="status">
-                                        <option value="">--select--</option>
-                                        <option value="ASSIGNED" v-if="activeTab === 'SUBMITTED'">ASSIGN</option>
-                                        <option value="APPROVED" v-if="activeTab === 'GENERATED'">APPROVE</option>
-                                        <option value="REJECTED">REJECT</option>
-
-                                    </select>
-                                </div>
-                                <div class="col-md-6" v-if="activeTab === 'SUBMITTED'">
-                                    <label>Employee Name</label>
-                                    <select class="form-select" v-model="assignedTo">
-                                        <option value="">--select--</option>
-                                        <option v-for="data in listOfEmployee" :key="data.id" :value="data.id">
-                                            {{ data.firstName }} {{ data.lastName }}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="heading-container">
-                                <h4>Comment Section</h4>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label>Admin Comment</label>
-                                    <textarea class="form-control" v-model="comment">
-
-                                    </textarea>
-
-                                </div>
-
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save</button>
-                            </div>
-                        </form> -->
-                        
                     </div>
-
                 </div>
             </div>
         </div>
-
-
-
-
     </layout-div>
 </template>
 
@@ -282,7 +231,7 @@ export default {
             //     commentBox: '',
             //     requestFormCode:''
             // },
-             selectedTicket: {},
+            selectedTicket: {},
 
             allStatistic: {}
         };
@@ -318,20 +267,19 @@ export default {
         getDashboardStatistics() {
             axios.get('api/getDashboardStatistics')
                 .then(response => {
-                    this.statistic = response.data;
+                    const statistic = response.data.data;
                     const obj = {
-                        ...this.statistic,
-                        ALL: response.val,
+                        ...statistic,
+                        ALL: response.data.val,
                     };
-                    this.allStatistic = obj.data;
-                    console.log(this.allStatistic.data)
+                    this.allStatistic = obj;
+                    console.log(this.allStatistic)
                     return response
                 })
                 .catch(error => {
                     return error
                 });
         },
-
         openModal(ticket) {
             this.selectedTicket = ticket;
             this.fetchTicketList();
@@ -358,7 +306,7 @@ export default {
                         }
                         this.fetchTicketList();
                     });
-                    
+
                 })
                 .catch(error => {
                     console.log(error);
