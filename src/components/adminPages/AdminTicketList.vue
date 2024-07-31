@@ -238,7 +238,6 @@
 import axios from 'axios';
 import LayoutDiv from '../LayoutDiv.vue';
 import Swal from 'sweetalert2';
-import { Modal } from 'bootstrap'; 
 export default {
     name: 'TicketList',
     components: {
@@ -424,15 +423,16 @@ export default {
             // const modalInstance = Modal.getInstance(modalElement);
             // modalInstance.hide();
             // Close the modal using Bootstrap's Modal instance
-            const modalElement = document.getElementById('exampleModal');
-            const modalInstance = Modal.getInstance(modalElement);
-            modalInstance.hide();
-            modalElement.classList.remove('show');
-            document.body.classList.remove('modal-open');
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-              backdrop.remove();
-            }
+            // const modalElement = document.getElementById('exampleModal');
+            // const modalInstance = Modal.getInstance(modalElement);
+            // modalInstance.hide();
+            // modalElement.classList.remove('show');
+            // document.body.classList.remove('modal-open');
+            // const backdrop = document.querySelector('.modal-backdrop');
+            // if (backdrop) {
+            //   backdrop.remove();
+            // }
+            // this.cleanUpModal();
             this.fetchTicketList();
             // Redirect to /user/alist using Vue Router
             // this.$router.push('/user/alist'); 
@@ -449,6 +449,7 @@ export default {
           });
         });
     },
+   
     },
     
     computed: {
