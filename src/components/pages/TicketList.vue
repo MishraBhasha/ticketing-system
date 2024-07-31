@@ -33,7 +33,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(ticket, i) in tickets" :key="ticket.id">
+                            <tr v-for="(ticket, i) in filteredTickets" :key="ticket.id">
+                            <!-- <tr v-for="(ticket, i) in tickets" :key="ticket.id"> -->
                                 <td>{{ i + 1 }}</td>
                                 <td>{{ ticket.ticketName }}</td>
                                 <td>{{ formatDate(ticket.createdOn) }}</td>
@@ -93,13 +94,21 @@ export default {
                 { name: 'REJECTED', label: 'REJECTED' },
                 { name: 'CANCELLED', label: 'CANCELLED' },
             ],
-            statistic: {},
             allStatistic: {}
         };
     },
     created() {
         this.fetchTicketList();
         this.getDashboardStatistics();
+    },
+    computed: {
+        filteredTickets() {
+            if (this.activeTab === 'ALL') {
+                return this.tickets;
+            } else {
+                return this.tickets.filter(ticket => ticket.status.toUpperCase() === this.activeTab);
+            }
+        }
     },
     methods: {
         setActiveTab(tabName) {
