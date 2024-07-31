@@ -140,11 +140,14 @@
 </template>
 
 <script>
+import LayoutDiv from '../LayoutDiv.vue';
 import axios from 'axios';
-import Swal from 'sweetalert2'; // Import SweetAlert2
-
+import Swal from 'sweetalert2'
 export default {
-  name: 'TicketCreate',
+    name: 'TicketCreate',
+    components: {
+        LayoutDiv,
+    },
   data() {
     return {
       form: {
