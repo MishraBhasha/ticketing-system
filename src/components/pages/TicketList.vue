@@ -9,7 +9,10 @@
                 </router-link>
             </div>
             <div class="card-body">
-
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
+                        @input="filterTickets">
+                </div>
                 <ul class="nav nav-underline">
                     <li class="nav-item" v-for="tab in tabs" :key="tab.name">
                         <a class="nav-link m-2" :class="{ active: activeTab === tab.name }"
@@ -208,6 +211,7 @@ export default {
     data() {
         return {
             tickets: [],
+            searchQuery: '',
             activeTab: 'ALL',
             tabs: [
                 { name: 'ALL', label: 'ALL' },
@@ -242,14 +246,56 @@ export default {
         this.getDashboardStatistics();
     },
     computed: {
-        filteredTickets() {
-            if (this.activeTab === 'ALL') {
-                return this.tickets;
-            } else {
-                return this.tickets.filter(ticket => ticket.status.toUpperCase() === this.activeTab);
-            }
-        }
-    },
+  filteredTickets() {
+    const query = this.searchQuery.toLowerCase();
+
+    return this.tickets.filter(ticket => {
+      // Filter by active tab
+      const matchesTab = this.activeTab === 'ALL' || ticket.status.toUpperCase() === this.activeTab;
+
+      // Filter by search query with null/undefined checks
+      const matchesQuery = (
+        (ticket.companyName?.toLowerCase().includes(query) || '') ||
+        (ticket.address?.toLowerCase().includes(query) || '') ||
+        (ticket.personName?.toLowerCase().includes(query) || '') ||
+        (ticket.phoneNumber?.toLowerCase().includes(query) || '') ||
+        (ticket.emailId?.toLowerCase().includes(query) || '') ||
+        (ticket.ticketName?.toLowerCase().includes(query) || '') ||
+        (ticket.status?.toLowerCase().includes(query) || '') ||
+        (ticket.priorityName?.toLowerCase().includes(query) || '')
+      );
+
+      return matchesTab && matchesQuery;
+    });
+  }
+}
+,
+
+    // computed: {
+    //     filteredTickets() {
+    //         if (this.activeTab === 'ALL') {
+    //             return this.tickets;
+    //         } else {
+    //             return this.tickets.filter(ticket => ticket.status.toUpperCase() === this.activeTab);
+    //         }
+    //     }
+    // },
+
+    // filteredTickets() {
+    //         const query = this.searchQuery.toLowerCase();
+    //         return this.tickets.filter((ticket) => {
+    //             return (
+    //                 ticket.companyName.toLowerCase().includes(query) ||
+    //                 ticket.address.toLowerCase().includes(query) ||
+    //                 ticket.personName.toLowerCase().includes(query) ||
+    //                 ticket.phoneNumber.toLowerCase().includes(query) ||
+    //                 ticket.emailId.toLowerCase().includes(query) ||
+    //                 ticket.ticketName.toLowerCase().includes(query) ||
+    //                 ticket.status.toLowerCase().includes(query) ||
+    //                 ticket.priorityName.toLowerCase().includes(query)
+    //             );
+    //         });
+    //     },
     methods: {
         setActiveTab(tabName) {
             this.activeTab = tabName;
