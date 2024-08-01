@@ -5,10 +5,13 @@
                 <li class="nav-item" :class="{ active: activePath === '/user/list' }" @click="setActive('/user/list')">
                     <router-link to="/user/admin/list" class="nav-link">Dashboard</router-link>
                 </li>
-                <!-- <li class="nav-item" :class="{ active: activePath === '/user/create' }"
+                <li class="nav-item" :class="{ active: activePath === '/user/employeecreate' }" @click="setActive('/user/employeecreate')">
+                    <router-link to="/user/employeecreate" class="nav-link">Create Employee</router-link>
+                </li>
+                 <li class="nav-item" :class="{ active: activePath === '/user/create' }"
                     @click="setActive('/user/create')">
                     <router-link to="/user/create" class="nav-link">Raise a Ticket</router-link>
-                </li> -->
+                </li> 
             </template>
 
             <template v-if="role === 'Employee'">

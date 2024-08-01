@@ -17,6 +17,9 @@ import store from './store';
 import UserRegisterTemplate from './components/pages/UserRegisterTemplate.vue';
 import AdminTicketList from './components/adminPages/AdminTicketList';
 import EmpTicketList from './components/empPages/EmpTicketList';
+import EmployeeCreate from './components/adminPages/EmployeeCreate.vue';
+import EmployeeList from './components/adminPages/EmployeeList.vue';
+
 
 // axios.defaults.baseURL = process.env.VUE_APP_API_URL
 // axios.interceptors.request.use(function (config) {
@@ -53,6 +56,9 @@ const routes = [
             { path: 'view/:id', component: TicketView },
             { path: 'admin/list', component: AdminTicketList },
             { path: 'emp/list', component: EmpTicketList },
+            { path: 'employeecreate', component: EmployeeCreate },
+            { path: 'employeelist', component: EmployeeList },
+           
         ],
         meta: { requiresAuth: true }
     },
