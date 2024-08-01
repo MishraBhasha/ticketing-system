@@ -161,7 +161,6 @@ export default {
         LayoutDiv,
     },
   data() {
-    alert(localStorage.getItem('userName'))
     return {
       form: {
         companyName: '',
