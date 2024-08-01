@@ -491,7 +491,7 @@ export default {
                         title: 'An error occurred!',
                         text: error.response.data.message,
                         showConfirmButton: false,
-                        timer: 1500
+                        // timer: 1500
                     });
                 })
                 .finally(() => {

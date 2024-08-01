@@ -49,16 +49,16 @@
             <!-- </div> -->
             <div class="col-md-4 mb-3">
               <!-- <div class="mb-3"> -->
-                <label for="mobileNumber" class="form-label">Mobile Number</label>
+                <label for="phoneNumber" class="form-label">Mobile Number</label>
                 <input
                   type="tel"
-                  id="mobileNumber"
-                  v-model="form.mobileNumber"
-                  @input="clearError('mobileNumber')"
+                  id="phoneNumber"
+                  v-model="form.phoneNumber"
+                  @input="clearError('phoneNumber')"
                   class="form-control shadow"
-                  :class="{ 'is-invalid': errors.mobileNumber }"
+                  :class="{ 'is-invalid': errors.phoneNumber }"
                 />
-                <div v-if="errors.mobileNumber" class="text-danger">{{ errors.mobileNumber }}</div>
+                <div v-if="errors.phoneNumber" class="text-danger">{{ errors.phoneNumber }}</div>
               </div>
             <div class="col-md-4 mb-3">
 
@@ -94,33 +94,33 @@
                 <label for="ticketType" class="form-label">Ticket Type</label>
                 <select
                   id="ticketType"
-                  v-model="form.ticketType"
-                  @change="clearError('ticketType')"
+                  v-model="form.ticketId"
+                  @change="clearError('ticketId')"
                   class="form-select shadow"
-                  :class="{ 'is-invalid': errors.ticketType }"
+                  :class="{ 'is-invalid': errors.ticketId }"
                 >
                   <option value="" disabled>Select Ticket Type</option>
                   <option value="1">Bug</option>
                 </select>
-                <div v-if="errors.ticketType" class="text-danger">{{ errors.ticketType }}</div>
+                <div v-if="errors.ticketId" class="text-danger">{{ errors.ticketId }}</div>
               </div>
             <div class="col-md-4 mb-3">
 
               <!-- <div class="mb-3"> -->
                 <label for="priority" class="form-label">Priority</label>
                 <select
-                  id="priority"
-                  v-model="form.priority"
-                  @change="clearError('priority')"
+                  id="priorityId"
+                  v-model="form.priorityId"
+                  @change="clearError('priorityId')"
                   class="form-select shadow"
-                  :class="{ 'is-invalid': errors.priority }"
+                  :class="{ 'is-invalid': errors.priorityId }"
                 >
                   <option value="" disabled>Select Priority</option>
                   <option value="1">Low</option>
                   <option value="2">Medium</option>
                   <option value="3">High</option>
                 </select>
-                <div v-if="errors.priority" class="text-danger">{{ errors.priority }}</div>
+                <div v-if="errors.priorityId" class="text-danger">{{ errors.priorityId }}</div>
               </div>
             <div class="col-md-4 mb-3">
 
@@ -161,18 +161,19 @@ export default {
         LayoutDiv,
     },
   data() {
+    alert(localStorage.getItem('userName'))
     return {
       form: {
         companyName: '',
         address: '',
         personName: '',
-        mobileNumber: '',
+        phoneNumber: '',
         emailId: '',
         expectedDeliveryDate: '',
-        ticketType: '',
-        priority: '',
-        file: null,
-        commentBox: ''
+        ticketId: '',
+        priorityId: '',
+        commentBox: '',
+        userName:localStorage.getItem('userName')
       },
       errors: {},
       isSaving: false,
@@ -194,10 +195,10 @@ export default {
       if (!this.form.personName) {
         this.errors.personName = 'Person Name is required';
       }
-      if (!this.form.mobileNumber) {
-        this.errors.mobileNumber = 'Mobile Number is required';
-      } else if (!/^\d{10}$/.test(this.form.mobileNumber)) {
-        this.errors.mobileNumber = 'Mobile Number must be exactly 10 digits';
+      if (!this.form.phoneNumber) {
+        this.errors.phoneNumber = 'Mobile Number is required';
+      } else if (!/^\d{10}$/.test(this.form.phoneNumber)) {
+        this.errors.phoneNumber = 'Mobile Number must be exactly 10 digits';
       }
        if (!this.form.emailId) {
         this.errors.emailId = 'Email Id is required';
@@ -207,22 +208,29 @@ export default {
       if (!this.form.expectedDeliveryDate) {
         this.errors.expectedDeliveryDate = 'Expected Delivery Date is required';
       }
-      if (!this.form.ticketType) {
-        this.errors.ticketType = 'Ticket Type is required';
+      if (!this.form.ticketId) {
+        this.errors.ticketId = 'Ticket Type is required';
       }
-      if (!this.form.priority) {
-        this.errors.priority = 'Priority is required';
+      if (!this.form.priorityId) {
+        this.errors.priorityId = 'Priority is required';
       }
 
       // Proceed if there are no errors
       if (Object.keys(this.errors).length === 0) {
         this.isSaving = true;
 
-        const formData = new FormData();
-        formData.append('requestFormDTO', JSON.stringify(this.form));
-        if (this.form.file) {
-          formData.append('file', this.form.file);
-        }
+        // const formData = new FormData();
+        // formData.append('requestFormDTO', JSON.stringify(this.form));
+        // if (this.form.file) {
+        //   formData.append('file', this.form.file);
+        // }
+        const { file, ...formWithoutFile } = this.form; // Exclude file from form data
+
+      const formData = new FormData();
+      formData.append('requestFormDTO', JSON.stringify(formWithoutFile)); // Append the form data excluding the file
+      if (file) {
+        formData.append('file', file); // Append the file separately
+      }
 
         axios.post('/api/requestFormSave', formData, {
           headers: {
@@ -260,11 +268,11 @@ export default {
         companyName: '',
         address: '',
         personName: '',
-        mobileNumber: '',
+        phoneNumber: '',
         emailId: '',
         expectedDeliveryDate: '',
-        ticketType: '',
-        priority: '',
+        ticketId: '',
+        priorityId: '',
         file: null,
         commentBox: ''
       };

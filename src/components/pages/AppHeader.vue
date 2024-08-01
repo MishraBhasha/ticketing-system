@@ -13,11 +13,10 @@
       </ul>
 
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item dropdown d-lg-block user-dropdown">
+        <!-- <li class="nav-item dropdown d-lg-block user-dropdown">
           <a class="nav-link dropdown-toggle text-white" id="UserDropdown" href="#" data-bs-toggle="dropdown"
             aria-expanded="false">         
             <i class="bi bi-person-circle fs-2"></i>{{formattedEmail}}
-            <!-- {{ user.replace(/"/g, '') }} -->
           </a>
           <ul class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
             <li>
@@ -26,6 +25,16 @@
               </a>
             </li>
           </ul>
+        </li> -->
+        <li class="nav-item dropdown d-lg-block user-dropdown">
+          <div @click="toggleDropdown" class="nav-link text-white dropdown-toggle" ref="dropdownTrigger">
+            <i class="bi bi-person-circle fs-2"></i> {{ formattedEmail }}
+          </div>
+          <div v-if="isDropdownOpen" class="dropdown-menu dropdown-menu-end" ref="dropdownMenu">
+            <a class="dropdown-item text-center" @click="logout">
+              <i class="bi bi-sign-turn-slight-right me-md-2"></i> Logout
+            </a>
+          </div>
         </li>
       </ul>
     </div>
@@ -47,7 +56,8 @@ export default {
     return {
       logoSrc: logo,
       user: JSON.parse(localStorage.getItem('user')) || '',
-      role: localStorage.getItem('role')
+      role: localStorage.getItem('role'),
+      isDropdownOpen: false
     };
   },
   computed: {
@@ -59,13 +69,33 @@ export default {
   mounted() {
     console.log('User:', this.user.replace(/"/g, ''));
     console.log('Role User:', this.role);
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
   },
   methods: {
-
+    toggleDropdown() {
+      this.isDropdownOpen = !this.isDropdownOpen;
+    },
     logout() {
       this.$router.push('/');
-    }
+    },
+    closeDropdown() {
+      this.isDropdownOpen = false;
+    },
+    handleClickOutside(event) {
+      const dropdownTrigger = this.$refs.dropdownTrigger;
+      const dropdownMenu = this.$refs.dropdownMenu;
+      
+      // Check if the click was outside both the trigger and the menu
+      if (dropdownTrigger && !dropdownTrigger.contains(event.target) &&
+          dropdownMenu && !dropdownMenu.contains(event.target)) {
+        this.closeDropdown();
+      }
+    },
   }
+  
 };
 </script>
 
@@ -73,5 +103,15 @@ export default {
 .header {
   /* background-color: #c5b3e6; */
   background-color: #b590fa;
+}
+.dropdown-menu {
+  display: block;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
+.dropdown-menu-end {
+  right: 0;
 }
 </style>
