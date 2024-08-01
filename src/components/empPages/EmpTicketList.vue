@@ -1,72 +1,68 @@
 <template>
     <layout-div>
-        <div class="container">
-            <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Ticket Manager</h2>
-            <div class="card">
-                <div class="card-body">
+        <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Ticket Manager</h2>
+        <div class="card">
+            <div class="card-body">
 
-                    <ul class="nav nav-underline">
-                        <li class="nav-item" v-for="tab in tabs" :key="tab.name">
-                            <a class="nav-link" :class="{ active: activeTab === tab.name }"
-                                @click="setActiveTab(tab.name)" href="#">
-                                {{ tab.label }}
-                            </a>
-                        </li>
-                        <!-- <li class="nav-item"><a class="nav-link">ALL</a></li>
-                        <li class="nav-item"><a class="nav-link">ASSIGNED</a></li>
-                        <li class="nav-item"><a class="nav-link">SUBMITTED</a></li>
-                        <li class="nav-item"><a class="nav-link">GENERATED</a></li>
-                        <li class="nav-item"><a class="nav-link">APPROVED</a></li>
-                        <li class="nav-item"><a class="nav-link">REJECTED</a></li>
-                        <li class="nav-item"><a class="nav-link">CANCELLED</a></li> -->
-                    </ul>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Sl No</th>
-                                <th>Ticket Name</th>
-                                <th>Req-Date</th>
-                                <th>Comment</th>
-                                <th>Priority</th>
-                                <th>Expected_Delivery-Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(ticket, i) in tickets" :key="ticket.id">
-                                <td>{{ i + 1 }}</td>
-                                <td>{{ ticket.ticketName }}</td>
-                                <td>{{ formatDate(ticket.createdOn) }}</td>
-                                <td>{{ ticket.commentBox }}</td>
-                                <td :class="getPriorityClass(ticket.priorityName)">
-                                    {{ ticket.priorityName }}
-                                </td>
-                                <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
-                                <td>
-                                    <span class="rounded-pill text-white p-1"
-                                        :class="{
-                                            'bg-warning': ticket.status.toLowerCase() === 'assigned',
-                                            'bg-primary': ticket.status.toLowerCase() === 'submitted',
-                                            'bg-secondary': ticket.status.toLowerCase() === 'generated',
-                                            'bg-success': ticket.status.toLowerCase() === 'approved',
-                                            'bg-dark': ticket.status.toLowerCase() === 'rejected',
-                                            'bg-danger': ticket.status.toLowerCase() === 'cancelled'
-                                        }">{{ ticket.status }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <!-- <router-link :to="`/show/${ticket.id}`"
+                <ul class="nav nav-underline">
+                    <li class="nav-item" v-for="tab in tabs" :key="tab.name">
+                        <a class="nav-link m-2" :class="{ active: activeTab === tab.name }" @click="setActiveTab(tab.name)"
+                            href="#">
+                            {{ tab.label }}
+                            <span class="badge bg-primary text-white rounded-pill">{{
+                                allStatistic[tab.label.toUpperCase()] ?? 0 }}</span>
+                        </a>
+                    </li>
+                </ul>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Sl No</th>
+                            <th>Ticket Name</th>
+                            <th>Req-Date</th>
+                            <th>Comment</th>
+                            <th>Priority</th>
+                            <th>Expected_Delivery-Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="filteredTickets.length === 0">
+                            <td colspan="8" class="text-center fs-5">No data available.</td>
+                        </tr>
+                        <tr v-for="(ticket, i) in filteredTickets" :key="ticket.id">
+                        <!-- <tr v-for="(ticket, i) in tickets" :key="ticket.id"> -->
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ ticket.ticketName }}</td>
+                            <td>{{ formatDate(ticket.createdOn) }}</td>
+                            <td>{{ ticket.commentBox }}</td>
+                            <td :class="getPriorityClass(ticket.priorityName)">
+                                {{ ticket.priorityName }}
+                            </td>
+                            <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
+                            <td>
+                                <span class="rounded-pill text-white p-1" :class="{
+                                    'bg-warning': ticket.status.toLowerCase() === 'assigned',
+                                    'bg-primary': ticket.status.toLowerCase() === 'submitted',
+                                    'bg-secondary': ticket.status.toLowerCase() === 'generated',
+                                    'bg-success': ticket.status.toLowerCase() === 'approved',
+                                    'bg-dark': ticket.status.toLowerCase() === 'rejected',
+                                    'bg-danger': ticket.status.toLowerCase() === 'cancelled'
+                                }">{{ ticket.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <!-- <router-link :to="`/show/${ticket.id}`"
                                         class="btn btn-outline-info mx-1">Show</router-link> -->
-                                    <router-link>
-                                        <i class="bi bi-pencil-fill text-primary mx-2"></i>
-                                    </router-link>
-                                    <i class="bi bi-trash3-fill text-danger" @click="handleDelete(ticket.id)"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                <router-link>
+                                    <i class="bi bi-pencil-fill text-primary mx-2"></i>
+                                </router-link>
+                                <i class="bi bi-trash3-fill text-danger" @click="handleDelete(ticket.id)"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </layout-div>
@@ -93,20 +89,47 @@ export default {
                 { name: 'REJECTED', label: 'REJECTED' },
                 { name: 'CANCELLED', label: 'CANCELLED' },
             ],
+            allStatistic: {}
         };
     },
     created() {
         this.fetchTicketList();
+        this.getDashboardStatistics();
+    },
+    computed: {
+        filteredTickets() {
+            if (this.activeTab === 'ALL') {
+                return this.tickets;
+            } else {
+                return this.tickets.filter(ticket => ticket.status.toUpperCase() === this.activeTab);
+            }
+        }
     },
     methods: {
         setActiveTab(tabName) {
             this.activeTab = tabName;
         },
         fetchTicketList() {
-            axios.get('api/fetchRequestFormRecordsByUserName')
+            axios.get('api/getRequestFormData')
                 .then(response => {
                     this.tickets = response.data.data;
                     console.log(this.tickets)
+                    return response
+                })
+                .catch(error => {
+                    return error
+                });
+        },
+        getDashboardStatistics() {
+            axios.get('api/getDashboardStatistics')
+                .then(response => {
+                    const statistic = response.data.data;
+                    const obj = {
+                        ...statistic,
+                        ALL: response.data.val,
+                    };
+                    this.allStatistic = obj;
+                    console.log(this.allStatistic)
                     return response
                 })
                 .catch(error => {

@@ -34,6 +34,9 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-if="filteredTickets.length === 0">
+                            <td colspan="8" class="text-center fs-5">No data available.</td>
+                        </tr>
                         <tr v-for="(ticket, i) in filteredTickets" :key="ticket.id">
                             <!-- <tr v-for="(ticket, i) in tickets" :key="ticket.id"> -->
                             <td>{{ i + 1 }}</td>
