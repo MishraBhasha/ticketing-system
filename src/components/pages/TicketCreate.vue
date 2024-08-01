@@ -172,7 +172,7 @@ export default {
         ticketId: '',
         priorityId: '',
         commentBox: '',
-        userName:localStorage.getItem('userName')
+        userName: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : ''
       },
       errors: {},
       isSaving: false,

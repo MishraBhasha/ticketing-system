@@ -140,8 +140,8 @@ export default {
                         this.login(authData);
                         console.log(response.data.data.loginDtoResponse.role);
                         console.log(response.data.data.loginDtoResponse.userName);
-                        const userName = response.data.data.loginDtoResponse.userName
-                        localStorage.setItem('userName', userName);
+                        const userName = JSON.stringify(response.data.data.loginDtoResponse.userName)
+                        localStorage.setItem('user', userName);
                         const userRole = response.data.data.loginDtoResponse.role;
                         localStorage.setItem('role', userRole);
                         // Redirect based on role
