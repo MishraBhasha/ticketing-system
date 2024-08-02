@@ -1,33 +1,35 @@
-// src/store/index.js
 import { createStore } from 'vuex';
+import createPersistedState from 'vuex-persistedstate';
 
 const store = createStore({
   state() {
     return {
-      token: localStorage.getItem('token') || '',
-      user: JSON.parse(localStorage.getItem('user')) || '',  
+      token: null, 
+      user: null,
+      role: null,
     };
   },
   mutations: {
     setToken(state, token) {
       state.token = token;
-      localStorage.setItem('token', token);
     },
     setUser(state, user) {
       state.user = user;
-      localStorage.setItem('user', JSON.stringify(user));
+    },
+    setRole(state, role) {
+      state.role = role;
     },
     clearAuthData(state) {
-      state.token = '';
+      state.token = null;
       state.user = null;
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      state.role = null;
     },
   },
   actions: {
     login({ commit }, authData) {
       commit('setToken', authData.token);
       commit('setUser', authData.user);
+      commit('setRole', authData.role);
     },
     logout({ commit }) {
       commit('clearAuthData');
@@ -40,7 +42,16 @@ const store = createStore({
     getUser(state) {
       return state.user;
     },
+    getRole(state) {
+      return state.role;
+    },
   },
+  plugins: [
+    createPersistedState({
+      paths: ['token', 'user', 'role'], // Persist only these parts of the state
+      storage: window.sessionStorage, // Use sessionStorage to persist data only for the session
+    }),
+  ],
 });
 
 export default store;

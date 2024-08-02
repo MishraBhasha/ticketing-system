@@ -134,16 +134,13 @@ export default {
                         const authData = {
 
                             token: response.data.data.accessToken,
-                            user: JSON.stringify(response.data.data.loginDtoResponse.userName),
-                            // name: JSON.stringify(response.data.data.loginDtoResponse.firstName),
+                            user: response.data.data.loginDtoResponse.userName,
+                            role: response.data.data.loginDtoResponse.role,
                         };
+                        this.$store.dispatch('login', authData);
                         this.login(authData);
-                        console.log(response.data.data.loginDtoResponse.role);
-                        console.log(response.data.data.loginDtoResponse.userName);
-                        const userName = JSON.stringify(response.data.data.loginDtoResponse.userName)
-                        localStorage.setItem('user', userName);
-                        const userRole = response.data.data.loginDtoResponse.role;
-                        localStorage.setItem('role', userRole);
+                        const userRole = authData.role;
+                        console.log(userRole);
                         // Redirect based on role
                         if (userRole === 'ADMIN') {
                             this.$router.push('/user/admin/list');

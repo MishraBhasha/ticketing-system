@@ -1,6 +1,5 @@
 <template>
     <layout-div>
-
         <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Raises Ticket List</h2>
         <div class="card">
             <div class="card-header">
@@ -9,9 +8,11 @@
                 </router-link>
             </div>
             <div class="card-body">
-                <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
-                        @input="filterTickets">
+                <div class="row justify-content-end">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
+                            @input="filterTickets">
+                    </div>
                 </div>
                 <ul class="nav nav-underline">
                     <li class="nav-item" v-for="tab in tabs" :key="tab.name">
@@ -40,8 +41,7 @@
                         <tr v-if="filteredTickets.length === 0">
                             <td colspan="8" class="text-center fs-5">No data available.</td>
                         </tr>
-                        <tr v-for="(ticket, i) in filteredTickets" :key="ticket.id">
-                            <!-- <tr v-for="(ticket, i) in tickets" :key="ticket.id"> -->
+                        <tr v-for="(ticket, i) in paginatedData" :key="ticket.id">
                             <td>{{ i + 1 }}</td>
                             <td>{{ ticket.ticketName }}</td>
                             <td>{{ formatDate(ticket.createdOn) }}</td>
@@ -70,9 +70,28 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
+                <!--Pagination-->
+                <div class="d-flex justify-content-end mt-4">
+                    <ul class="pagination">
+                        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                            <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)"
+                                aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" :class="{ active: page === currentPage }" v-for="page in totalPages"
+                            :key="page">
+                            <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                        </li>
+                        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                            <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>            
         </div>
-
         <!--Modal-->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -216,6 +235,10 @@ export default {
             tickets: [],
             searchQuery: '',
             activeTab: 'ALL',
+            selectedTicket: {},
+            allStatistic: {},
+            currentPage: 1,
+            itemsPerPage: 5,
             tabs: [
                 { name: 'ALL', label: 'ALL' },
                 { name: 'ASSIGNED', label: 'ASSIGNED' },
@@ -239,66 +262,39 @@ export default {
             //     commentBox: '',
             //     requestFormCode:''
             // },
-            selectedTicket: {},
-
-            allStatistic: {}
         };
     },
     created() {
         this.fetchTicketList();
         this.getDashboardStatistics();
-    },
+    },    
     computed: {
-  filteredTickets() {
-    const query = this.searchQuery.toLowerCase();
-
-    return this.tickets.filter(ticket => {
-      // Filter by active tab
-      const matchesTab = this.activeTab === 'ALL' || ticket.status.toUpperCase() === this.activeTab;
-
-      // Filter by search query with null/undefined checks
-      const matchesQuery = (
-        (ticket.companyName?.toLowerCase().includes(query) || '') ||
-        (ticket.address?.toLowerCase().includes(query) || '') ||
-        (ticket.personName?.toLowerCase().includes(query) || '') ||
-        (ticket.phoneNumber?.toLowerCase().includes(query) || '') ||
-        (ticket.emailId?.toLowerCase().includes(query) || '') ||
-        (ticket.ticketName?.toLowerCase().includes(query) || '') ||
-        (ticket.status?.toLowerCase().includes(query) || '') ||
-        (ticket.priorityName?.toLowerCase().includes(query) || '')
-      );
-
-      return matchesTab && matchesQuery;
-    });
-  }
-}
-,
-
-    // computed: {
-    //     filteredTickets() {
-    //         if (this.activeTab === 'ALL') {
-    //             return this.tickets;
-    //         } else {
-    //             return this.tickets.filter(ticket => ticket.status.toUpperCase() === this.activeTab);
-    //         }
-    //     }
-    // },
-
-    // filteredTickets() {
-    //         const query = this.searchQuery.toLowerCase();
-    //         return this.tickets.filter((ticket) => {
-    //             return (
-    //                 ticket.companyName.toLowerCase().includes(query) ||
-    //                 ticket.address.toLowerCase().includes(query) ||
-    //                 ticket.personName.toLowerCase().includes(query) ||
-    //                 ticket.phoneNumber.toLowerCase().includes(query) ||
-    //                 ticket.emailId.toLowerCase().includes(query) ||
-    //                 ticket.ticketName.toLowerCase().includes(query) ||
-    //                 ticket.status.toLowerCase().includes(query) ||
-    //                 ticket.priorityName.toLowerCase().includes(query)
-    //             );
-    //         });
-    //     },
+        filteredTickets() {
+            const query = this.searchQuery.toLowerCase();
+            return this.tickets.filter(ticket => {
+                const matchesTab = this.activeTab === 'ALL' || ticket.status.toUpperCase() === this.activeTab;
+                const matchesQuery = (
+                    (ticket.companyName?.toLowerCase().includes(query) || '') ||
+                    (ticket.address?.toLowerCase().includes(query) || '') ||
+                    (ticket.personName?.toLowerCase().includes(query) || '') ||
+                    (ticket.phoneNumber?.toLowerCase().includes(query) || '') ||
+                    (ticket.emailId?.toLowerCase().includes(query) || '') ||
+                    (ticket.ticketName?.toLowerCase().includes(query) || '') ||
+                    (ticket.status?.toLowerCase().includes(query) || '') ||
+                    (ticket.priorityName?.toLowerCase().includes(query) || '')
+                );
+                return matchesTab && matchesQuery;
+            });
+        },
+        totalPages() {
+            return Math.ceil(this.filteredTickets.length / this.itemsPerPage);
+        },
+        paginatedData() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredTickets.slice(start, end);
+        },
+    },
     methods: {
         setActiveTab(tabName) {
             this.activeTab = tabName;
@@ -330,12 +326,21 @@ export default {
                     return error
                 });
         },
+        changePage(page) {
+            if (page >= 1 && page <= this.totalPages) {
+                this.currentPage = page;
+            }
+        },
+        // changePage(page) {
+        //     if (page < 1 || page > this.totalPages) return;
+        //     this.currentPage = page;
+        //     // this.fetchTicketList();
+        //     this.filteredTickets();
+        // },
         openModal(ticket) {
             this.selectedTicket = ticket;
             this.fetchTicketList();
-            // this.fetchEmployeeList();
         },
-
         update() {
             console.log(this.selectedTicket)
             axios.put(`/api/updateRequestFormData`, this.selectedTicket)
@@ -356,7 +361,6 @@ export default {
                         }
                         this.fetchTicketList();
                     });
-
                 })
                 .catch(error => {
                     console.log(error);
@@ -367,15 +371,12 @@ export default {
                     });
                 });
         },
-
-
         formatDate(date) {
             const d = new Date(date);
             const day = String(d.getDate()).padStart(2, '0');
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const year = d.getFullYear();
-            // return `${year}-${month}-${day}`; // Format date as YYYY-MM-DD
-            return `${day}-${month}-${year}`; // Format date as YYYY-MM-DD
+            return `${day}-${month}-${year}`; // Format date as DD-MM-YYYY
         },
         handleDelete(id) {
             Swal.fire({
