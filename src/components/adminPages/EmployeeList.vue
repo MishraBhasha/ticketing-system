@@ -1,9 +1,10 @@
+/* eslint-disable */
+
 <template>
   <layout-div>
     <div class="container">
       <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Employee List</h2>
       <div class="card">
-        
         <div class="card-body">
           <ul class="nav nav-underline">
             <li class="nav-item" v-for="tab in tabs" :key="tab.name">
@@ -35,12 +36,53 @@
                 <td>{{ employee.emailId }}</td>
                 <td>{{ employee.address }}</td>
                 <td>
-                  <router-link :to="`/employee/edit/${employee.id}`" class="btn btn-outline-info mx-1">Edit</router-link>
+                  <button @click="openModal(employee)" class="btn btn-outline-info mx-1">Edit</button>
                   <i class="bi bi-trash3-fill text-danger" @click="handleDelete(employee.id)"></i>
                 </td>
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Employee Modal -->
+    <div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editEmployeeModalLabel">Edit Employee</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="updateEmployee">
+              <div class="mb-3">
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="firstName" v-model="selectedEmployee.firstName">
+              </div>
+              <div class="mb-3">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="lastName" v-model="selectedEmployee.lastName">
+              </div>
+              <div class="mb-3">
+                <label for="companyName" class="form-label">Company Name</label>
+                <input type="text" class="form-control" id="companyName" v-model="selectedEmployee.companyName">
+              </div>
+              <div class="mb-3">
+                <label for="phoneNumber" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" id="phoneNumber" v-model="selectedEmployee.phoneNumber">
+              </div>
+              <div class="mb-3">
+                <label for="emailId" class="form-label">Email Id</label>
+                <input type="email" class="form-control" id="emailId" v-model="selectedEmployee.emailId">
+              </div>
+              <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" class="form-control" id="address" v-model="selectedEmployee.address">
+              </div>
+              <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -51,6 +93,7 @@
 import axios from 'axios';
 import LayoutDiv from '../LayoutDiv.vue';
 import Swal from 'sweetalert2';
+import { Modal } from 'bootstrap';
 
 export default {
   name: 'EmployeeList',
@@ -60,6 +103,14 @@ export default {
   data() {
     return {
       employees: [],
+      selectedEmployee: {
+        firstName: '',
+        lastName: '',
+        companyName: '',
+        phoneNumber: '',
+        emailId: '',
+        address: '',
+      },
       activeTab: 'ALL',
       tabs: [
         { name: 'ALL', label: 'ALL' },
@@ -83,6 +134,35 @@ export default {
         })
         .catch(error => {
           console.error('Error fetching employees:', error);
+        });
+    },
+    openModal(employee) {
+      this.selectedEmployee = { ...employee };
+      const modal = new Modal(document.getElementById('editEmployeeModal'));
+      modal.show();
+    },
+    updateEmployee() {
+      axios.put('/api/updateUser', this.selectedEmployee)
+        .then(response => {
+          console.log(response);
+          Swal.fire({
+            icon: 'success',
+            title: 'Updated',
+            text: 'The employee was updated successfully',
+          }).then(() => {
+            const modalElement = document.getElementById('editEmployeeModal');
+            const modalInstance = Modal.getInstance(modalElement);
+            modalInstance.hide();
+            this.fetchEmployeeList();
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'There was a problem updating the employee',
+          });
         });
     },
     handleDelete(id) {
