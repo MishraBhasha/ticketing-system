@@ -19,6 +19,8 @@ import AdminTicketList from './components/adminPages/AdminTicketList';
 import EmpTicketList from './components/empPages/EmpTicketList';
 import EmployeeCreate from './components/adminPages/EmployeeCreate.vue';
 import EmployeeList from './components/adminPages/EmployeeList.vue';
+import ManageTicket from './components/adminPages/ManageTicket';
+import ManageProrityType from './components/adminPages/ManageProrityType';
 
 
 // axios.defaults.baseURL = process.env.VUE_APP_API_URL
@@ -58,7 +60,8 @@ const routes = [
             { path: 'emp/list', component: EmpTicketList },
             { path: 'employeecreate', component: EmployeeCreate },
             { path: 'employeelist', component: EmployeeList },
-           
+            { path: 'ticket/list', component: ManageTicket },
+            { path: 'priority/list', component: ManageProrityType },
         ],
         meta: { requiresAuth: true }
     },
