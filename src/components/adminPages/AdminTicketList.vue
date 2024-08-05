@@ -355,6 +355,15 @@ export default {
             this.selectedTicket = ticket;
             this.fetchEmployeeList();
         },
+        closeModal() {
+            const modalElement = document.getElementById('exampleModal');
+            const modalInstance = Modal.getInstance(modalElement);
+            modalInstance.hide();
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.parentNode.removeChild(backdrop);
+            }
+        },
         fetchTicketList() {
             axios.get('api/getRequestFormData')
                 .then(response => {
@@ -467,7 +476,7 @@ export default {
                 });
         },
         adminAssigned() {
-            this.isLoading = true;
+            // this.isLoading = true;
             const payload = {
                 status: this.status,
                 assignedTo: this.assignedTo,
@@ -476,27 +485,37 @@ export default {
                 assignedBy: 10
             };
 
-            axios.post('/api/saveRequestFormTrackingRecord', payload)
-                .then(response => {
-                    console.log(response)
+            Swal.fire({
+                title: 'Please wait...',
+                html: 'Submitting the form',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+
+            // this.isLoading = true;
+
+            axios.all([
+                axios.post('/api/saveRequestFormTrackingRecord', payload),
+                axios.put(`/api/updateStatus?status=${payload.status}&id=${payload.requestFormCode}`)
+            ])
+                .then(axios.spread(() => {
                     Swal.fire({
                         icon: 'success',
                         title: 'Status Updated',
-                        text: 'Assigned Successfully!',
-                        showConfirmButton: true,
-                        // timer: 1500
-                    }).then(() => {
-                        const modalElement = document.getElementById('exampleModal');
-                        const modalInstance = Modal.getInstance(modalElement);
-                        modalInstance.hide();
-                        const backdrop = document.querySelector('.modal-backdrop');
-                        if (backdrop) {
-                            backdrop.parentNode.removeChild(backdrop);
-                        }
-                        this.fetchTicketList();
-                    });
+                        text: `${payload.status} successfully.`,
+                        confirmButtonText: 'OK',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
 
-                })
+                            this.closeModal();
+                            this.fetchTicketList();
+                            Swal.close();
+                            this.getDashboardStatistics();
+                        }
+                    });
+                }))
                 .catch(error => {
                     Swal.fire({
                         icon: 'error',
