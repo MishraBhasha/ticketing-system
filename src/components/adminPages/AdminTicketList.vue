@@ -309,7 +309,6 @@ export default {
     created() {
         this.fetchTicketList();
         this.getDashboardStatistics();
-
     },
     computed: {
         formattedUserSubmissionDate() {
@@ -480,10 +479,10 @@ export default {
             // this.isLoading = true;
             const payload = {
                 status: this.status,
-                assignedTo: this.assignedTo,
+                assignedTo:  this.activeTab === 'GENERATED' ? 0 : this.assignedTo,
                 comment: this.comment,
                 requestFormCode: this.selectedTicket.requestFormCode,
-                assignedBy: 10
+                assignedBy: localStorage.getItem('userId')
             };
 
             Swal.fire({
@@ -522,7 +521,7 @@ export default {
                         icon: 'error',
                         title: 'An error occurred!',
                         text: error.response.data.message,
-                        showConfirmButton: false,
+                        showConfirmButton: true,
                         // timer: 1500
                     });
                 })
