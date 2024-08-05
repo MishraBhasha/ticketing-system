@@ -1,27 +1,18 @@
 <template>
     <div :class="['sidebar', { 'sidebar-collapsed': isCollapsed }]">
         <ul class="sidebar-menu">
-            <template v-if="role === 'ADMIN'">
-                <li class="nav-item" :class="{ active: activePath === '/user/list' }" @click="setActive('/user/list')">
-                    <router-link to="/user/admin/list" class="nav-link">Dashboard</router-link>
-                </li>
-                <li class="nav-item" :class="{ active: activePath === '/user/employeecreate' }" @click="setActive('/user/employeecreate')">
-                    <router-link to="/user/employeecreate" class="nav-link">Create Employee</router-link>
-                </li>
-                 <li class="nav-item" :class="{ active: activePath === '/user/create' }"
-                    @click="setActive('/user/create')">
-                    <router-link to="/user/create" class="nav-link">Raise a Ticket</router-link>
-                </li> 
-                <li class="nav-item" :class="{ active: activePath === '/user/priority/list' }"
-                    @click="setActive('/user/priority/list')">
-                    <router-link to="/user/priority/list" class="nav-link">Manage Priority Type</router-link>
-                </li> 
-
-                 <li class="nav-item" :class="{ active: activePath === '/user/ticket/list' }"
-                    @click="setActive('/user/ticket/list')">
-                    <router-link to="/user/ticket/list" class="nav-link">Manage Ticket Type</router-link>
-                </li> 
-            </template>
+            <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/list') }">
+                <router-link to="/user/admin/list" class="nav-link">Dashboard</router-link>
+            </li>
+            <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/employeelist') }">
+                <router-link to="/user/admin/employeelist" class="nav-link">Employee Creation</router-link>
+            </li>
+            <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/ticket/list') }">
+                <router-link to="/user/admin/ticket/list" class="nav-link">Manage Ticket</router-link>
+            </li>
+            <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/priority/list') }">
+                <router-link to="/user/admin/priority/list" class="nav-link">Manage Prority Type</router-link>
+            </li>
 
             <li v-if="userRole === 'Employee'" class="nav-item" :class="{ active: isActive('/user/emp/list') }">
                 <router-link to="/user/emp/list" class="nav-link">Dashboard</router-link>
