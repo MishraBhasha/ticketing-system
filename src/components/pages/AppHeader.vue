@@ -28,7 +28,7 @@
         </li> -->
         <li class="nav-item dropdown d-lg-block user-dropdown">
           <div @click="toggleDropdown" class="nav-link text-white dropdown-toggle" ref="dropdownTrigger">
-            <i class="bi bi-person-circle fs-2"></i> {{ formattedEmail }}
+            <i class="bi bi-person-circle fs-2"></i> {{ user }}
           </div>
           <div v-if="isDropdownOpen" class="dropdown-menu dropdown-menu-end" ref="dropdownMenu">
             <a class="dropdown-item text-center" @click="logout">
@@ -55,20 +55,28 @@ export default {
   data() {
     return {
       logoSrc: logo,
-      user: JSON.parse(localStorage.getItem('user')) || '',
-      role: localStorage.getItem('role'),
       isDropdownOpen: false
     };
   },
   computed: {
-    formattedEmail() {
-      const email = this.user.replace(/"/g, '');
-      return email.split('@')[0]; // Extract the part before '@'
-    }
+    user() {
+      return this.$store.getters.getUser;
+    },
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    },
+    userRole() {
+      return this.$store.getters.getRole;
+    },
+    // formattedEmail() {
+    // //   const email = this.user.replace(/"/g, '');
+    //   return this.user.split('@')[0]; // Extract the part before '@'
+    // }
   },
   mounted() {
-    console.log('User:', this.user.replace(/"/g, ''));
-    console.log('Role User:', this.role);
+    console.log('UUUU:', this.user);
+    // console.log('User:', this.user.replace(/"/g, ''));
+    console.log('Role User:', this.userRole);
     document.addEventListener('click', this.handleClickOutside);
   },
   beforeUnmount() {
@@ -79,6 +87,7 @@ export default {
       this.isDropdownOpen = !this.isDropdownOpen;
     },
     logout() {
+      this.$store.dispatch('logout');
       this.$router.push('/');
     },
     closeDropdown() {

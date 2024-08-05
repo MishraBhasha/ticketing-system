@@ -1,86 +1,94 @@
 <template>
     <layout-div>
         <AppLoader v-if="isLoading" />
-            <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Ticket Manager</h2>
-            <div class="row">
-                <div class="col-md-4"></div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
-                        @input="filterTickets">
+        <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }"> Dashboard </h2>
+        <div class="card">
+            <div class="card-body">
+                <div class="row justify-content-end">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
+                            @input="filterTickets">
+                    </div>
                 </div>
-                <div class="col-md-4"></div>
-            </div>
-
-
-            <div class="card mt-3">
-                <div class="card-body">
-
-                    <ul class="nav nav-underline">
-                        <li class="nav-item" v-for="tab in tabs" :key="tab.name">
-                            <a class="nav-link" :class="{ active: activeTab === tab.name }"
-                                @click="setActiveTab(tab.name)" href="#">
-                                {{ tab.label }}
-                                <span class="badge bg-primary text-white rounded-pill">{{ allStatistic[tab.label.toUpperCase()] ?? 0 }}</span>
+                <ul class="nav nav-underline">
+                    <li class="nav-item" v-for="tab in tabs" :key="tab.name">
+                        <a class="nav-link m-2" :class="{ active: activeTab === tab.name }"
+                            @click="setActiveTab(tab.name)" href="#">
+                            {{ tab.label }}
+                            <span class="badge bg-primary text-white rounded-pill">{{
+                                allStatistic[tab.label.toUpperCase()] ?? 0 }}</span>
+                        </a>
+                    </li>
+                </ul>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Sl No</th>
+                            <th>Ticket Name</th>
+                            <th>Req-Date</th>
+                            <th>Comment</th>
+                            <th>Priority</th>
+                            <th>Expected Delivery Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="filteredTickets.length === 0">
+                            <td colspan="8" class="text-center fs-5">No data available.</td>
+                        </tr>
+                        <tr v-for="(ticket, i) in paginatedData" :key="ticket.id">
+                            <td>{{ i + 1 + (currentPage - 1) * itemsPerPage }}</td>
+                            <td>{{ ticket.ticketName }}</td>
+                            <td>{{ formatDate(ticket.createdOn) }}</td>
+                            <td>{{ ticket.commentBox }}</td>
+                            <td :class="getPriorityClass(ticket.priorityName)">
+                                {{ ticket.priorityName }}
+                            </td>
+                            <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
+                            <td>
+                                <span class="rounded-pill text-white p-1" :class="{
+                                    'bg-warning': ticket.status.toLowerCase() === 'assigned',
+                                    'bg-primary': ticket.status.toLowerCase() === 'submitted',
+                                    'bg-secondary': ticket.status.toLowerCase() === 'generated',
+                                    'bg-success': ticket.status.toLowerCase() === 'approved',
+                                    'bg-dark': ticket.status.toLowerCase() === 'rejected',
+                                    'bg-danger': ticket.status.toLowerCase() === 'cancelled'
+                                }">{{ ticket.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a data-bs-toggle="modal" data-bs-target="#exampleModal" @click="openModal(ticket)">
+                                    <i class="bi bi-pencil-fill text-primary mx-2"></i>
+                                </a>
+                                <i class="bi bi-trash3-fill text-danger" @click="handleDelete(ticket.id)"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--Pagination-->
+                <div class="d-flex justify-content-end mt-4">
+                    <ul class="pagination">
+                        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                            <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)"
+                                aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-                        <!-- <li class="nav-item"><a class="nav-link">ALL</a></li>
-                        <li class="nav-item"><a class="nav-link">ASSIGNED</a></li>
-                        <li class="nav-item"><a class="nav-link">SUBMITTED</a></li>
-                        <li class="nav-item"><a class="nav-link">GENERATED</a></li>
-                        <li class="nav-item"><a class="nav-link">APPROVED</a></li>
-                        <li class="nav-item"><a class="nav-link">REJECTED</a></li>
-                        <li class="nav-item"><a class="nav-link">CANCELLED</a></li> -->
+                        <li class="page-item" :class="{ active: page === currentPage }" v-for="page in totalPages"
+                            :key="page">
+                            <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                        </li>
+                        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                            <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)"
+                                aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
                     </ul>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Sl No</th>
-                                <th>Ticket Name</th>
-                                <th>Req-Date</th>
-                                <th>Comment</th>
-                                <th>Priority</th>
-                                <th>Expected_Delivery-Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(ticket, i) in filteredTickets" :key="ticket.id">
-                                <td>{{ i + 1 + (currentPage - 1) * itemsPerPage }}</td>
-                                <td>{{ ticket.ticketName }}</td>
-                                <td>{{ formatDate(ticket.createdOn) }}</td>
-                                <td>{{ ticket.commentBox }}</td>
-                                <td :class="getPriorityClass(ticket.priorityName)">
-                                    {{ ticket.priorityName }}
-                                </td>
-                                <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
-                                <td>
-                                    <span class="rounded-pill text-white p-1" :class="{
-                                        'bg-warning': ticket.status.toLowerCase() === 'assigned',
-                                        'bg-primary': ticket.status.toLowerCase() === 'submitted',
-                                        'bg-secondary': ticket.status.toLowerCase() === 'generated',
-                                        'bg-success': ticket.status.toLowerCase() === 'approved',
-                                        'bg-dark': ticket.status.toLowerCase() === 'rejected',
-                                        'bg-danger': ticket.status.toLowerCase() === 'cancelled'
-                                    }">{{ ticket.status }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <a data-bs-toggle="modal" data-bs-target="#exampleModal" @click="openModal(ticket)">
-                                        <i class="bi bi-pencil-fill text-primary mx-2"></i>
-                                    </a>
-                                    <!-- <router-link :to="`/show/${ticket.id}`"
-                                        class="btn btn-outline-info mx-1">Show</router-link> -->
-                                    <!-- <router-link :to="`/edit/${ticket.id}`">
-                                        <i class="bi bi-pencil-fill text-primary mx-2"></i>
-                                    </router-link> -->
-                                    <i class="bi bi-trash3-fill text-danger" @click="handleDelete(ticket.id)"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
+        </div>
         <!--Modal-->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -245,24 +253,6 @@
                 </div>
             </div>
         </div>
-        <!--Pagination-->
-        <div class="d-flex justify-content-end mt-3">
-            <ul class="pagination">
-                <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                    <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item" :class="{ active: page === currentPage }" v-for="page in totalPages" :key="page">
-                    <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
-                </li>
-                <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                    <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
     </layout-div>
 </template>
 
@@ -286,10 +276,9 @@ export default {
             itemsPerPage: 5,
             totalItems: 0,
             searchQuery: "",
-            status:'',
-            assignedTo:'',
-            comment:'',
-            statistic: {},
+            status: '',
+            assignedTo: '',
+            comment: '',
             allStatistic: {},
             isLoading: false,
             activeTab: 'SUBMITTED',
@@ -322,6 +311,40 @@ export default {
         this.getDashboardStatistics();
 
     },
+    computed: {
+        formattedUserSubmissionDate() {
+            return this.formatDate(this.selectedTicket.createdOn);
+        },
+        formattedCreatedOn() {
+            return this.formatDate(this.selectedTicket.createdOn);
+        },
+        filteredTickets() {
+            const query = this.searchQuery.toLowerCase();
+            return this.tickets.filter(ticket => {
+                const matchesTab = this.activeTab === 'ALL' || ticket.status.toUpperCase() === this.activeTab;
+                const matchesQuery = (
+                    (ticket.companyName?.toLowerCase().includes(query) || '') ||
+                    (ticket.address?.toLowerCase().includes(query) || '') ||
+                    (ticket.personName?.toLowerCase().includes(query) || '') ||
+                    (ticket.phoneNumber?.toLowerCase().includes(query) || '') ||
+                    (ticket.emailId?.toLowerCase().includes(query) || '') ||
+                    (ticket.ticketName?.toLowerCase().includes(query) || '') ||
+                    (ticket.status?.toLowerCase().includes(query) || '') ||
+                    (ticket.priorityName?.toLowerCase().includes(query) || '') || 
+                    (ticket.commentBox?.toLowerCase().includes(query) || '')
+                );
+                return matchesTab && matchesQuery;
+            });
+        },
+        totalPages() {
+            return Math.ceil(this.filteredTickets.length / this.itemsPerPage);
+        },
+        paginatedData() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredTickets.slice(start, end);
+        },
+    },
     methods: {
         setActiveTab(tabName) {
             this.activeTab = tabName;
@@ -333,24 +356,25 @@ export default {
             this.selectedTicket = ticket;
             this.fetchEmployeeList();
         },
+        closeModal() {
+            const modalElement = document.getElementById('exampleModal');
+            const modalInstance = Modal.getInstance(modalElement);
+            modalInstance.hide();
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.parentNode.removeChild(backdrop);
+            }
+        },
         fetchTicketList() {
             axios.get('api/getRequestFormData')
                 .then(response => {
-                    // this.tickets = response.data.data;
-                    // console.log(this.tickets)
-                    // return response
-                    const allTickets = response.data.data;
-                    this.totalItems = allTickets.length; // Calculate total items
-                    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-                    const endIndex = this.currentPage * this.itemsPerPage;
-                    this.tickets = allTickets.slice(startIndex, endIndex);
-                    console.log(this.tickets);
-                    return response;
+                    this.tickets = response.data.data;
+                    console.log(this.tickets)
+                    return response
                 })
                 .catch(error => {
                     return error
                 });
-
         },
         fetchEmployeeList() {
             axios.get('api/getEmployeelist')
@@ -362,15 +386,13 @@ export default {
                 .catch(error => {
                     return error
                 });
-
         },
         formatDate(date) {
             const d = new Date(date);
             const day = String(d.getDate()).padStart(2, '0');
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const year = d.getFullYear();
-            // return `${year}-${month}-${day}`; // Format date as YYYY-MM-DD
-            return `${day}-${month}-${year}`; // Format date as YYYY-MM-DD
+            return `${day}-${month}-${year}`; // Format date as DD-MM-YYYY
         },
         handleDelete(id) {
             Swal.fire({
@@ -455,7 +477,7 @@ export default {
                 });
         },
         adminAssigned() {
-             this.isLoading = true;
+            // this.isLoading = true;
             const payload = {
                 status: this.status,
                 assignedTo: this.assignedTo,
@@ -464,27 +486,37 @@ export default {
                 assignedBy: 10
             };
 
-            axios.post('/api/saveRequestFormTrackingRecord', payload)
-                .then(response => {
-                    console.log(response)
+            Swal.fire({
+                title: 'Please wait...',
+                html: 'Submitting the form',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+
+            // this.isLoading = true;
+
+            axios.all([
+                axios.post('/api/saveRequestFormTrackingRecord', payload),
+                axios.put(`/api/updateStatus?status=${payload.status}&id=${payload.requestFormCode}`)
+            ])
+                .then(axios.spread(() => {
                     Swal.fire({
                         icon: 'success',
                         title: 'Status Updated',
-                        text: 'Assigned Successfully!',
-                        showConfirmButton: true,
-                        // timer: 1500
-                    }).then(() => {
-                        const modalElement = document.getElementById('exampleModal');
-                        const modalInstance = Modal.getInstance(modalElement);
-                        modalInstance.hide();
-                        const backdrop = document.querySelector('.modal-backdrop');
-                        if (backdrop) {
-                            backdrop.parentNode.removeChild(backdrop);
-                        }
-                        this.fetchTicketList();
-                    });
+                        text: `${payload.status} successfully.`,
+                        confirmButtonText: 'OK',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
 
-                })
+                            this.closeModal();
+                            this.fetchTicketList();
+                            Swal.close();
+                            this.getDashboardStatistics();
+                        }
+                    });
+                }))
                 .catch(error => {
                     Swal.fire({
                         icon: 'error',
@@ -495,59 +527,38 @@ export default {
                     });
                 })
                 .finally(() => {
-          this.isLoading = false; // Hide loader
-        });
+                    this.isLoading = false; // Hide loader
+                });
         },
         getDashboardStatistics() {
             axios.get('api/getDashboardStatistics')
                 .then(response => {
-                    this.statistic = response.data;
+                    const statistic = response.data.data;
                     const obj = {
-                        ...this.statistic,
-                        ALL: response.val,
+                        ...statistic,
+                        ALL: response.data.val,
                     };
-                    this.allStatistic = obj.data;
-                    console.log(this.allStatistic.data)
+                    this.allStatistic = obj;
+                    console.log(this.allStatistic)
                     return response
                 })
                 .catch(error => {
                     return error
                 });
         },
+        // changePage(page) {
+        //     if (page < 1 || page > this.totalPages) return;
+        //     this.currentPage = page;
+        //     this.fetchTicketList();
+        // },
         changePage(page) {
-            if (page < 1 || page > this.totalPages) return;
-            this.currentPage = page;
-            this.fetchTicketList();
+            if (page >= 1 && page <= this.totalPages) {
+                this.currentPage = page;
+            }
         },
-
     },
 
-    computed: {
-        formattedUserSubmissionDate() {
-            return this.formatDate(this.selectedTicket.createdOn);
-        },
-        formattedCreatedOn() {
-            return this.formatDate(this.selectedTicket.createdOn);
-        },
-        totalPages() {
-            return Math.ceil(this.totalItems / this.itemsPerPage);
-        },
-        filteredTickets() {
-            const query = this.searchQuery.toLowerCase();
-            return this.tickets.filter((ticket) => {
-                return (
-                    ticket.companyName.toLowerCase().includes(query) ||
-                    ticket.address.toLowerCase().includes(query) ||
-                    ticket.personName.toLowerCase().includes(query) ||
-                    ticket.phoneNumber.toLowerCase().includes(query) ||
-                    ticket.emailId.toLowerCase().includes(query) ||
-                    ticket.ticketName.toLowerCase().includes(query) ||
-                    ticket.status.toLowerCase().includes(query) ||
-                    ticket.priorityName.toLowerCase().includes(query)
-                );
-            });
-        },
-    }
+
 };
 </script>
 

@@ -23,25 +23,16 @@
                 </li> 
             </template>
 
-            <template v-if="role === 'Employee'">
-                <li class="nav-item" :class="{ active: activePath === '/user/list' }" @click="setActive('/user/list')">
-                    <router-link to="/user/list" class="nav-link">Dashboard</router-link>
-                </li>
-                <!-- <li class="nav-item" :class="{ active: activePath === '/user/create' }"
-                    @click="setActive('/user/create')">
-                    <router-link to="/user/create" class="nav-link">Raise a Ticket</router-link>
-                </li> -->
-            </template>
+            <li v-if="userRole === 'Employee'" class="nav-item" :class="{ active: isActive('/user/emp/list') }">
+                <router-link to="/user/emp/list" class="nav-link">Dashboard</router-link>
+            </li>
 
-            <template v-if="role === 'user'">
-                <li class="nav-item" :class="{ active: activePath === '/user/list' }" @click="setActive('/user/list')">
-                    <router-link to="/user/list" class="nav-link">Dashboard</router-link>
-                </li>
-                <li class="nav-item" :class="{ active: activePath === '/user/create' }"
-                    @click="setActive('/user/create')">
-                    <router-link to="/user/create" class="nav-link">Raise a Ticket</router-link>
-                </li>
-            </template>
+            <li v-if="userRole === 'user'" class="nav-item" :class="{ active: isActive('/user/list') }">
+                <router-link to="/user/list" class="nav-link">Dashboard</router-link>
+            </li>
+            <li v-if="userRole === 'user'" class="nav-item" :class="{ active: isActive('/user/create') }">
+                <router-link to="/user/create" class="nav-link">Raise a Ticket</router-link>
+            </li>
         </ul>
     </div>
 </template>
@@ -55,16 +46,21 @@ export default {
             required: true
         }
     },
-    data() {
-        return {
-            activePath: '/user/list',
-            role: localStorage.getItem('role')
-        };
+    computed: {
+        user() {
+            return this.$store.getters.getUser;
+        },
+        isAuthenticated() {
+            return this.$store.getters.isAuthenticated;
+        },
+        userRole() {
+            return this.$store.getters.getRole;
+        },
     },
     methods: {
-        setActive(path) {
-            this.activePath = path;
-        }
+        isActive(path) {
+            return this.$route.path === path;
+        },
     }
 };
 </script>
