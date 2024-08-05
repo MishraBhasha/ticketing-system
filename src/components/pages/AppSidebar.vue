@@ -12,6 +12,15 @@
                     @click="setActive('/user/create')">
                     <router-link to="/user/create" class="nav-link">Raise a Ticket</router-link>
                 </li> 
+                <li class="nav-item" :class="{ active: activePath === '/user/priority/list' }"
+                    @click="setActive('/user/priority/list')">
+                    <router-link to="/user/priority/list" class="nav-link">Manage Priority Type</router-link>
+                </li> 
+
+                 <li class="nav-item" :class="{ active: activePath === '/user/ticket/list' }"
+                    @click="setActive('/user/ticket/list')">
+                    <router-link to="/user/ticket/list" class="nav-link">Manage Ticket Type</router-link>
+                </li> 
             </template>
 
             <template v-if="role === 'Employee'">
