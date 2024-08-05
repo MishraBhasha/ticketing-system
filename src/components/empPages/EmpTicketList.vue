@@ -3,11 +3,16 @@
         <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Ticket Manager</h2>
         <div class="card">
             <div class="card-body">
-
+                <div class="row justify-content-end">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
+                            @input="filterTickets">
+                    </div>
+                </div>
                 <ul class="nav nav-underline">
                     <li class="nav-item" v-for="tab in tabs" :key="tab.name">
-                        <a class="nav-link m-2" :class="{ active: activeTab === tab.name }" @click="setActiveTab(tab.name)"
-                            href="#">
+                        <a class="nav-link m-2" :class="{ active: activeTab === tab.name }"
+                            @click="setActiveTab(tab.name)" href="#">
                             {{ tab.label }}
                             <span class="badge bg-primary text-white rounded-pill">{{
                                 allStatistic[tab.label.toUpperCase()] ?? 0 }}</span>
@@ -31,9 +36,9 @@
                         <tr v-if="filteredTickets.length === 0">
                             <td colspan="8" class="text-center fs-5">No data available.</td>
                         </tr>
-                        <tr v-for="(ticket, i) in filteredTickets" :key="ticket.id">
-                        <!-- <tr v-for="(ticket, i) in tickets" :key="ticket.id"> -->
-                            <td>{{ i + 1 }}</td>
+                        <tr v-for="(ticket, i) in paginatedData" :key="ticket.id">
+                            <!-- <tr v-for="(ticket, i) in tickets" :key="ticket.id"> -->
+                            <td>{{ i + 1 + (currentPage - 1) * itemsPerPage }}</td>
                             <td>{{ ticket.ticketName }}</td>
                             <td>{{ formatDate(ticket.createdOn) }}</td>
                             <td>{{ ticket.commentBox }}</td>
@@ -53,8 +58,6 @@
                                 </span>
                             </td>
                             <td>
-                                <!-- <router-link :to="`/show/${ticket.id}`"
-                                        class="btn btn-outline-info mx-1">Show</router-link> -->
                                 <a data-bs-toggle="modal" data-bs-target="#exampleModal" @click="openModal(ticket)">
                                     <i class="bi bi-pencil-fill text-primary mx-2"></i>
                                 </a>
@@ -63,10 +66,31 @@
                         </tr>
                     </tbody>
                 </table>
+                <!--Pagination-->
+                <div class="d-flex justify-content-end mt-4">
+                    <ul class="pagination">
+                        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                            <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)"
+                                aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" :class="{ active: page === currentPage }" v-for="page in totalPages"
+                            :key="page">
+                            <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                        </li>
+                        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                            <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)"
+                                aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-<!--Modal-->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!--Modal-->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -74,20 +98,20 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form >
+                        <form>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field1" class="form-label">Company Name</label>
                                         <input type="text" class="form-control" id="field1"
-                                            v-model="selectedTicket.companyName"   disabled readonly/>
+                                            v-model="selectedTicket.companyName" disabled readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field2" class="form-label">Address</label>
                                         <input type="text" class="form-control" id="field2"
-                                            v-model="selectedTicket.address"  disabled readonly />
+                                            v-model="selectedTicket.address" disabled readonly />
                                     </div>
                                 </div>
                             </div>
@@ -96,14 +120,14 @@
                                     <div class="form-group">
                                         <label for="field1" class="form-label">Person Name</label>
                                         <input type="text" class="form-control" id="field1"
-                                            v-model="selectedTicket.personName"  disabled readonly />
+                                            v-model="selectedTicket.personName" disabled readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field2" class="form-label">Phone Number</label>
                                         <input type="tel" id="phone" class="form-control"
-                                            v-model="selectedTicket.phoneNumber"   disabled readonly/>
+                                            v-model="selectedTicket.phoneNumber" disabled readonly />
                                     </div>
                                 </div>
                             </div>
@@ -112,27 +136,29 @@
                                     <div class="form-group">
                                         <label for="field1" class="form-label">Email Id</label>
                                         <input type="text" class="form-control" id="field1"
-                                            v-model="selectedTicket.emailId"  disabled readonly />
+                                            v-model="selectedTicket.emailId" disabled readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="field2" class="form-label">Delivery Date</label>
                                         <input type="date" class="form-control" id="field2"
-                                            v-model="selectedTicket.expectedDeliveryDate"  disabled readonly />
+                                            v-model="selectedTicket.expectedDeliveryDate" disabled readonly />
                                     </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="commentBox" class="form-label">User Status</label>
-                                        <input type="text" class="form-control" v-model="selectedTicket.status"  disabled readonly />
+                                        <input type="text" class="form-control" v-model="selectedTicket.status" disabled
+                                            readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="createdOn" class="form-label">Ticket Type</label>
-                                        <input type="text" v-model="selectedTicket.ticketName" class="form-control"  disabled readonly />
+                                        <input type="text" v-model="selectedTicket.ticketName" class="form-control"
+                                            disabled readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -146,7 +172,8 @@
                                     <div class="form-group">
                                         <label for="commentBox" class="form-label">User Comment</label>
                                         <textarea rows="1" cols="20" id="commentBox" v-model="selectedTicket.commentBox"
-                                            class="form-control" placeholder="Enter your comment here..."  disabled readonly></textarea>
+                                            class="form-control" placeholder="Enter your comment here..." disabled
+                                            readonly></textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -172,18 +199,19 @@
                                     </div>
                                 </div>
                                 <div>
-                                <button  type="submit"
-                                        class="btn btn-primary"  @click.prevent="resolveIssue(selectedTicket.requestFormCode)">Resolve Issue</button>
+                                    <button type="submit" class="btn btn-primary"
+                                        @click.prevent="resolveIssue(selectedTicket.requestFormCode)">Resolve
+                                        Issue</button>
                                 </div>
-                            
+
 
                                 <div class="modal-footer">
-                                    
+
                                 </div>
                             </div>
                         </form>
                         <form @submit.prevent="update">
-                        <div class="heading-container">
+                            <div class="heading-container">
                                 <h4>Comment Section</h4>
                             </div>
                             <div class="row">
@@ -195,11 +223,9 @@
                                 </div>
 
                             </div>
-                        <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close</button>
-                                    <button  type="submit"
-                                        class="btn btn-primary">Save</button>
-                                    </form>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -222,6 +248,9 @@ export default {
         return {
             tickets: [],
             activeTab: 'ALL',
+            currentPage: 1,
+            itemsPerPage: 5,
+            searchQuery: '',
             tabs: [
                 { name: 'ALL', label: 'ALL' },
                 { name: 'ASSIGNED', label: 'ASSIGNED' },
@@ -240,12 +269,30 @@ export default {
     },
     computed: {
         filteredTickets() {
-            if (this.activeTab === 'ALL') {
-                return this.tickets;
-            } else {
-                return this.tickets.filter(ticket => ticket.status.toUpperCase() === this.activeTab);
-            }
-        }
+            const query = this.searchQuery.toLowerCase();
+            return this.tickets.filter(ticket => {
+                const matchesTab = this.activeTab === 'ALL' || ticket.status.toUpperCase() === this.activeTab;
+                const matchesQuery = (
+                    (ticket.companyName?.toLowerCase().includes(query) || '') ||
+                    (ticket.address?.toLowerCase().includes(query) || '') ||
+                    (ticket.personName?.toLowerCase().includes(query) || '') ||
+                    (ticket.phoneNumber?.toLowerCase().includes(query) || '') ||
+                    (ticket.emailId?.toLowerCase().includes(query) || '') ||
+                    (ticket.ticketName?.toLowerCase().includes(query) || '') ||
+                    (ticket.status?.toLowerCase().includes(query) || '') ||
+                    (ticket.priorityName?.toLowerCase().includes(query) || '')
+                );
+                return matchesTab && matchesQuery;
+            });
+        },
+        totalPages() {
+            return Math.ceil(this.filteredTickets.length / this.itemsPerPage);
+        },
+        paginatedData() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredTickets.slice(start, end);
+        },
     },
     methods: {
         setActiveTab(tabName) {
@@ -278,53 +325,58 @@ export default {
                     return error
                 });
         },
+        changePage(page) {
+            if (page >= 1 && page <= this.totalPages) {
+                this.currentPage = page;
+            }
+        },
         openModal(ticket) {
             this.selectedTicket = ticket;
             this.fetchTicketList();
             // this.fetchEmployeeList();
         },
-update(){
-    const payload = {
-            adminId: this.selectedTicket.adminId || 0,
-            comment: this.selectedTicket.comment || 'resolved',
-            employeeId: this.selectedTicket.employeeId || '9',
-            requestFormCode: this.selectedTicket.requestFormCode,
-            role: this.selectedTicket.role || 'Employee'
-        };
+        update() {
+            const payload = {
+                adminId: this.selectedTicket.adminId || 0,
+                comment: this.selectedTicket.comment || 'resolved',
+                employeeId: this.selectedTicket.employeeId || '9',
+                requestFormCode: this.selectedTicket.requestFormCode,
+                role: this.selectedTicket.role || 'Employee'
+            };
 
-        console.log(payload);
+            console.log(payload);
 
-        // Sending the payload using axios.put
-        axios.post('/api/saveComment', payload)
-            .then(response => {
-                console.log(response);
-                this.fetchTicketList();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Updated',
-                    text: 'The ticket was updated successfully',
-                }).then(() => {
-                    const modalElement = document.getElementById('exampleModal');
-                    const modalInstance = Modal.getInstance(modalElement);
-                    if (modalInstance) {
-                        modalInstance.hide();
-                    }
-                    const backdrop = document.querySelector('.modal-backdrop');
-                    if (backdrop) {
-                        backdrop.parentNode.removeChild(backdrop);
-                    }
+            // Sending the payload using axios.put
+            axios.post('/api/saveComment', payload)
+                .then(response => {
+                    console.log(response);
                     this.fetchTicketList();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Updated',
+                        text: 'The ticket was updated successfully',
+                    }).then(() => {
+                        const modalElement = document.getElementById('exampleModal');
+                        const modalInstance = Modal.getInstance(modalElement);
+                        if (modalInstance) {
+                            modalInstance.hide();
+                        }
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) {
+                            backdrop.parentNode.removeChild(backdrop);
+                        }
+                        this.fetchTicketList();
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'There was a problem updating the ticket',
+                    });
                 });
-            })
-            .catch(error => {
-                console.log(error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'There was a problem updating the ticket',
-                });
-            });
-},
+        },
         // update() {
         //     console.log(this.selectedTicket)
         //     axios.put(`/api/updateRequestFormData`, this.selectedTicket)
@@ -357,96 +409,95 @@ update(){
         //         });
         // },
         resolveIssue(id) {
-    const requestUrl = `/api/updateTicketDetails?requestFormCode=${id}`;
-    
-    axios.put(requestUrl)
-    .then(response => {
-        const statistic = response.data.data;
-        console.log(statistic);
-        // Swal alert for success
-        Swal.fire({
-            icon: 'success',
-            title: 'Resolved',
-            text: 'The ticket was resolved successfully',
-        });
+            const requestUrl = `/api/updateTicketDetails?requestFormCode=${id}`;
 
-        return response;
-    })
-    .catch(error => {
-        console.error(error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'There was a problem resolving the ticket',
-        });
-        return error;
-    });
-},
+            axios.put(requestUrl)
+                .then(response => {
+                    const statistic = response.data.data;
+                    console.log(statistic);
+                    // Swal alert for success
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Resolved',
+                        text: 'The ticket was resolved successfully',
+                    });
 
-//         resolveIssue(id) {
-//     axios.put('/api/updateTicketDetails', {
-//         params: {
-//             requestFormCode: id
-//         }
-//     })
-//     .then(response => {
-//         const statistic = response.data.data;
-//         console.log(statistic);
-//         // Swal alert for success
-//         Swal.fire({
-//             icon: 'success',
-//             title: 'Resolved',
-//             text: 'The ticket was resolved successfully',
-//         });
+                    return response;
+                })
+                .catch(error => {
+                    console.error(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'There was a problem resolving the ticket',
+                    });
+                    return error;
+                });
+        },
 
-//         return response;
-//     })
-//     .catch(error => {
-//         console.error(error);
-//         Swal.fire({
-//             icon: 'error',
-//             title: 'Error',
-//             text: 'There was a problem resolving the ticket',
-//         });
-//         return error;
-//     });
-// },
+        //         resolveIssue(id) {
+        //     axios.put('/api/updateTicketDetails', {
+        //         params: {
+        //             requestFormCode: id
+        //         }
+        //     })
+        //     .then(response => {
+        //         const statistic = response.data.data;
+        //         console.log(statistic);
+        //         // Swal alert for success
+        //         Swal.fire({
+        //             icon: 'success',
+        //             title: 'Resolved',
+        //             text: 'The ticket was resolved successfully',
+        //         });
 
-//         resolveIssue(id) {
-//         const payload = {
-//         requestFormCode: id
-//     };
+        //         return response;
+        //     })
+        //     .catch(error => {
+        //         console.error(error);
+        //         Swal.fire({
+        //             icon: 'error',
+        //             title: 'Error',
+        //             text: 'There was a problem resolving the ticket',
+        //         });
+        //         return error;
+        //     });
+        // },
 
-//     axios.post('/api/updateTicketDetails', payload)
-//         .then(response => {
-//             const statistic = response.data.data;
-//             console.log(statistic);
-//             // Swal alert for success
-//             Swal.fire({
-//                 icon: 'success',
-//                 title: 'Resolved',
-//                 text: 'The ticket was resolved successfully',
-//             });
+        //         resolveIssue(id) {
+        //         const payload = {
+        //         requestFormCode: id
+        //     };
 
-//             return response;
-//         })
-//         .catch(error => {
-//             console.error(error);
-//             Swal.fire({
-//                 icon: 'error',
-//                 title: 'Error',
-//                 text: 'There was a problem resolving the ticket',
-//             });
-//             return error;
-//         });
-// },
+        //     axios.post('/api/updateTicketDetails', payload)
+        //         .then(response => {
+        //             const statistic = response.data.data;
+        //             console.log(statistic);
+        //             // Swal alert for success
+        //             Swal.fire({
+        //                 icon: 'success',
+        //                 title: 'Resolved',
+        //                 text: 'The ticket was resolved successfully',
+        //             });
+
+        //             return response;
+        //         })
+        //         .catch(error => {
+        //             console.error(error);
+        //             Swal.fire({
+        //                 icon: 'error',
+        //                 title: 'Error',
+        //                 text: 'There was a problem resolving the ticket',
+        //             });
+        //             return error;
+        //         });
+        // },
 
         formatDate(date) {
             const d = new Date(date);
             const day = String(d.getDate()).padStart(2, '0');
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const year = d.getFullYear();
-            // return `${year}-${month}-${day}`; // Format date as YYYY-MM-DD
             return `${day}-${month}-${year}`; // Format date as YYYY-MM-DD
         },
         handleDelete(id) {
