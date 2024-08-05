@@ -330,7 +330,8 @@ export default {
                     (ticket.emailId?.toLowerCase().includes(query) || '') ||
                     (ticket.ticketName?.toLowerCase().includes(query) || '') ||
                     (ticket.status?.toLowerCase().includes(query) || '') ||
-                    (ticket.priorityName?.toLowerCase().includes(query) || '')
+                    (ticket.priorityName?.toLowerCase().includes(query) || '') || 
+                    (ticket.commentBox?.toLowerCase().includes(query) || '')
                 );
                 return matchesTab && matchesQuery;
             });
