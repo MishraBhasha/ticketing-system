@@ -412,6 +412,42 @@ export default {
                 }
             })
         },
+        downloadFile(fileId) {
+            console.log(fileId)
+            axios.get(`/api/downloadFile?fileId=${fileId}`, { responseType: 'blob' })
+                .then(response => {
+                    const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+
+                    const newTab = window.open(url, '_blank');
+                    if (newTab) {
+                        newTab.focus(); // Focus the new tab if it was successfully opened
+                    } else {
+                        console.error('Failed to open new tab');
+                    }
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
+        downloadResolvedFile(fileId) {
+            console.log(fileId)
+            axios.get(`/api/downloadFile?fileId=${fileId}`, { responseType: 'blob' })
+                .then(response => {
+                    const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+
+                    const newTab = window.open(url, '_blank');
+                    if (newTab) {
+                        newTab.focus();
+                    } else {
+                        console.error('Failed to open new tab');
+                    }
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
         getPriorityClass(priorityName) {
             switch (priorityName) {
                 case 'low':
