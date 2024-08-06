@@ -38,7 +38,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-if="filteredTickets.length === 0">
+                        <tr v-if="paginatedData.length === 0">
                             <td colspan="8" class="text-center fs-5">No data available.</td>
                         </tr>
                         <tr v-for="(ticket, i) in paginatedData" :key="ticket.id">
@@ -71,7 +71,7 @@
                     </tbody>
                 </table>
                 <!--Pagination-->
-                <div class="d-flex justify-content-end mt-4">
+                <div class="d-flex justify-content-end mt-4" v-if="paginatedData.length > 0">
                     <ul class="pagination">
                         <li class="page-item" :class="{ disabled: currentPage === 1 }">
                             <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)"

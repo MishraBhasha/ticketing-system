@@ -33,7 +33,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-if="filteredTickets.length === 0">
+                        <tr v-if="paginatedData.length === 0">
                             <td colspan="8" class="text-center fs-5">No data available.</td>
                         </tr>
                         <tr v-for="(ticket, i) in paginatedData" :key="ticket.id">
@@ -67,7 +67,7 @@
                     </tbody>
                 </table>
                 <!--Pagination-->
-                <div class="d-flex justify-content-end mt-4">
+                <div class="d-flex justify-content-end mt-4" v-if="paginatedData.length > 0">
                     <ul class="pagination">
                         <li class="page-item" :class="{ disabled: currentPage === 1 }">
                             <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)"
@@ -99,8 +99,6 @@
                     </div>
                     <div class="modal-body">
                         <form>
-                            <!-- <div class="row">
-                                <div class="col-md-4 mb-3"> -->
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <div class="form-group">
@@ -116,8 +114,6 @@
                                             v-model="selectedTicket.address" disabled readonly />
                                     </div>
                                 </div>
-                                <!-- </div>
-                            <div class="row"> -->
                                 <div class="col-md-6 mb-2">
                                     <div class="form-group">
                                         <label for="field1" class="form-label">Person Name</label>
@@ -132,8 +128,6 @@
                                             v-model="selectedTicket.phoneNumber" disabled readonly />
                                     </div>
                                 </div>
-                                <!-- </div>
-                            <div class="row"> -->
                                 <div class="col-md-6 mb-2">
                                     <div class="form-group">
                                         <label for="field1" class="form-label">Email Id</label>
@@ -205,12 +199,9 @@
                                         @click.prevent="resolveIssue(selectedTicket.requestFormCode)">Resolve
                                         Issue</button>
                                 </div>
-
                             </div>
-
                         </form>
                         <div class="modal-footer mt-2"></div>
-
                         <form @submit.prevent="update">
                             <div class="heading-container">
                                 <h4>Comment Section</h4>
@@ -231,7 +222,6 @@
                 </div>
             </div>
         </div>
-
     </layout-div>
 </template>
 
