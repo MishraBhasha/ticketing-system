@@ -242,6 +242,7 @@ export default {
             currentPage: 1,
             itemsPerPage: 5,
             searchQuery: '',
+            comment:'',
             tabs: [
                 { name: 'ALL', label: 'ALL' },
                 { name: 'ASSIGNED', label: 'ASSIGNED' },
@@ -330,7 +331,7 @@ export default {
             const payload = {
                 adminId: this.selectedTicket.adminId || 0,
                 comment: this.selectedTicket.comment || 'resolved',
-                employeeId: this.selectedTicket.employeeId || '9',
+                employeeId: this.selectedTicket.employeeId || localStorage.getItem('userId'),
                 requestFormCode: this.selectedTicket.requestFormCode,
                 role: this.selectedTicket.role || 'Employee'
             };
