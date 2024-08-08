@@ -4,7 +4,22 @@
   <layout-div>
     <div class="container">
       <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Employee List</h2>
+
+     <div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+    <input type="text" class="form-control" placeholder="Search...."/>
+  </div>
+  <div class="col-md-4">
+    <!-- Button to redirect to the create employee page -->
+    <button type="button" class="btn btn-primary" onclick="window.location.href='employeecreate'">
+      Create Employee
+    </button>
+  </div>
+      </div>
+      <br>
       <div class="card">
+      
         <div class="card-body">
           <ul class="nav nav-underline">
             <li class="nav-item" v-for="tab in tabs" :key="tab.name">

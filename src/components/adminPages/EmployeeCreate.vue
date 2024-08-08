@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Employee Create</h2>
+    <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Employee List</h2>
     <div class="card rounded">
       <div class="card-body">
         <form @submit.prevent="handleSubmit">

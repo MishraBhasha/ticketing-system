@@ -8,7 +8,7 @@
           <input type="text" class="form-control" placeholder="Search...." />
         </div>
         <div class="col-md-4">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          <button type="button" class="btn btn-primary" @click="openCreateModal">
             Create Priority Type
           </button>
         </div>
@@ -49,8 +49,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(priority, i) in priorities" :key="priority.id">
-                <td>{{ i + 1 }}</td>
+              <tr v-for="(priority, i) in paginatedPriorities" :key="priority.id">
+                <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
                 <td>{{ priority.priorityName }}</td>
                 <td>
                   <a data-bs-toggle="modal" data-bs-target="#exampleModal" @click="openModal(priority)">
@@ -61,6 +61,25 @@
               </tr>
             </tbody>
           </table>
+
+          <!-- Pagination Controls -->
+          <div class="d-flex justify-content-end mt-4" v-if="paginatedPriorities.length > 0">
+            <ul class="pagination">
+              <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <li class="page-item" :class="{ active: page === currentPage }" v-for="page in totalPages" :key="page">
+                <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+              </li>
+              <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -84,7 +103,20 @@ export default {
       selectedPriority: {
         priorityName: '',
       },
+      currentPage: 1,
+      itemsPerPage: 5,
+      totalItems: 0,
     };
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.totalItems / this.itemsPerPage);
+    },
+    paginatedPriorities() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.priorities.slice(start, end);
+    },
   },
   created() {
     this.getAllPriority();
@@ -93,10 +125,17 @@ export default {
     openModal(priority) {
       this.selectedPriority = priority ? { ...priority } : { priorityName: '' };
     },
+    openCreateModal() {
+      this.selectedPriority = { priorityName: '' };
+      const modalElement = document.getElementById('exampleModal');
+      const modalInstance = new Modal(modalElement);
+      modalInstance.show();
+    },
     getAllPriority() {
       axios.get('/api/getAllPriority')
         .then(response => {
           this.priorities = response.data.data;
+          this.totalItems = response.data.data.length;
         })
         .catch(error => {
           console.error(error);
@@ -157,6 +196,11 @@ export default {
             });
         }
       });
+    },
+    changePage(page) {
+      if (page > 0 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
     },
   },
 };

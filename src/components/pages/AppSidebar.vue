@@ -5,7 +5,7 @@
                 <router-link to="/user/admin/list" class="nav-link">Dashboard</router-link>
             </li>
             <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/employeelist') }">
-                <router-link to="/user/admin/employeelist" class="nav-link">Employee Creation</router-link>
+                <router-link to="/user/admin/employeelist" class="nav-link">Employee List</router-link>
             </li>
             <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/ticket/list') }">
                 <router-link to="/user/admin/ticket/list" class="nav-link">Manage Ticket</router-link>
