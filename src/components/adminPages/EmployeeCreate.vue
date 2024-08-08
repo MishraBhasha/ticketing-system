@@ -159,32 +159,43 @@ export default {
           'Content-Type': 'application/json' // Set the content type to JSON
         }
       })
-      .then(() => {
-        // Handle successful response
-        Swal.fire({
-          icon: 'success',
-          title: 'Employee details saved successfully!',
-          showConfirmButton: true,
-          timer: 1500
-        }).then(() => {
-          // Redirect to the employee list page after the message is shown
-          this.$router.push('/user/employeelist');
-        });
-        this.resetForm();
-      })
-      .catch(error => {
-        // Handle error response
-        console.error('Error occurred:', error.response ? error.response.data : error.message);
-        Swal.fire({
-          icon: 'error',
-          title: 'An error occurred while saving employee details!',
-          text: error.response ? error.response.data.message : error.message,
-          showConfirmButton: true
-        });
-      })
-      .finally(() => {
-        this.isSaving = false; // Reset saving flag
-      });
+      .then(response => {
+          // Check if the overallStatus indicates success
+          if (response.data.overallStatus === 'success') {
+            // Handle successful response
+            Swal.fire({
+              icon: 'success',
+              title: 'Employee details saved successfully!',
+              showConfirmButton: true,
+              timer: 1500
+            }).then(() => {
+              // Redirect to the employee list page after the message is shown
+              this.$router.push('/user/admin/employeelist');
+            });
+            this.resetForm();
+          } else {
+            // If the overallStatus is not success, treat it as an error
+            Swal.fire({
+              icon: 'error',
+              title: 'An error occurred while saving employee details!',
+              text: response.data.message || 'Unexpected error occurred',
+              showConfirmButton: true
+            });
+          }
+        })
+      // .catch(error => {
+      //   // Handle error response
+      //   console.error('Error occurred:', error.response ? error.response.data : error.message);
+      //   Swal.fire({
+      //     icon: 'error',
+      //     title: 'An error occurred while saving employee details!',
+      //     text: error.response ? error.response.data.message : error.message,
+      //     showConfirmButton: true
+      //   });
+      // })
+      // .finally(() => {
+      //   this.isSaving = false; // Reset saving flag
+      // });
     },
     validateForm() {
       let valid = true;
