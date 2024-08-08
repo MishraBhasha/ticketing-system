@@ -32,8 +32,8 @@
               <tr v-if="paginatedData.length === 0">
                 <td colspan="8" class="text-center fs-5">No data available.</td>
               </tr>
-              <tr v-for="(employee, index) in paginatedData" :key="employee.id">
-                <td>{{ index + 1 }}</td>
+              <tr v-for="(employee, i) in paginatedData" :key="employee.id">
+                <td>{{ i + 1 + (currentPage - 1) * itemsPerPage }}</td>
                 <td>{{ employee.firstName }}</td>
                 <td>{{ employee.lastName }}</td>
                 <td>{{ employee.companyName }}</td>
