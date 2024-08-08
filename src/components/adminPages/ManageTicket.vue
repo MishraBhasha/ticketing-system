@@ -2,18 +2,6 @@
   <layout-div>
     <div class="container">
       <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Ticket Type</h2>
-      <div class="row">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
-          <input type="text" class="form-control" placeholder="Search...." />
-        </div>
-        <div class="col-md-4">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Create Ticket Type
-          </button>
-        </div>
-      </div>
-
       <!-- Modal -->
       <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -27,7 +15,8 @@
                 <div class="row">
                   <div class="form-group">
                     <label for="field1" class="form-label">Ticket Type</label>
-                    <input type="text" class="form-control" id="field1" v-model="ticketName" />
+                    <input type="text" class="form-control" id="field1" v-model="selectedPriority.ticketName" />
+
                   </div>
                 </div>
                 <div class="modal-footer">
@@ -42,6 +31,17 @@
 
       <div class="card mt-3">
         <div class="card-body">
+          <div class="row justify-content-between mb-3">
+            <div class="col-md-4">
+              <button type="button" class="btn btn-primary" @click="openCreateModal">
+                Create Ticket Type
+              </button>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
+                @input="filterTickets">
+            </div>
+          </div>
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -51,21 +51,23 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(ticket, i) in paginatedTickets" :key="ticket.id">
+              <tr v-if="paginatedData.length === 0">
+                <td colspan="3" class="text-center fs-5">No data available.</td>
+              </tr>
+              <tr v-for="(ticket, i) in paginatedData" :key="ticket.id">
                 <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
                 <td>{{ ticket.ticketName }}</td>
                 <td>
-                  <a data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  <a data-bs-toggle="modal" data-bs-target="#exampleModal" @click="openModal(ticket)">
                     <i class="bi bi-pencil-fill text-primary mx-2"></i>
                   </a>
-                  <i class="bi bi-trash3-fill text-danger" @click="handleDelete(ticket.id)"></i>
+                  <i class="bi bi-trash3-fill text-danger mx-2" @click="handleDelete(ticket.id)"></i>
                 </td>
               </tr>
             </tbody>
           </table>
-
-          <!-- Pagination Controls -->
-          <div class="d-flex justify-content-end mt-4" v-if="paginatedTickets.length > 0">
+          <!-- Pagination -->
+          <div class="d-flex justify-content-end mt-4" v-if="paginatedData.length > 0">
             <ul class="pagination">
               <li class="page-item" :class="{ disabled: currentPage === 1 }">
                 <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)" aria-label="Previous">
@@ -106,22 +108,54 @@ export default {
       currentPage: 1,
       itemsPerPage: 5,
       totalItems: 0,
+      searchQuery: '',
+      selectedPriority: {
+        ticketName: '',
+      },
     };
-  },
-  computed: {
-    totalPages() {
-      return Math.ceil(this.totalItems / this.itemsPerPage);
-    },
-    paginatedTickets() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.tickets.slice(start, end);
-    },
   },
   created() {
     this.getAllTicketType();
   },
+  computed: {
+    filteredTickets() {
+      const query = this.searchQuery.toLowerCase();
+      return this.tickets.filter(ticket => {
+        const matchesQuery = (
+          (ticket.ticketName?.toLowerCase().includes(query) || '')
+        );
+        return matchesQuery;
+      });
+    },
+    totalPages() {
+      return Math.ceil(this.filteredTickets.length / this.itemsPerPage);
+    },
+    paginatedData() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredTickets.slice(start, end);
+    },
+  },
   methods: {
+    openModal(ticket) {
+      console.log(ticket)
+      this.selectedPriority = ticket ? { ...ticket } : { ticketName: '' };
+    },
+    openCreateModal() {
+      this.selectedPriority = { ticketName: '' };
+      const modalElement = document.getElementById('exampleModal');
+      const modalInstance = new Modal(modalElement);
+      modalInstance.show();
+    },
+    closeModal() {
+      const modalElement = document.getElementById('exampleModal');
+      const modalInstance = Modal.getInstance(modalElement);
+      modalInstance.hide();
+      const backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop) {
+        backdrop.parentNode.removeChild(backdrop);
+      }
+    },
     getAllTicketType() {
       axios.get('api/getAllTicketType')
         .then(response => {
@@ -133,58 +167,59 @@ export default {
         });
     },
     saveTicket() {
-      const payload = { ticketName: this.ticketName };
-      axios.post('/api/saveTicketType', payload)
+      const payload = { ticketName: this.selectedPriority.ticketName };
+      const url = this.selectedPriority.id ? `/api/updateTicketType/${this.selectedPriority.id}` : '/api/saveTicketType';
+      const method = this.selectedPriority.id ? 'put' : 'post';
+      axios({ method, url, data: payload })
         .then(() => {
           Swal.fire({
             icon: 'success',
-            title: 'Saved',
-            text: 'The ticket type was saved successfully',
+            title: method === 'put' ? 'Updated' : 'Saved',
+            text: `The ticket type was ${method === 'put' ? 'updated' : 'saved'} successfully`,
           }).then(() => {
+            this.closeModal();
             this.getAllTicketType();
-            const modalElement = document.getElementById('exampleModal');
-            const modalInstance = Modal.getInstance(modalElement);
-            modalInstance.hide();
           });
         })
         .catch(error => {
           Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: error.response?.data?.message || 'There was a problem saving the ticket type',
+            text: error.response?.data?.message || `There was a problem ${method === 'put' ? 'updating' : 'saving'} the priority type`,
           });
         });
     },
-   handleDelete(id) {
-  Swal.fire({
-    title: 'Are you sure?',
-    text: "You won't be able to revert this!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Yes, delete it!',
-  }).then((result) => {
-    if (result.isConfirmed) {
-      axios.delete(`/api/deleteTicketType/${id}`)
-        .then(() => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Deleted',
-            text: 'The ticket type was deleted successfully',
-          });
-          this.getAllTicketType();
-        })
-        .catch(error => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: error.response?.data?.message || 'There was a problem deleting the ticket type',
-          });
-        });
-    }
-  });
-  
+
+    handleDelete(id) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios.delete(`/api/deleteTicketType/${id}`)
+            .then(() => {
+              Swal.fire({
+                icon: 'success',
+                title: 'Deleted',
+                text: 'The ticket type was deleted successfully',
+              });
+              this.getAllTicketType();
+            })
+            .catch(error => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.response?.data?.message || 'There was a problem deleting the ticket type',
+              });
+            });
+        }
+      });
+
     },
     changePage(page) {
       if (page > 0 && page <= this.totalPages) {

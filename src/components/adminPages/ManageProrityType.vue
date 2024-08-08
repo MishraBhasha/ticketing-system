@@ -2,18 +2,6 @@
   <layout-div>
     <div class="container">
       <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Priority Type</h2>
-      <div class="row">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
-          <input type="text" class="form-control" placeholder="Search...." />
-        </div>
-        <div class="col-md-4">
-          <button type="button" class="btn btn-primary" @click="openCreateModal">
-            Create Priority Type
-          </button>
-        </div>
-      </div>
-
       <!-- Modal -->
       <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -40,6 +28,17 @@
 
       <div class="card mt-3">
         <div class="card-body">
+          <div class="row justify-content-between mb-3">
+            <div class="col-md-4">
+              <button type="button" class="btn btn-primary" @click="openCreateModal">
+                Create Priority Type
+              </button>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
+                @input="filterTickets">
+            </div>
+          </div>
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -106,9 +105,19 @@ export default {
       currentPage: 1,
       itemsPerPage: 5,
       totalItems: 0,
+      searchQuery: '',
     };
   },
   computed: {
+    filteredTickets() {
+      const query = this.searchQuery.toLowerCase();
+      return this.tickets.filter(ticket => {
+        const matchesQuery = (
+          (ticket.ticketName?.toLowerCase().includes(query) || '')
+        );
+        return matchesQuery;
+      });
+    },
     totalPages() {
       return Math.ceil(this.totalItems / this.itemsPerPage);
     },
@@ -131,6 +140,15 @@ export default {
       const modalInstance = new Modal(modalElement);
       modalInstance.show();
     },
+    closeModal() {
+      const modalElement = document.getElementById('exampleModal');
+      const modalInstance = Modal.getInstance(modalElement);
+      modalInstance.hide();
+      const backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop) {
+        backdrop.parentNode.removeChild(backdrop);
+      }
+    },
     getAllPriority() {
       axios.get('/api/getAllPriority')
         .then(response => {
@@ -141,34 +159,32 @@ export default {
           console.error(error);
         });
     },
-    
+
     savePriority() {
-  const payload = {
-    priorityName: this.selectedPriority.priorityName,
-  };
-  const url = this.selectedPriority.id ? `/api/updatePriority/${this.selectedPriority.id}` : '/api/savePriority';
-  const method = this.selectedPriority.id ? 'put' : 'post';
-  axios({ method, url, data: payload })
-    .then(() => {
-      Swal.fire({
-        icon: 'success',
-        title: method === 'put' ? 'Updated' : 'Saved',
-        text: `The priority type was ${method === 'put' ? 'updated' : 'saved'} successfully`,
-      }).then(() => {
-        this.getAllPriority();
-        const modalElement = document.getElementById('exampleModal');
-        const modalInstance = Modal.getInstance(modalElement);
-        modalInstance.hide();
-      });
-    })
-    .catch(error => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error.response?.data?.message || `There was a problem ${method === 'put' ? 'updating' : 'saving'} the priority type`,
-      });
-    });
-},
+      const payload = {
+        priorityName: this.selectedPriority.priorityName,
+      };
+      const url = this.selectedPriority.id ? `/api/updatePriority/${this.selectedPriority.id}` : '/api/savePriority';
+      const method = this.selectedPriority.id ? 'put' : 'post';
+      axios({ method, url, data: payload })
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: method === 'put' ? 'Updated' : 'Saved',
+            text: `The priority type was ${method === 'put' ? 'updated' : 'saved'} successfully`,
+          }).then(() => {
+            this.closeModal();
+            this.getAllPriority();
+          });
+        })
+        .catch(error => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.response?.data?.message || `There was a problem ${method === 'put' ? 'updating' : 'saving'} the priority type`,
+          });
+        });
+    },
 
 
     handleDelete(id) {
