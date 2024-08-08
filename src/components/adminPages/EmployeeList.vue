@@ -27,7 +27,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(employee, index) in employees" :key="employee.id">
+              <tr v-for="(employee, index) in  paginatedData" :key="employee.id">
                 <td>{{ index + 1 }}</td>
                 <td>{{ employee.firstName }}</td>
                 <td>{{ employee.lastName }}</td>
@@ -42,6 +42,26 @@
               </tr>
             </tbody>
           </table>
+          <div class="d-flex justify-content-end mt-4" v-if="paginatedData.length > 0">
+                     <ul class="pagination">
+                        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                            <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)"
+                                aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" :class="{ active: page === currentPage }" v-for="page in totalPages"
+                            :key="page">
+                            <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                        </li>
+                        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                            <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)"
+                                aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
         </div>
       </div>
     </div>
@@ -116,11 +136,24 @@ export default {
         { name: 'ALL', label: 'ALL' },
         // Add other tabs if needed
       ],
+      currentPage: 1,
+      itemsPerPage: 5, // Number of items per page
     };
   },
   created() {
     this.fetchEmployeeList();
   },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.employees.length / this.itemsPerPage);
+    },
+    paginatedData() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.employees.slice(start, end);
+    },
+  },
+
   methods: {
     setActiveTab(tabName) {
       this.activeTab = tabName;
@@ -165,6 +198,12 @@ export default {
           });
         });
     },
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
+    },  
+
     handleDelete(id) {
       Swal.fire({
         title: 'Are you sure?',
