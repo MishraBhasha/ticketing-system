@@ -1,18 +1,20 @@
-/* eslint-disable */
-
 <template>
   <layout-div>
     <div class="container">
       <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Employee List</h2>
       <div class="card">
         <div class="card-body">
-          <ul class="nav nav-underline">
-            <li class="nav-item" v-for="tab in tabs" :key="tab.name">
-              <a class="nav-link" :class="{ active: activeTab === tab.name }" @click="setActiveTab(tab.name)" href="#">
-                {{ tab.label }}
-              </a>
-            </li>
-          </ul>
+          <div class="row justify-content-between mb-3">
+            <div class="col-md-2">
+              <router-link to="../admin/employeecreate" class="btn btn-outline-primary">
+                Create Employee
+              </router-link>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
+                @input="filterTickets">
+            </div>
+          </div>
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -27,7 +29,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(employee, index) in  paginatedData" :key="employee.id">
+              <tr v-if="paginatedData.length === 0">
+                <td colspan="8" class="text-center fs-5">No data available.</td>
+              </tr>
+              <tr v-for="(employee, index) in paginatedData" :key="employee.id">
                 <td>{{ index + 1 }}</td>
                 <td>{{ employee.firstName }}</td>
                 <td>{{ employee.lastName }}</td>
@@ -36,38 +41,36 @@
                 <td>{{ employee.emailId }}</td>
                 <td>{{ employee.address }}</td>
                 <td>
-                  <button @click="openModal(employee)" class="btn btn-outline-info mx-1">Edit</button>
+                  <i class="bi bi-pencil-fill text-primary mx-2" @click="openModal(employee)"></i>
                   <i class="bi bi-trash3-fill text-danger" @click="handleDelete(employee.id)"></i>
                 </td>
               </tr>
             </tbody>
           </table>
           <div class="d-flex justify-content-end mt-4" v-if="paginatedData.length > 0">
-                     <ul class="pagination">
-                        <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                            <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)"
-                                aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item" :class="{ active: page === currentPage }" v-for="page in totalPages"
-                            :key="page">
-                            <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
-                        </li>
-                        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                            <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)"
-                                aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+            <ul class="pagination">
+              <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <li class="page-item" :class="{ active: page === currentPage }" v-for="page in totalPages" :key="page">
+                <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+              </li>
+              <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Edit Employee Modal -->
-    <div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel"
+      aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -202,7 +205,7 @@ export default {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
       }
-    },  
+    },
 
     handleDelete(id) {
       Swal.fire({
