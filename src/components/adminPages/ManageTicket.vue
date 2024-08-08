@@ -155,35 +155,36 @@ export default {
           });
         });
     },
-    handleDelete(id) {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          axios.delete(`/api/fetchRequestFormRecordsByUserName/${id}`)
-            .then(() => {
-              Swal.fire({
-                icon: 'success',
-                title: 'Deleted',
-                text: 'The ticket type was deleted successfully',
-              });
-              this.getAllTicketType();
-            })
-            .catch(error => {
-              Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.response?.data?.message || 'There was a problem deleting the ticket type',
-              });
-            });
-        }
-      });
+   handleDelete(id) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios.delete(`/api/deleteTicketType/${id}`)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted',
+            text: 'The ticket type was deleted successfully',
+          });
+          this.getAllTicketType();
+        })
+        .catch(error => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.response?.data?.message || 'There was a problem deleting the ticket type',
+          });
+        });
+    }
+  });
+  
     },
     changePage(page) {
       if (page > 0 && page <= this.totalPages) {
