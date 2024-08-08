@@ -141,32 +141,36 @@ export default {
           console.error(error);
         });
     },
+    
     savePriority() {
-      const payload = {
-        priorityName: this.selectedPriority.priorityName,
-      };
+  const payload = {
+    priorityName: this.selectedPriority.priorityName,
+  };
+  const url = this.selectedPriority.id ? `/api/updatePriority/${this.selectedPriority.id}` : '/api/savePriority';
+  const method = this.selectedPriority.id ? 'put' : 'post';
+  axios({ method, url, data: payload })
+    .then(() => {
+      Swal.fire({
+        icon: 'success',
+        title: method === 'put' ? 'Updated' : 'Saved',
+        text: `The priority type was ${method === 'put' ? 'updated' : 'saved'} successfully`,
+      }).then(() => {
+        this.getAllPriority();
+        const modalElement = document.getElementById('exampleModal');
+        const modalInstance = Modal.getInstance(modalElement);
+        modalInstance.hide();
+      });
+    })
+    .catch(error => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.message || `There was a problem ${method === 'put' ? 'updating' : 'saving'} the priority type`,
+      });
+    });
+},
 
-      axios.post('/api/savePriority', payload)
-        .then(() => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Saved',
-            text: 'The priority type was saved successfully',
-          }).then(() => {
-            this.getAllPriority();
-            const modalElement = document.getElementById('exampleModal');
-            const modalInstance = Modal.getInstance(modalElement);
-            modalInstance.hide();
-          });
-        })
-        .catch(error => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: error.response?.data?.message || 'There was a problem saving the priority type',
-          });
-        });
-    },
+
     handleDelete(id) {
       Swal.fire({
         title: 'Are you sure?',
