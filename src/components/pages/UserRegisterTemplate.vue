@@ -4,9 +4,9 @@
       <div class="row justify-content-center">
         <div class="col-md-9 border rounded shadow p-4" :style="{ backgroundColor: 'rgba(255, 255, 255, 0.25)' }">
           <form @submit.prevent="userRegister">
-            <h3 class="text-center m-5">User Registration Form</h3>
-            <div class="row m-2">
-              <div class="col-md-6">
+            <h3 class="text-center m-4">User Registration Form</h3>
+            <div class="row">
+              <div class="col-md-6 mb-2">
                 <div class="input-field">
                   <label for="firstName">First Name</label>
                   <input v-model="project.firstName" type="text" class="form-control" id="firstName" name="firstName" />
@@ -15,7 +15,9 @@
                     First Name is required.
                   </div>
                 </div>
+              </div>
 
+              <div class="col-md-6 mb-2">
                 <div class="input-field">
                   <label for="lastName">Last Name</label>
                   <input v-model="project.lastName" type="text" class="form-control" id="lastName" name="lastName" />
@@ -26,7 +28,7 @@
                 </div>
               </div>
 
-              <div class="col-md-6">
+              <div class="col-md-6 mb-2">
                 <div class="input-field">
                   <label for="companyName">Company Name</label>
                   <input v-model="project.companyName" type="text" class="form-control" id="companyName"
@@ -36,6 +38,9 @@
                     Company Name is required.
                   </div>
                 </div>
+              </div>
+
+              <div class="col-md-6 mb-2">
                 <div class="input-field">
                   <label for="phoneNumber">Phone Number</label>
                   <input v-model="project.phoneNumber" type="text" class="form-control" id="phoneNumber"
@@ -47,7 +52,7 @@
                 </div>
               </div>
 
-              <div class="col-md-6">
+              <div class="col-md-6 mb-2">
                 <div class="input-field">
                   <label for="emailId">EmailId</label>
                   <input v-model="project.emailId" type="text" class="form-control" id="emailId" name="emailId" />
@@ -56,7 +61,8 @@
                     EmailId is required.
                   </div>
                 </div>
-
+              </div>
+              <div class="col-md-6 mb-2">
                 <div class="input-field">
                   <label for="address">Address</label>
                   <input v-model="project.address" type="text" class="form-control" id="address" name="address" />
@@ -67,7 +73,7 @@
                 </div>
               </div>
 
-              <div class="col-md-6">
+              <div class="col-md-6 mb-2">
                 <div class="input-field">
                   <label for="password">Password</label>
                   <div class="input-group">
@@ -83,6 +89,9 @@
                     Password is required.
                   </div>
                 </div>
+              </div>
+
+              <div class="col-md-6 mb-2">
                 <div class="input-field">
                   <label for="confirmPassword">Confirm Password</label>
                   <div class="input-group">
@@ -100,7 +109,7 @@
                 </div>
               </div>
 
-              <div class="d-grid gap-2 col-6 mx-auto m-5">
+              <div class="d-grid gap-2 col-6 mx-auto m-4">
                 <div class="text-center">
                   <button type="submit" class="btn btn-primary" :disabled="isSaving">
                     Register
