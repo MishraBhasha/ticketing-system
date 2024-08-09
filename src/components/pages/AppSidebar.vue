@@ -13,6 +13,10 @@
             <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/priority/list') }">
                 <router-link to="/user/admin/priority/list" class="nav-link">Manage Prority Type</router-link>
             </li>
+            <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/company/list') }">
+                <router-link to="/user/admin/company/list" class="nav-link">Manage Company</router-link>
+            </li>
+           
 
             <li v-if="userRole === 'Employee'" class="nav-item" :class="{ active: isActive('/user/emp/list') }">
                 <router-link to="/user/emp/list" class="nav-link">Dashboard</router-link>

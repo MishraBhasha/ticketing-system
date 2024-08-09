@@ -22,6 +22,7 @@ import TicketList from './components/pages/TicketList';
 import TicketCreate from './components/pages/TicketCreate';
 import TicketEdit from './components/pages/TicketEdit';
 import TicketView from './components/pages/TicketView';
+import ManageCompany from './components/adminPages/ManageCompany.vue';
 
 
 // axios.defaults.baseURL = process.env.VUE_APP_API_URL
@@ -59,6 +60,7 @@ const routes = [
             { path: 'admin/employeelist', component: EmployeeList },
             { path: 'admin/ticket/list', component: ManageTicket },
             { path: 'admin/priority/list', component: ManageProrityType },
+            { path: 'admin/company/list', component: ManageCompany },
             { path: 'emp/list', component: EmpTicketList },
             { path: 'list', component: TicketList },
             { path: 'create', component: TicketCreate },
