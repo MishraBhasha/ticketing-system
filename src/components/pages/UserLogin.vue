@@ -2,7 +2,7 @@
     <layout-div>
         <div class="container mt-5">
             <div class="row justify-content-center">
-                <div class="col-md-4 border rounded shadow" :style="{ backgroundColor: '#e8e8b3' }">
+                <div class="col-md-4 border rounded shadow" :style="{ backgroundColor: 'rgba(255, 255, 255, 0.25)' }">
                     <form @submit.prevent="userLogin">
                         <h2 class="text-center m-5">Login</h2>
                         <div class="d-grid gap-2 col-9 mx-auto m-5">
