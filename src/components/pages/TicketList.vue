@@ -53,7 +53,7 @@
                             <td>
                                 <span class="badge rounded-pill text-white" :class="{
                                     'bg-warning': ticket.status.toLowerCase() === 'assigned',
-                                    'bg-primary': ticket.status.toLowerCase() === 'submitted',
+                                    'bg-primary': ticket.status.toLowerCase() === 'created',
                                     'bg-secondary': ticket.status.toLowerCase() === 'generated',
                                     'bg-success': ticket.status.toLowerCase() === 'approved',
                                     'bg-dark': ticket.status.toLowerCase() === 'rejected',
@@ -207,7 +207,7 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary"
                                         data-bs-dismiss="modal">Close</button>
-                                    <button v-if="selectedTicket.status == 'SUBMITTED'" type="submit"
+                                    <button v-if="selectedTicket.status == 'CREATED'" type="submit"
                                         class="btn btn-primary">Save</button>
                                 </div>
                             </div>
@@ -239,10 +239,11 @@ export default {
             allStatistic: {},
             currentPage: 1,
             itemsPerPage: 5,
+            selectedFile: null,
             tabs: [
                 { name: 'ALL', label: 'ALL' },
                 { name: 'ASSIGNED', label: 'ASSIGNED' },
-                { name: 'SUBMITTED', label: 'SUBMITTED' },
+                { name: 'CREATED', label: 'CREATED' },
                 { name: 'GENERATED', label: 'GENERATED' },
                 { name: 'APPROVED', label: 'APPROVED' },
                 { name: 'REJECTED', label: 'REJECTED' },
@@ -339,11 +340,39 @@ export default {
         // },
         openModal(ticket) {
             this.selectedTicket = ticket;
+            console.log(this.selectedTicket)
             this.fetchTicketList();
         },
         update() {
             console.log(this.selectedTicket)
-            axios.put(`/api/updateRequestFormData`, this.selectedTicket)
+             // Prepare the filtered ticket data
+        const filteredTicket = {
+            address: this.selectedTicket.address,
+            userName: this.selectedTicket.userName,
+            personName: this.selectedTicket.personName,
+            expectedDeliveryDate: this.selectedTicket.expectedDeliveryDate,
+            phoneNumber: this.selectedTicket.phoneNumber,
+            emailId: this.selectedTicket.emailId,
+            commentBox: this.selectedTicket.commentBox,
+            ticketId: this.selectedTicket.ticketId,
+            priorityId: this.selectedTicket.priorityId,
+            requestFormCode: this.selectedTicket.requestFormCode
+        };
+
+        const status = ''; // Set your status here
+        const file = this.selectedFile; // Assume `selectedFile` is a file object
+
+        // Create FormData instance and append data
+        const formData = new FormData();
+        formData.append('requestFormDTO', JSON.stringify(filteredTicket));
+        if (file) {
+            formData.append('file', file);
+        }
+        if (status) {
+            formData.append('status', status);
+        }
+
+            axios.put(`/api/updateRequestFormData`,formData )
                 .then(response => {
                     console.log(response);
                     this.fetchTicketList();

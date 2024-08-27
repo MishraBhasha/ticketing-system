@@ -282,6 +282,7 @@ export default {
             allStatistic: {},
             isLoading: false,
             activeTab: 'SUBMITTED',
+            companyId : localStorage.getItem('companyId'),
             tabs: [
                 { name: 'SUBMITTED', label: 'SUBMITTED' },
                 { name: 'ALL', label: 'ALL' },
@@ -365,7 +366,12 @@ export default {
             }
         },
         fetchTicketList() {
-            axios.get('api/getRequestFormData')
+            axios.get('api/getRequestFormData', {
+                params: {
+                    status:this.activeTab,
+                    companyId: this.companyId // or simply companyId if the key and variable name are the same
+                }
+            })
                 .then(response => {
                     this.tickets = response.data.data;
                     console.log(this.tickets)
@@ -530,7 +536,11 @@ export default {
                 });
         },
         getDashboardStatistics() {
-            axios.get('api/getDashboardStatistics')
+            axios.get('api/getDashboardStatistics', {
+                params: {
+                    companyId: this.companyId // or simply companyId if the key and variable name are the same
+                }
+            })
                 .then(response => {
                     const statistic = response.data.data;
                     const obj = {

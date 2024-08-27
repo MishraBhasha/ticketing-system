@@ -137,11 +137,14 @@ export default {
                             user: response.data.data.loginDtoResponse.userName,
                             role: response.data.data.loginDtoResponse.role,
                             userId : response.data.data.loginDtoResponse.id,
+                            companyId:response.data.data.loginDtoResponse.companyId,
                         };
+                        console.log(authData)
                         this.$store.dispatch('login', authData);
                         this.login(authData);
                         localStorage.setItem('userId', authData.userId.toString());
                         console.log(localStorage.getItem('userId')); 
+                        localStorage.setItem('companyId',authData.companyId)
                         const userRole = authData.role;
                         console.log(userRole);
                         // Redirect based on role
