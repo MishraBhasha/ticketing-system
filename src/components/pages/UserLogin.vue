@@ -146,6 +146,7 @@ export default {
                         console.log(localStorage.getItem('userId')); 
                         localStorage.setItem('companyId',authData.companyId)
                         const userRole = authData.role;
+                        localStorage.setItem('userRole', authData.role);
                         console.log(userRole);
                         // Redirect based on role
                         if (userRole === 'ADMIN') {
@@ -154,7 +155,11 @@ export default {
                             this.$router.push('/user/emp/list');
                         } else if (userRole === 'user') {
                             this.$router.push('/user/list');
-                        } else {
+                        } 
+                        else if (userRole === 'SUPERADMIN') {
+                            this.$router.push('/user/superAdmin/list');
+                        }
+                        else {
                             this.$router.push('/');
                         }
                     })
