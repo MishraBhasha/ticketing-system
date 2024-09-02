@@ -49,7 +49,7 @@
                             <td>
                                 <span class="rounded-pill text-white p-1" :class="{
                                     'bg-warning': ticket.status.toLowerCase() === 'assigned',
-                                    'bg-primary': ticket.status.toLowerCase() === 'submitted',
+                                    'bg-primary': ticket.status.toLowerCase() === 'created',
                                     'bg-secondary': ticket.status.toLowerCase() === 'generated',
                                     'bg-success': ticket.status.toLowerCase() === 'approved',
                                     'bg-dark': ticket.status.toLowerCase() === 'rejected',
@@ -286,7 +286,7 @@ export default {
             tickets: [],
             listOfEmployee: [],
             currentPage: 1,
-            itemsPerPage: 5,
+            itemsPerPage: 10,
             totalItems: 0,
             searchQuery: "",
              status: '',
@@ -299,7 +299,7 @@ export default {
             showEmployeeList: false,
             companyId : localStorage.getItem('companyId'),
             tabs: [
-                { name: 'SUBMITTED', label: 'SUBMITTED' },
+                { name: 'CREATED', label: 'CREATED' },
                 { name: 'ALL', label: 'ALL' },
                 { name: 'ASSIGNED', label: 'ASSIGNED' },
                 { name: 'GENERATED', label: 'GENERATED' },
