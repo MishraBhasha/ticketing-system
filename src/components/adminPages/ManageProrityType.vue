@@ -30,7 +30,7 @@
         <div class="card-body">
           <div class="row justify-content-between mb-3">
             <div class="col-md-4">
-              <button type="button" class="btn btn-primary" @click="openCreateModal">
+              <button type="button" class="btn btn-outline-primary" @click="openCreateModal">
                 Create Priority Type
               </button>
             </div>
