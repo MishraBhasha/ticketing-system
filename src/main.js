@@ -24,6 +24,7 @@ import TicketEdit from './components/pages/TicketEdit';
 import TicketView from './components/pages/TicketView';
 import ManageCompany from './components/adminPages/ManageCompany.vue';
 import SuperAdminTicketList from './components/superAdminPages/SuperAdminTicketList.vue';
+import SuperManageCompany from './components/superAdminPages/SuperManageCompany.vue';
 
 
 // axios.defaults.baseURL = process.env.VUE_APP_API_URL
@@ -57,6 +58,7 @@ const routes = [
         component: MainLayout,
         children: [
             { path: 'superAdmin/list', component:SuperAdminTicketList},
+            { path: 'superAdmin/companyList', component:SuperManageCompany},
             { path: 'admin/list', component: AdminTicketList },
             { path: 'admin/employeecreate', component: EmployeeCreate },
             { path: 'admin/employeelist', component: EmployeeList },

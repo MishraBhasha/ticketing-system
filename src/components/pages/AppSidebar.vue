@@ -16,6 +16,9 @@
             <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/company/list') }">
                 <router-link to="/user/admin/company/list" class="nav-link">Manage Company</router-link>
             </li>
+            <li v-if="userRole === 'SUPERADMIN'" class="nav-item" :class="{ active: isActive('/user/superAdmin/companyList') }">
+                <router-link to="/user/superAdmin/companyList" class="nav-link">Manage Company</router-link>
+            </li>
            
 
             <li v-if="userRole === 'Employee'" class="nav-item" :class="{ active: isActive('/user/emp/list') }">
