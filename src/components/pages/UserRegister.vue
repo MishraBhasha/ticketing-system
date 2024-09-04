@@ -202,7 +202,7 @@ export default {
           showConfirmButton: true,
           timer: 1500
         }).then(() => {
-          router.push('/'); // Use router for redirection
+          // router.push('/'); 
         });
         console.log('Registration error:', error);
       }

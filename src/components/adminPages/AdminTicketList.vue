@@ -1,7 +1,20 @@
 <template>
     <layout-div>
         <AppLoader v-if="isLoading" />
-        <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }"> Dashboard </h2>
+        <!-- <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }"> Dashboard </h2> -->
+        <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
+            <h2 class="text-center rounded shadow mb-0" :style="{ color: '#060389' }">Dashboard</h2>
+            <div>
+                <select id="companyName" class="form-control d-inline-block w-auto"
+                    :class="{ 'is-invalid': submitted && errors.companyName }" @change="handleCompanyChange($event)"
+                    v-model="selectedCompanyId">
+                    <option value="" disabled selected>Select your company</option>
+                    <option v-for="item in companies" :key="item.id" :value="item.id">
+                        {{ item.name }}
+                    </option>
+                </select>
+            </div>
+        </div>
         <div class="card">
             <div class="card-body">
                 <div class="row justify-content-end">
@@ -48,10 +61,17 @@
                             <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
                             <td>
                                 <span class="rounded-pill text-white p-1" :class="{
-                                    'bg-warning': ticket.status.toLowerCase() === 'assigned',
-                                    'bg-primary': ticket.status.toLowerCase() === 'submitted',
-                                    'bg-secondary': ticket.status.toLowerCase() === 'generated',
-                                    'bg-success': ticket.status.toLowerCase() === 'approved',
+                                    'bg-warning':
+                                        ticket.status.toLowerCase() === 'assigned' ||
+                                        ticket.status.toLowerCase() === 'deny' ||
+                                        ticket.status.toLowerCase() === 're-assigned',
+                                    'bg-primary': ticket.status.toLowerCase() === 'forwarded',
+                                    'bg-info': ticket.status.toLowerCase() === 'inprogress',
+                                    'bg-secondary':
+                                        ticket.status.toLowerCase() === 'in-verify' ||
+                                        ticket.status.toLowerCase() === 'deferred' ||
+                                        ticket.status.toLowerCase() === 're-opened',
+                                    'bg-success': ticket.status.toLowerCase() === 'closed',
                                     'bg-dark': ticket.status.toLowerCase() === 'rejected',
                                     'bg-danger': ticket.status.toLowerCase() === 'cancelled'
                                 }">{{ ticket.status }}
@@ -68,7 +88,7 @@
                 </table>
                 <!--Pagination-->
                 <div class="d-flex justify-content-end mt-4" v-if="paginatedData.length > 0">
-                     <ul class="pagination">
+                    <ul class="pagination">
                         <li class="page-item" :class="{ disabled: currentPage === 1 }">
                             <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)"
                                 aria-label="Previous">
@@ -210,17 +230,28 @@
                         </form>
                         <form @submit.prevent="adminAssigned">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-6" v-if="requestData !== 'REJECTED' && requestData !== 'CANCELLED'">
                                     <label for="status">Status</label>
-                                    <select class="form-select" v-model="status">
+                                    <select class="form-select" v-model="status" @change="onStatusChange">
                                         <option value="" disabled selected>--select--</option>
-                                        <option value="ASSIGNED" v-if="activeTab === 'SUBMITTED'">ASSIGN</option>
-                                        <option value="APPROVED" v-if="activeTab === 'GENERATED'">APPROVE</option>
+                                        <option value="ASSIGNED" v-if="
+                                            requestData === 'CREATED' ||
+                                            requestData === 'DENY' ||
+                                            requestData === 'DEFERRED' ||
+                                            requestData === 'RE-OPENED' || requestData === 'FORWARDED'
+                                        ">
+                                            ASSIGN
+                                        </option>
+
+                                        <option value="CLOSED" v-if="requestData === 'IN-VERIFY'">
+                                            CLOSE
+                                        </option>
                                         <option value="REJECTED">REJECT</option>
+                                        <option value="DEFERRED">DEFER</option>
 
                                     </select>
                                 </div>
-                                <div class="col-md-6" v-if="activeTab === 'SUBMITTED'">
+                                <div class="col-md-6" v-if="showEmployeeList">
                                     <label>Employee Name</label>
                                     <select class="form-select" v-model="assignedTo">
                                         <option value="" disabled selected>--select--</option>
@@ -230,10 +261,11 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="heading-container">
+                            <br>
+                            <!-- <div class="heading-container">
                                 <h4>Comment Section</h4>
-                            </div>
-                            <div class="row">
+                            </div> -->
+                            <!-- <div class="row">
                                 <div class="col-md-12">
                                     <label>Admin Comment</label>
                                     <textarea class="form-control" v-model="comment">
@@ -242,10 +274,30 @@
 
                                 </div>
 
-                            </div>
+                            </div> -->
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
+                        <div class="heading-container">
+                            <h4>Comment Section</h4>
+                        </div>
+                        <form @submit.prevent="saveComment">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="field2" class="form-label">Admin Comment</label>
+                                        <textarea v-model="commentForm.empComment" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-5 d-flex">
+                                    <button class="btn btn-primary me-2" type="submit">
+                                        Add Comments
+                                    </button>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal" >Close</button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -272,6 +324,7 @@ export default {
         return {
             tickets: [],
             listOfEmployee: [],
+            companies: [],
             currentPage: 1,
             itemsPerPage: 5,
             totalItems: 0,
@@ -281,10 +334,13 @@ export default {
             comment: '',
             allStatistic: {},
             isLoading: false,
-            activeTab: 'SUBMITTED',
-            companyId : localStorage.getItem('companyId'),
+            activeTab: 'FORWARDED',
+            requestData: 'FORWARDED',
+            showEmployeeList: false,
+            selectedCompanyId: '',
+            companyId: localStorage.getItem('companyId'),
             tabs: [
-                { name: 'SUBMITTED', label: 'SUBMITTED' },
+                { name: 'FORWARDED', label: 'FORWARDED' },
                 { name: 'ALL', label: 'ALL' },
                 { name: 'ASSIGNED', label: 'ASSIGNED' },
                 { name: 'GENERATED', label: 'GENERATED' },
@@ -303,13 +359,17 @@ export default {
                 createdOn: '',
                 ticketName: '',
                 priorityName: '',
-                commentBox: '',
+                // commentBox: '',
+            },
+            commentForm: {
+                empComment: ''
             },
         };
     },
     created() {
         this.fetchTicketList();
         this.getDashboardStatistics();
+        this.companyWiseRequest();
     },
     computed: {
         formattedUserSubmissionDate() {
@@ -330,7 +390,7 @@ export default {
                     (ticket.emailId?.toLowerCase().includes(query) || '') ||
                     (ticket.ticketName?.toLowerCase().includes(query) || '') ||
                     (ticket.status?.toLowerCase().includes(query) || '') ||
-                    (ticket.priorityName?.toLowerCase().includes(query) || '') || 
+                    (ticket.priorityName?.toLowerCase().includes(query) || '') ||
                     (ticket.commentBox?.toLowerCase().includes(query) || '')
                 );
                 return matchesTab && matchesQuery;
@@ -354,6 +414,7 @@ export default {
         },
         openModal(ticket) {
             this.selectedTicket = ticket;
+            this.requestFormCode = ticket.requestFormCode;
             this.fetchEmployeeList();
         },
         closeModal() {
@@ -368,7 +429,7 @@ export default {
         fetchTicketList() {
             axios.get('api/getRequestFormData', {
                 params: {
-                    status:this.activeTab,
+                    status: this.activeTab,
                     companyId: this.companyId // or simply companyId if the key and variable name are the same
                 }
             })
@@ -481,15 +542,39 @@ export default {
                     console.error(error);
                 });
         },
+
+
         adminAssigned() {
             // this.isLoading = true;
-            const payload = {
-                status: this.status,
-                assignedTo:  this.activeTab === 'GENERATED' ? 0 : this.assignedTo,
-                comment: this.comment,
-                requestFormCode: this.selectedTicket.requestFormCode,
-                assignedBy: localStorage.getItem('userId')
-            };
+            let obj = {};
+            if (this.requestData === 'COMPILED' || this.status === 'REJECTED') {
+                obj = {
+                    status: this.status,
+                    assignedTo: 0,
+                    comment: this.comment,
+                    requestFormCode: this.selectedTicket.requestFormCode,
+                    assignedBy: localStorage.getItem('userId'),
+                    companyId: this.selectedCompanyId
+                }
+
+            }
+            else {
+                obj = {
+                    status: this.status,
+                    assignedTo: this.assignedTo,
+                    comment: this.comment,
+                    requestFormCode: this.selectedTicket.requestFormCode,
+                    assignedBy: localStorage.getItem('userId'),
+                    companyId: this.selectedCompanyId
+                }
+            }
+            // const payload = {
+            //     status: this.status,
+            //     assignedTo: this.activeTab === 'GENERATED' ? 0 : this.assignedTo,
+            //     comment: this.comment,
+            //     requestFormCode: this.selectedTicket.requestFormCode,
+            //     assignedBy: localStorage.getItem('userId')
+            // };
 
             Swal.fire({
                 title: 'Please wait...',
@@ -503,14 +588,14 @@ export default {
             // this.isLoading = true;
 
             axios.all([
-                axios.post('/api/saveRequestFormTrackingRecord', payload),
-                axios.put(`/api/updateStatus?status=${payload.status}&id=${payload.requestFormCode}`)
+                axios.post('/api/saveRequestFormTrackingRecord', obj),
+                axios.put(`/api/updateStatus?status=${obj.status}&id=${obj.requestFormCode}`)
             ])
                 .then(axios.spread(() => {
                     Swal.fire({
                         icon: 'success',
                         title: 'Status Updated',
-                        text: `${payload.status} successfully.`,
+                        text: `${obj.status} successfully.`,
                         confirmButtonText: 'OK',
                     }).then((result) => {
                         if (result.isConfirmed) {
@@ -535,6 +620,17 @@ export default {
                     this.isLoading = false; // Hide loader
                 });
         },
+        onStatusChange() {
+            const selectedStatus = this.status;
+            this.showEmployeeList = ['FORWARDED', 'DENY', 'DEFERRED', 'RE-OPENED'].includes(this.requestData);
+            console.log(this.showEmployeeList);
+
+            if (selectedStatus === 'REJECTED' || selectedStatus === 'DEFERRED') {
+                this.showEmployeeList = false;
+                console.log(this.showEmployeeList);
+            }
+        },
+
         getDashboardStatistics() {
             axios.get('api/getDashboardStatistics', {
                 params: {
@@ -565,8 +661,84 @@ export default {
                 this.currentPage = page;
             }
         },
-    },
+        saveComment() {
+            const userRole = localStorage.getItem('userRole');
+            const userId = localStorage.getItem('userId')
+            console.log(this.commentForm);
 
+            const obj = {
+                comment: this.commentForm.empComment,
+                requestFormCode: this.requestFormCode,
+                role: userRole,
+                employeeId: 0,
+                adminId: userId,
+            };
+
+            Swal.fire({
+                title: 'Please wait...',
+                html: 'Submitting the Comment',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+
+            axios.post(`/api/saveComment`, obj).then(
+                (response) => {
+                    if (response.data) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Comment Submitted',
+                            text: 'Your Comment has been submitted successfully.',
+                            confirmButtonText: 'OK',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Swal.close();
+                            }
+                        });
+                    }
+                },
+                (error) => {
+                    console.error(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Form Submission Failed',
+                        text: 'An error occurred while submitting the form.',
+                        confirmButtonText: 'OK',
+                    });
+                }
+            );
+        },
+
+        handleCompanyChange(valueOrEvent) {
+            const value = valueOrEvent.target ? valueOrEvent.target.value : valueOrEvent;
+            this.selectedCompanyId = value;
+            // Perform any additional logic here, such as making API calls
+        },
+        companyWiseRequest() {
+            axios.get('api/getCompanylist')
+                .then(response => {
+                    this.companies = response.data.data;
+                    console.log(this.companies)
+                    // return response
+                    if (this.companies.length > 0) {
+                        this.selectedCompanyId = this.companies[0].id;
+                        this.$nextTick(() => {
+                            this.handleCompanyChange(this.selectedCompanyId);
+                        });
+                    }
+                })
+                .catch(error => {
+                    return error
+                });
+        },
+        resetForm() {
+            this.status = '';
+            this.assignedTo = '';
+            this.commentForm.empComment = '';
+        }
+    },
+  
 
 };
 </script>
@@ -595,5 +767,20 @@ th {
 .priority-high {
     font-weight: bold;
     color: red;
+}
+
+.heading-container {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.heading-container::before,
+.heading-container::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #000;
+    margin: 0 10px;
 }
 </style>
