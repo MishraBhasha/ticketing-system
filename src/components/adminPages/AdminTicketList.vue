@@ -18,12 +18,12 @@
         <div class="card">
             <div class="card-body">
                 <div class="row justify-content-end">
-                    <div class="col-md-4">
+                    <div class="col-md-4 mb-3">
                         <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
                             @input="filterTickets">
                     </div>
                 </div>
-                <ul class="nav nav-underline">
+                <!-- <ul class="nav nav-underline">
                     <li class="nav-item" v-for="tab in tabs" :key="tab.name">
                         <a class="nav-link m-2" :class="{ active: activeTab === tab.name }"
                             @click="setActiveTab(tab.name)" href="#">
@@ -32,7 +32,30 @@
                                 allStatistic[tab.label.toUpperCase()] ?? 0 }}</span>
                         </a>
                     </li>
-                </ul>
+                </ul> -->
+                
+                <div class="row">
+                    <div v-for="tab in tabs" :key="tab.name" class="col-lg-2 mb-3">
+                        <div class="card shadow box" :class="{ active: activeTab === tab.name }" 
+                            @click="setActiveTab(tab.name)"
+                            :style="{ cursor: 'pointer' }">
+                            <div class="card-body d-flex align-items-center p-2">
+                                <i :class="tab.icon + ' fs-2 me-2'"></i>
+                                <div>
+                                    <h6 class="card-title"
+                                        :class="{ active: activeTab === tab.name }">
+                                        {{ tab.label }}
+                                    </h6>
+
+                                    <p class="card-text">
+                                        {{ allStatistic[tab.label.toUpperCase()] ?? 0 }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -340,13 +363,17 @@ export default {
             selectedCompanyId: '',
             companyId: localStorage.getItem('companyId'),
             tabs: [
-                { name: 'FORWARDED', label: 'FORWARDED' },
-                { name: 'ALL', label: 'ALL' },
-                { name: 'ASSIGNED', label: 'ASSIGNED' },
-                { name: 'GENERATED', label: 'GENERATED' },
-                { name: 'APPROVED', label: 'APPROVED' },
-                { name: 'REJECTED', label: 'REJECTED' },
-                { name: 'CANCELLED', label: 'CANCELLED' },
+                { name: 'FORWARDED', label: 'FORWARDED', icon: 'bi bi-ui-checks' },
+                { name: 'ALL', label: 'ALL', icon: 'bi bi-list-check' },
+                { name: 'ASSIGNED', label: 'ASSIGNED', icon: 'bi bi-person-check' },
+                { name: 'INPROGRESS', label: 'INPROGRESS', icon: 'bi bi-person-check' },
+                { name: 'INVERIFY', label: 'INVERIFY', icon: 'bi bi-bar-chart' },
+                { name: 'DENY', label: 'DENY', icon: 'bi bi-calendar2-x' },
+                { name: 'REASSIGNED', label: 'REASSIGNED', icon: 'bi bi-calendar2-x' },
+                { name: 'REOPENED', label: 'RE-OPENED', icon: 'bi bi-calendar2-x' },
+                { name: 'CLOSED', label: 'CLOSED', icon: 'bi bi-journal-check' },
+                { name: 'REJECTED', label: 'REJECTED', icon: 'bi bi-x-circle' },
+                { name: 'DEFERRED', label: 'DEFERRED', icon: 'bi bi-file-earmark-image-fill' },
             ],
             selectedTicket: {
                 companyName: '',
@@ -408,8 +435,8 @@ export default {
     methods: {
         setActiveTab(tabName) {
             this.activeTab = tabName;
-            this.currentPage = 1; // Reset to first page on tab change
-            this.fetchTicketList();
+            this.currentPage = 1; 
+            // this.fetchTicketList();
             console.log(this.activeTab)
         },
         openModal(ticket) {
@@ -744,9 +771,20 @@ export default {
 </script>
 
 <style scoped>
-.nav-link.active {
-    font-weight: bolder;
-    color: #060389;
+.box {
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+h6 {
+    color: #385c92;
+}
+
+.card.active {
+    color: #ffffff;
+    background-color: #385c92;
+    h6.active {
+        color: #ffffff;    
+    }
 }
 
 th {
