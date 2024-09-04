@@ -9,12 +9,12 @@
             </div>
             <div class="card-body">
                 <div class="row justify-content-end">
-                    <div class="col-md-4">
+                    <div class="col-md-4 mb-3">
                         <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
                             @input="filterTickets">
                     </div>
                 </div>
-                <ul class="nav nav-underline">
+                <!-- <ul class="nav nav-underline">
                     <li class="nav-item" v-for="tab in tabs" :key="tab.name">
                         <a class="nav-link m-2" :class="{ active: activeTab === tab.name }"
                             @click="setActiveTab(tab.name)" href="#">
@@ -23,7 +23,29 @@
                                 allStatistic[tab.label.toUpperCase()] ?? 0 }}</span>
                         </a>
                     </li>
-                </ul>
+                </ul> -->
+                <div class="row">
+                    <div v-for="tab in tabs" :key="tab.name" class="col-lg-2 mb-3">
+                        <div class="card shadow box" :class="{ active: activeTab === tab.name }" 
+                            @click="setActiveTab(tab.name)"
+                            :style="{ cursor: 'pointer' }">
+                            <div class="card-body d-flex align-items-center p-2">
+                                <i :class="tab.icon + ' fs-2 me-2'"></i>
+                                <div>
+                                    <h6 class="card-title"
+                                        :class="{ active: activeTab === tab.name }">
+                                        {{ tab.label }}
+                                    </h6>
+
+                                    <p class="card-text">
+                                        {{ allStatistic[tab.label.toUpperCase()] ?? 0 }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -84,13 +106,14 @@
                             <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
                         </li>
                         <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                            <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)" aria-label="Next">
+                            <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)"
+                                aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
                     </ul>
                 </div>
-            </div>            
+            </div>
         </div>
         <!--Modal-->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -241,13 +264,14 @@ export default {
             itemsPerPage: 5,
             selectedFile: null,
             tabs: [
-                { name: 'ALL', label: 'ALL' },
-                { name: 'ASSIGNED', label: 'ASSIGNED' },
-                { name: 'CREATED', label: 'CREATED' },
-                { name: 'GENERATED', label: 'GENERATED' },
-                { name: 'APPROVED', label: 'APPROVED' },
-                { name: 'REJECTED', label: 'REJECTED' },
-                { name: 'CANCELLED', label: 'CANCELLED' },
+                { name: 'ALL', label: 'ALL', icon: 'bi bi-list-check' },
+                { name: 'CREATED', label: 'CREATED', icon: 'bi bi-ui-checks' },
+                { name: 'ASSIGNED', label: 'ASSIGNED', icon: 'bi bi-person-check' },
+                { name: 'INPROGRESS', label: 'INPROGRESS', icon: 'bi bi-person-check' },
+                { name: 'IN-VERIFY', label: 'IN-VERIFY', icon: 'bi bi-bar-chart' },
+                { name: 'CLOSED', label: 'CLOSED', icon: 'bi bi-journal-check' },
+                { name: 'REJECTED', label: 'REJECTED', icon: 'bi bi-x-circle' },
+                { name: 'RE-OPENED', label: 'RE-OPENED', icon: 'bi bi-x-circle-fill' },
             ],
             // selectedTicket: {
             //     companyName:'',
@@ -268,7 +292,7 @@ export default {
     created() {
         this.fetchTicketList();
         this.getDashboardStatistics();
-    },    
+    },
     computed: {
         filteredTickets() {
             const query = this.searchQuery.toLowerCase();
@@ -345,34 +369,34 @@ export default {
         },
         update() {
             console.log(this.selectedTicket)
-             // Prepare the filtered ticket data
-        const filteredTicket = {
-            address: this.selectedTicket.address,
-            userName: this.selectedTicket.userName,
-            personName: this.selectedTicket.personName,
-            expectedDeliveryDate: this.selectedTicket.expectedDeliveryDate,
-            phoneNumber: this.selectedTicket.phoneNumber,
-            emailId: this.selectedTicket.emailId,
-            commentBox: this.selectedTicket.commentBox,
-            ticketId: this.selectedTicket.ticketId,
-            priorityId: this.selectedTicket.priorityId,
-            requestFormCode: this.selectedTicket.requestFormCode
-        };
+            // Prepare the filtered ticket data
+            const filteredTicket = {
+                address: this.selectedTicket.address,
+                userName: this.selectedTicket.userName,
+                personName: this.selectedTicket.personName,
+                expectedDeliveryDate: this.selectedTicket.expectedDeliveryDate,
+                phoneNumber: this.selectedTicket.phoneNumber,
+                emailId: this.selectedTicket.emailId,
+                commentBox: this.selectedTicket.commentBox,
+                ticketId: this.selectedTicket.ticketId,
+                priorityId: this.selectedTicket.priorityId,
+                requestFormCode: this.selectedTicket.requestFormCode
+            };
 
-        const status = ''; // Set your status here
-        const file = this.selectedFile; // Assume `selectedFile` is a file object
+            const status = ''; // Set your status here
+            const file = this.selectedFile; // Assume `selectedFile` is a file object
 
-        // Create FormData instance and append data
-        const formData = new FormData();
-        formData.append('requestFormDTO', JSON.stringify(filteredTicket));
-        if (file) {
-            formData.append('file', file);
-        }
-        if (status) {
-            formData.append('status', status);
-        }
+            // Create FormData instance and append data
+            const formData = new FormData();
+            formData.append('requestFormDTO', JSON.stringify(filteredTicket));
+            if (file) {
+                formData.append('file', file);
+            }
+            if (status) {
+                formData.append('status', status);
+            }
 
-            axios.put(`/api/updateRequestFormData`,formData )
+            axios.put(`/api/updateRequestFormData`, formData)
                 .then(response => {
                     console.log(response);
                     this.fetchTicketList();
@@ -494,9 +518,20 @@ export default {
 </script>
 
 <style scoped>
-.nav-link.active {
-    font-weight: bolder;
-    color: #060389;
+.box {
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+h6 {
+    color: #385c92;
+}
+
+.card.active {
+    color: #ffffff;
+    background-color: #385c92;
+    h6.active {
+        color: #ffffff;    
+    }
 }
 
 th {
