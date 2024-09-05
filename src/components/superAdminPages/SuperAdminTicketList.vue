@@ -5,12 +5,12 @@
         <div class="card">
             <div class="card-body">
                 <div class="row justify-content-end">
-                    <div class="col-md-4">
+                    <div class="col-md-4 mb-3">
                         <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
                             @input="filterTickets">
                     </div>
                 </div>
-                <ul class="nav nav-underline">
+                <!-- <ul class="nav nav-underline">
                     <li class="nav-item" v-for="tab in tabs" :key="tab.name">
                         <a class="nav-link m-2" :class="{ active: activeTab === tab.name }"
                             @click="setActiveTab(tab.name)" href="#">
@@ -19,7 +19,19 @@
                                 allStatistic[tab.label.toUpperCase()] ?? 0 }}</span>
                         </a>
                     </li>
-                </ul>
+                </ul> -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <!-- <div class="chart-container"> -->
+                        <DoughnutChart :chartData="doughnutChartData" :options="doughnutChartOptions" />
+                        <!-- </div> -->
+                    </div>
+                    <div class="col-md-6">
+                        <LineChart :chartData="lineChartData" :options="lineChartOptions" />
+                    </div>
+                </div>
+
+
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -68,7 +80,7 @@
                 </table>
                 <!--Pagination-->
                 <div class="d-flex justify-content-end mt-4" v-if="paginatedData.length > 0">
-                     <ul class="pagination">
+                    <ul class="pagination">
                         <li class="page-item" :class="{ disabled: currentPage === 1 }">
                             <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)"
                                 aria-label="Previous">
@@ -210,55 +222,56 @@
                         </form>
                         <form @submit.prevent="adminAssigned">
                             <div class="row">
-    <div class="col-md-4" v-if="requestData !== 'REJECTED' && requestData !== 'CANCELLED'">
-      <div class="form-group">
-        <label for="status">Status</label>
-        <select v-model="status" class="form-select" @change="onStatusChange">
-          <option value="" disabled selected>Select</option>
-          <option value="ASSIGNED" v-if="isStatusSelectable()">ASSIGN</option>
+                                <div class="col-md-4" v-if="requestData !== 'REJECTED' && requestData !== 'CANCELLED'">
+                                    <div class="form-group">
+                                        <label for="status">Status</label>
+                                        <select v-model="status" class="form-select" @change="onStatusChange">
+                                            <option value="" disabled selected>Select</option>
+                                            <option value="ASSIGNED" v-if="isStatusSelectable()">ASSIGN</option>
 
-          <option value="CLOSED" v-if="requestData === 'IN-VERIFY'">CLOSE</option>
-          <option value="REJECTED">REJECT</option>
-          <option value="DEFERRED">DEFER</option>
-          <option value="FORWARDED">FORWARD</option>
-        </select>
-      </div>
-    </div>
+                                            <option value="CLOSED" v-if="requestData === 'IN-VERIFY'">CLOSE</option>
+                                            <option value="REJECTED">REJECT</option>
+                                            <option value="DEFERRED">DEFER</option>
+                                            <option value="FORWARDED">FORWARD</option>
+                                        </select>
+                                    </div>
+                                </div>
 
-    <div class="col-md-4" v-if="showEmployeeList">
-      <div class="form-group">
-        <label for="firstName">Employee List</label>
-        <select v-model="assignedTo" class="form-select">
-          <option value="" disabled selected>Select an employee</option>
-          <option v-for="data in listOfEmployee" :key="data.id" :value="data.id">
-            {{ data.firstName }} {{ data.lastName }}
-          </option>
-        </select>
-      </div>
-    </div>
-  </div>
+                                <div class="col-md-4" v-if="showEmployeeList">
+                                    <div class="form-group">
+                                        <label for="firstName">Employee List</label>
+                                        <select v-model="assignedTo" class="form-select">
+                                            <option value="" disabled selected>Select an employee</option>
+                                            <option v-for="data in listOfEmployee" :key="data.id" :value="data.id">
+                                                {{ data.firstName }} {{ data.lastName }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="modal-footer">
-                               
+
                                 <button type="submit" class="btn btn-primary">Save</button>
                             </div>
                         </form>
                         <form @submit.prevent="saveComment">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="field2" class="form-label">Admin Comment</label>
-          <textarea v-model="commentForm.empComment" class="form-control"></textarea>
-        </div>
-      </div>
-      <div class="col-md-6 mt-5">
-        <button class="btn btn-primary" type="submit">
-          Add Comments
-        </button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </form>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="field2" class="form-label">Admin Comment</label>
+                                        <textarea v-model="commentForm.empComment" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-5">
+                                    <button class="btn btn-primary" type="submit">
+                                        Add Comments
+                                    </button>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </form>
 
 
                     </div>
@@ -275,11 +288,22 @@ import LayoutDiv from '../LayoutDiv.vue';
 import Swal from 'sweetalert2';
 import { Modal } from 'bootstrap';
 import AppLoader from '../pages/AppLoader.vue';
+import { DoughnutChart, LineChart } from "vue-chart-3";
+import {
+    Chart, ArcElement, Legend, Tooltip, DoughnutController,
+    LineController, LineElement, PointElement, CategoryScale, LinearScale
+} from "chart.js";
+
+Chart.register(ArcElement, Legend, Tooltip, DoughnutController,
+    LineController, LineElement, PointElement, CategoryScale, LinearScale);
+
 export default {
     name: 'TicketList',
     components: {
         LayoutDiv,
-        AppLoader
+        AppLoader,
+        DoughnutChart,
+        LineChart
     },
     data() {
         return {
@@ -289,7 +313,7 @@ export default {
             itemsPerPage: 10,
             totalItems: 0,
             searchQuery: "",
-             status: '',
+            status: '',
             assignedTo: '',
             comment: '',
             allStatistic: {},
@@ -297,16 +321,7 @@ export default {
             isLoading: false,
             activeTab: 'SUBMITTED',
             showEmployeeList: false,
-            companyId : localStorage.getItem('companyId'),
-            tabs: [
-                { name: 'CREATED', label: 'CREATED' },
-                { name: 'ALL', label: 'ALL' },
-                { name: 'ASSIGNED', label: 'ASSIGNED' },
-                { name: 'GENERATED', label: 'GENERATED' },
-                { name: 'APPROVED', label: 'APPROVED' },
-                { name: 'REJECTED', label: 'REJECTED' },
-                { name: 'CANCELLED', label: 'CANCELLED' },
-            ],
+            companyId: localStorage.getItem('companyId'),
             selectedTicket: {
                 companyName: '',
                 address: '',
@@ -321,9 +336,101 @@ export default {
                 commentBox: '',
             },
             commentForm: {
-        empComment: ''
-      },
-      requestFormCode: '' 
+                empComment: ''
+            },
+            requestFormCode: '',
+
+            tabs: [
+                { name: 'ALL', color: 'rgba(255, 99, 132, 0.8)' },
+                { name: 'CREATED', color: 'rgba(0, 255, 0, 0.8)' },
+                { name: 'ASSIGNED', color: 'rgba(255, 159, 64, 0.8)' },
+                { name: 'INPROGRESS', color: 'rgba(54, 162, 235, 0.8)' },
+                { name: 'IN-VERIFY', color: 'rgba(75, 192, 192, 0.8)' },
+                { name: 'DENY', color: 'rgba(153, 102, 255, 0.8)' },
+                { name: 'RE-ASSIGNED', color: 'rgba(255, 159, 64, 0.8)' },
+                { name: 'RE-OPENED', color: 'rgba(255, 99, 132, 0.8)' },
+                { name: 'CLOSED', color: 'rgba(255, 205, 86, 0.8)' },
+                { name: 'REJECTED', color: 'rgba(201, 203, 207, 0.8)' },
+                { name: 'DEFERRED', color: 'rgba(75, 192, 192, 0.8)' },
+            ],
+
+            doughnutChartData: {
+                labels: [], // Use tab labels for chart labels
+                datasets: [
+                    {
+                        label: "# of Votes",
+                        data: [], // Initialize with zeros
+                        backgroundColor: [],
+                        borderColor: ["rgba(255, 99, 132, 1)"],
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            doughnutChartOptions: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: "top",
+                    },
+                    tooltip: {
+                        enabled: true,
+                    },
+                },
+                onClick: (e, elements) => {
+                    if (elements.length > 0) {
+                        const elementIndex = elements[0].index;
+                        const label = this.doughnutChartData.labels[elementIndex];
+                        const value = this.doughnutChartData.datasets[0].data[elementIndex];
+                        console.log(`Clicked segment: ${label} with value ${value}`);
+                        // this.selectedTab = label; // Update the selected tab
+                        this.activeTab = label;
+                    }
+                },
+            },
+            lineChartData: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
+                datasets: [
+                    {
+                        label: 'Issues Raised',
+                        data: [10, 20, 30, 25, 40, 35, 50, 45, 55, 50, 60, 70], // Example data
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)', // Blue background color
+                        borderColor: 'rgba(54, 162, 235, 1)', // Blue border color
+                        fill: false,
+                        lineTension: 0,
+                        radius: 5,
+                    },
+                    {
+                        label: 'Issues Resolved',
+                        data: [5, 15, 20, 20, 30, 25, 40, 35, 45, 40, 50, 60], // Example data
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)', // Green background color
+                        borderColor: 'rgba(75, 192, 192, 1)', // Green border color
+                        fill: false,
+                        lineTension: 0,
+                        radius: 5,
+                    },
+                ],
+            },
+            lineChartOptions: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: "top",
+                    },
+                    tooltip: {
+                        enabled: true,
+                    },
+                },
+                scales: {
+                    x: {
+                        type: 'category', // Ensure this is set correctly
+                        beginAtZero: true,
+                    },
+                    y: {
+                        type: 'linear', // Ensure this is set correctly
+                        beginAtZero: true,
+                    },
+                },
+            },
         };
     },
     created() {
@@ -331,8 +438,6 @@ export default {
         this.getDashboardStatistics();
     },
     computed: {
-     
- 
         formattedUserSubmissionDate() {
             return this.formatDate(this.selectedTicket.createdOn);
         },
@@ -351,7 +456,7 @@ export default {
                     (ticket.emailId?.toLowerCase().includes(query) || '') ||
                     (ticket.ticketName?.toLowerCase().includes(query) || '') ||
                     (ticket.status?.toLowerCase().includes(query) || '') ||
-                    (ticket.priorityName?.toLowerCase().includes(query) || '') || 
+                    (ticket.priorityName?.toLowerCase().includes(query) || '') ||
                     (ticket.commentBox?.toLowerCase().includes(query) || '')
                 );
                 return matchesTab && matchesQuery;
@@ -367,30 +472,28 @@ export default {
         },
     },
     methods: {
-    isStatusSelectable() {
-      return (
-        this.requestData === 'CREATED' ||
-        this.requestData === 'DENY' ||
-        this.requestData === 'FORWARDED' ||
-        this.requestData === 'DEFERRED' ||
-        this.requestData === 'RE-OPENED'
-      );
-    },
-    onStatusChange() {
-      const selectedStatus = this.status;
-      this.showEmployeeList = 
-        this.requestData === 'CREATED' ||
-        this.requestData === 'DENY' ||
-        this.requestData === 'FORWARDED' ||
-        this.requestData === 'DEFERRED' ||
-        this.requestData === 'RE-OPENED';
+        isStatusSelectable() {
+            return (
+                this.requestData === 'CREATED' ||
+                this.requestData === 'DENY' ||
+                this.requestData === 'FORWARDED' ||
+                this.requestData === 'DEFERRED' ||
+                this.requestData === 'RE-OPENED'
+            );
+        },
+        onStatusChange() {
+            const selectedStatus = this.status;
+            this.showEmployeeList =
+                this.requestData === 'CREATED' ||
+                this.requestData === 'DENY' ||
+                this.requestData === 'FORWARDED' ||
+                this.requestData === 'DEFERRED' ||
+                this.requestData === 'RE-OPENED';
 
-      if (selectedStatus === 'REJECTED' || selectedStatus === 'DEFERRED') {
-        this.showEmployeeList = false;
-      }
-    },
-  
-  
+            if (selectedStatus === 'REJECTED' || selectedStatus === 'DEFERRED') {
+                this.showEmployeeList = false;
+            }
+        },
         setActiveTab(tabName) {
             this.activeTab = tabName;
             this.currentPage = 1; // Reset to first page on tab change
@@ -399,7 +502,7 @@ export default {
         },
         openModal(ticket) {
             this.selectedTicket = ticket;
-            this.requestFormCode=ticket.requestFormCode;
+            this.requestFormCode = ticket.requestFormCode;
             this.fetchEmployeeList();
         },
         closeModal() {
@@ -414,7 +517,7 @@ export default {
         fetchTicketList() {
             axios.get('api/getRequestFormData', {
                 params: {
-                    status:this.activeTab,
+                    // status: this.activeTab,
                     companyId: this.companyId // or simply companyId if the key and variable name are the same
                 }
             })
@@ -531,7 +634,7 @@ export default {
             // this.isLoading = true;
             const payload = {
                 status: this.status,
-                assignedTo:  this.activeTab === 'GENERATED' ? 0 : this.assignedTo,
+                assignedTo: this.activeTab === 'GENERATED' ? 0 : this.assignedTo,
                 comment: this.comment,
                 requestFormCode: this.selectedTicket.requestFormCode,
                 assignedBy: localStorage.getItem('userId')
@@ -595,61 +698,70 @@ export default {
                     };
                     this.allStatistic = obj;
                     console.log(this.allStatistic)
+                    this.updateDoughnutChartData();
                     return response
                 })
                 .catch(error => {
                     return error
                 });
         },
+        updateDoughnutChartData() {
+            this.doughnutChartData.labels = this.tabs.map(tab => tab.name);
+            console.log(this.doughnutChartData.labels)
+            this.doughnutChartData.datasets[0].data = this.tabs.map(tab => this.allStatistic[tab.name] || 0);
+            console.log(this.doughnutChartData.datasets[0].data)
+            this.doughnutChartData.datasets[0].backgroundColor = this.tabs.map(tab => tab.color);
+            console.log(this.doughnutChartData.datasets[0].backgroundColor)
+        },
 
         saveComment() {
-      const userRole = localStorage.getItem('userRole');
-      const userId =localStorage.getItem('userId')
-      console.log(this.commentForm);
+            const userRole = localStorage.getItem('userRole');
+            const userId = localStorage.getItem('userId')
+            console.log(this.commentForm);
 
-      const obj = {
-        comment: this.commentForm.empComment,
-        requestFormCode: this.requestFormCode,
-        role: userRole,
-        employeeId: 0,
-        adminId: userId,
-      };
+            const obj = {
+                comment: this.commentForm.empComment,
+                requestFormCode: this.requestFormCode,
+                role: userRole,
+                employeeId: 0,
+                adminId: userId,
+            };
 
-      Swal.fire({
-        title: 'Please wait...',
-        html: 'Submitting the Comment',
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-
-      axios.post(`/api/saveComment`, obj).then(
-        (response) => {
-          if (response.data) {
             Swal.fire({
-              icon: 'success',
-              title: 'Comment Submitted',
-              text: 'Your Comment has been submitted successfully.',
-              confirmButtonText: 'OK',
-            }).then((result) => {
-              if (result.isConfirmed) {
-                Swal.close();
-              }
+                title: 'Please wait...',
+                html: 'Submitting the Comment',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
             });
-          }
+
+            axios.post(`/api/saveComment`, obj).then(
+                (response) => {
+                    if (response.data) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Comment Submitted',
+                            text: 'Your Comment has been submitted successfully.',
+                            confirmButtonText: 'OK',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Swal.close();
+                            }
+                        });
+                    }
+                },
+                (error) => {
+                    console.error(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Form Submission Failed',
+                        text: 'An error occurred while submitting the form.',
+                        confirmButtonText: 'OK',
+                    });
+                }
+            );
         },
-        (error) => {
-          console.error(error);
-          Swal.fire({
-            icon: 'error',
-            title: 'Form Submission Failed',
-            text: 'An error occurred while submitting the form.',
-            confirmButtonText: 'OK',
-          });
-        }
-      );
-    },
 
         // changePage(page) {
         //     if (page < 1 || page > this.totalPages) return;
@@ -663,14 +775,13 @@ export default {
         },
     },
 
-
 };
 </script>
 
 <style scoped>
-.nav-link.active {
-    font-weight: bolder;
-    color: #060389;
+.chart-container {
+    width: 400px;
+    height: 400px;
 }
 
 th {
