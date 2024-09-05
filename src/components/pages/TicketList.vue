@@ -263,6 +263,7 @@ export default {
             currentPage: 1,
             itemsPerPage: 5,
             selectedFile: null,
+            userName:localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : '',
             tabs: [
                 { name: 'ALL', label: 'ALL', icon: 'bi bi-list-check' },
                 { name: 'CREATED', label: 'CREATED', icon: 'bi bi-ui-checks' },
@@ -292,6 +293,7 @@ export default {
     created() {
         this.fetchTicketList();
         this.getDashboardStatistics();
+        this.fetchUserData();
     },
     computed: {
         filteredTickets() {
@@ -321,6 +323,25 @@ export default {
         },
     },
     methods: {
+        fetchUserData() {
+      // Replace 'http://example.com/userName' with your actual API URL
+      axios.get('api/userName', {
+        params: {
+          userName: this.userName  // Replace with actual username or dynamic value
+        }
+      })
+      .then(response => {
+        // Assuming your API returns a JSON object with user details
+        this.user = response.data;
+
+        // Store user details in sessionStorage
+        sessionStorage.setItem('userDetails', JSON.stringify(this.user));
+      })
+      .catch(error => {
+        console.error('There was an error fetching the user data:', error);
+      });
+    }
+,
         setActiveTab(tabName) {
             this.activeTab = tabName;
         },

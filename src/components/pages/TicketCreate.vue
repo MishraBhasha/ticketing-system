@@ -172,15 +172,39 @@ export default {
         ticketId: '',
         priorityId: '',
         commentBox: '',
-        userName: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : ''
+        userName: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : '',
+        
       },
+      // userDetails:localStorage.getItem('userDetails') ? JSON.parse(localStorage.getItem('userDetails')):'',
       errors: {},
       isSaving: false,
       submitted: false // Added flag
+
     };
   },
+  created() {
+    this.loadFormData();
+  },
   methods: {
+    loadFormData() {
+      const userDetails = sessionStorage.getItem('userDetails') ? JSON.parse(sessionStorage.getItem('userDetails')) : {};
+      // const userName = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : '';
+console.log(userDetails)
+      this.form = {
+        companyName: userDetails.data.companyName || '',
+        address: userDetails.data.address || '',
+        personName: userDetails.data.firstName || '',
+        phoneNumber: userDetails.data.phoneNumber || '',
+        emailId: userDetails.data.emailId || '',
+        // expectedDeliveryDate: userDetails.expectedDeliveryDate || ''
+        // ticketId: userDetails.ticketId || '',
+         priorityId: userDetails.data.priorityId || '',
+        // commentBox: userDetails.commentBox || '',
+        // userName: userName || ''
+      };
+    },
     handleSubmit() {
+      alert( this.da)
       this.submitted = true; // Set flag to true when form is submitted
       this.errors = {}; // Clear previous errors
 
