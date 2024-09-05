@@ -413,7 +413,7 @@
         requestFormCode: this.selectedTicket.requestFormCode,
         assignedTo: 0,
         status: 'DENY',
-        companyId:  this.selectedCompany.companyId,
+        companyId:  this.selectedCompany,
       };
 
       try {
@@ -463,7 +463,7 @@
         requestFormCode: this.selectedTicket.requestFormCode,
         assignedTo: 0,
         status: 'ACCEPT',
-        companyId: this.selectedCompany.companyId,
+        companyId: this.selectedCompany,
       };
 
       try {
