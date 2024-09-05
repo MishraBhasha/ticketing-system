@@ -503,6 +503,7 @@ export default {
         openModal(ticket) {
             this.selectedTicket = ticket;
             this.requestFormCode = ticket.requestFormCode;
+            this.requestData=ticket.status;
             this.fetchEmployeeList();
         },
         closeModal() {
