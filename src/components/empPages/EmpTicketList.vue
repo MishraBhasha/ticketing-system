@@ -61,9 +61,30 @@
                 }">{{ ticket.status }}</span>
               </td>
               <td>
-                <a data-bs-toggle="modal" data-bs-target="#exampleModal" @click="openModal(ticket)">
+                <a  v-if="ticket.status === 'INPROGRESS' || ticket.status === 'COMPILED'" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="openModal(ticket)">
                   <i class="bi bi-pencil-fill text-primary mx-2"></i>
                 </a>
+
+                <!-- <a
+    v-if="ticket.status === 'INPROGRESS' || ticket.status === 'COMPILED'"
+    class="mx-2 text-success"
+    title="View"
+    data-bs-toggle="modal"
+    data-bs-target="#exampleModal"
+    @click="openModal(ticket)"
+  >
+    <i class="bi bi-pencil-square"></i>
+  </a> -->
+  <a
+    v-if="ticket.status === 'ASSIGNED' || ticket.status === 'RE-ASSIGNED'"
+    class="mx-2 text-success"
+    title="Accept work"
+    data-bs-toggle="modal"
+    data-bs-target="#exampleModal1"
+    @click="confirm(ticket)"
+  >
+    <i class="bi bi-telephone-outbound"></i>
+  </a>
                 <i class="bi bi-trash3-fill text-danger" @click="confirmDelete(ticket.id)"></i>
               </td>
             </tr>
@@ -186,6 +207,40 @@
         </div>
       </div>
     </div>
+   <!-- Modal for Acceptance of Work -->
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">
+          Acceptance of Work
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Are you sure?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" @click="sureToDeny">
+          No
+        </button>
+        <button type="button" class="btn btn-primary" @click="sureToSubmit">
+          Yes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
   </layout-div>
   </template>
   
@@ -297,6 +352,115 @@
                   modalInstance.show();
               }
           },
+          confirm(ticket) {
+            this.selectedTicket = { ...ticket };
+            console.log( this.selectedTicket);
+              // Show the modal using Bootstrap's modal methods
+              const modalElement = document.getElementById('exampleModal1');
+              if (modalElement) {
+                  const modalInstance = new Modal(modalElement);
+                  modalInstance.show();
+              }
+          },
+          async sureToDeny() {
+      const emp_id = localStorage.getItem('userId');
+      Swal.fire({
+        title: 'Please wait...',
+        html: 'Submitting the form',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      const obj = {
+        assignedBy: emp_id,
+        requestFormCode: this.selectedTicket.requestFormCode,
+        assignedTo: 0,
+        status: 'DENY',
+        companyId:  this.selectedCompany.companyId,
+      };
+
+      try {
+        // Assuming you are using axios, replace this with your service call
+        const saveRequestFormTrackingRecord = axios.post('/api/saveRequestFormTrackingRecord', obj);
+        const updateReqFormStatus = axios.put(`/api/updateStatus?status=DENY&id=${obj.requestFormCode}`);
+
+        await Promise.all([saveRequestFormTrackingRecord, updateReqFormStatus]);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Form Submitted',
+          text: 'Your Denial has been submitted successfully.',
+          confirmButtonText: 'OK',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.fetchTicketList();
+            // this.getAllForm(); // Fetch updated form list
+            // this.getDashboardStatistics(); // Update dashboard statistics
+            Swal.close();
+            this.closeModal(); // Close the modal
+          }
+        });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'DENY save Failed. Please try again later.',
+          confirmButtonText: 'OK',
+        });
+      }
+    },
+
+    async sureToSubmit() {
+      const emp_id = localStorage.getItem('userId');
+      Swal.fire({
+        title: 'Please wait...',
+        html: 'Submitting the form',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      const obj = {
+        assignedBy: emp_id,
+        requestFormCode: this.selectedTicket.requestFormCode,
+        assignedTo: 0,
+        status: 'ACCEPT',
+        companyId: this.selectedCompany.companyId,
+      };
+
+      try {
+        // Assuming you are using axios, replace this with your service call
+        const saveRequestFormTrackingRecord = axios.post('/api/saveRequestFormTrackingRecord', obj);
+        const updateReqFormStatus = axios.put(`/api/updateStatus?status=INPROGRESS&id=${obj.requestFormCode}`);
+
+        await Promise.all([saveRequestFormTrackingRecord, updateReqFormStatus]);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Form Submitted',
+          text: 'Your Acceptance has been submitted successfully.',
+          confirmButtonText: 'OK',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.fetchTicketList();
+            // this.getAllForm(); // Fetch updated form list
+            // this.getDashboardStatistics(); // Update dashboard statistics
+            Swal.close();
+            this.closeModal(); // Close the modal
+          }
+        });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Acceptance save Failed. Please try again later.',
+          confirmButtonText: 'OK',
+        });
+      }
+    },
           updateTicket() {
               const userRole = localStorage.getItem('userRole');
               const userId = localStorage.getItem('userId');
