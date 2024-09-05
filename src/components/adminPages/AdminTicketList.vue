@@ -456,8 +456,8 @@ export default {
         fetchTicketList() {
             axios.get('api/getRequestFormData', {
                 params: {
-                    status: this.activeTab,
-                    companyId: this.companyId // or simply companyId if the key and variable name are the same
+                    // status: this.activeTab
+                    companyId: this.companyId 
                 }
             })
                 .then(response => {
