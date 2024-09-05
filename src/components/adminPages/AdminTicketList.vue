@@ -368,7 +368,7 @@ export default {
                 { name: 'INVERIFY', label: 'INVERIFY', icon: 'bi bi-bar-chart' },
                 { name: 'DENY', label: 'DENY', icon: 'bi bi-calendar2-x' },
                 { name: 'REASSIGNED', label: 'REASSIGNED', icon: 'bi bi-calendar2-x' },
-                { name: 'REOPENED', label: 'RE-OPENED', icon: 'bi bi-calendar2-x' },
+                { name: 'RE-OPENED', label: 'RE-OPENED', icon: 'bi bi-calendar2-x' },
                 { name: 'CLOSED', label: 'CLOSED', icon: 'bi bi-journal-check' },
                 { name: 'REJECTED', label: 'REJECTED', icon: 'bi bi-x-circle' },
                 { name: 'DEFERRED', label: 'DEFERRED', icon: 'bi bi-file-earmark-image-fill' },
