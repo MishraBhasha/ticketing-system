@@ -1,11 +1,17 @@
 <template>
     <layout-div>
         <AppLoader v-if="isLoading" />
-        <!-- <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }"> Dashboard </h2> -->
-        <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
-            <h2 class="text-center rounded shadow mb-0" :style="{ color: '#060389' }">Dashboard</h2>
-            <div>
-                <select id="companyName" class="form-control d-inline-block w-auto"
+        <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }"> Dashboard </h2>
+        <div class="card">
+            <div class="card-body">
+                
+                <div class="row justify-content-end">
+                    <div class="col-md-4 mb-3">
+                        <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
+                            @input="filterTickets">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                <select id="companyName" class="form-select"
                     :class="{ 'is-invalid': submitted && errors.companyName }" @change="handleCompanyChange($event)"
                     v-model="selectedCompanyId">
                     <option value="" disabled selected>Select your company</option>
@@ -14,14 +20,6 @@
                     </option>
                 </select>
             </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <div class="row justify-content-end">
-                    <div class="col-md-4 mb-3">
-                        <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
-                            @input="filterTickets">
-                    </div>
                 </div>
                 <!-- <ul class="nav nav-underline">
                     <li class="nav-item" v-for="tab in tabs" :key="tab.name">
@@ -238,7 +236,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3" v-if="activeTab === 'INVERIFY'">
+                                <div class="col-md-3" v-if="activeTab === 'IN-VERIFY'">
                                     <div class="form-group">
                                         <label for="fileView" class="form-label">Resolved File</label>
                                         <div class="file-item">
@@ -457,7 +455,7 @@ export default {
             axios.get('api/getRequestFormData', {
                 params: {
                     // status: this.activeTab
-                    companyId: this.companyId 
+                    companyId: this.selectedCompanyId 
                 }
             })
                 .then(response => {
@@ -661,7 +659,7 @@ export default {
         getDashboardStatistics() {
             axios.get('api/getDashboardStatistics', {
                 params: {
-                    companyId: this.companyId // or simply companyId if the key and variable name are the same
+                    companyId: this.selectedCompanyId // or simply companyId if the key and variable name are the same
                 }
             })
                 .then(response => {
@@ -740,6 +738,8 @@ export default {
         handleCompanyChange(valueOrEvent) {
             const value = valueOrEvent.target ? valueOrEvent.target.value : valueOrEvent;
             this.selectedCompanyId = value;
+            this.getDashboardStatistics();
+            this.fetchTicketList();
             // Perform any additional logic here, such as making API calls
         },
         companyWiseRequest() {

@@ -4,11 +4,11 @@
     <div class="card">
       <div class="card-body">
         <div class="row justify-content-end">
-          <div class="col-md-4">
+          <div class="col-md-4 mb-3">
             <input type="text" class="form-control" placeholder="search..." v-model="searchQuery" @input="filterTickets">
           </div>
-          <div class="col-md-4 mt-2">
-            <select class="form-select" v-model="selectedCompany" @change="fetchTicketList">
+          <div class="col-md-4 mb-3">
+            <select class="form-select" v-model="selectedCompany" @change="handleCompanyChange($event)">
               <option value="">All Companies</option>
               <option v-for="company in companies" :key="company.id" :value="company.id">
                 {{ company.name }}
@@ -16,14 +16,35 @@
             </select>
           </div>
         </div>
-        <ul class="nav nav-underline">
+        <!-- <ul class="nav nav-underline">
           <li class="nav-item" v-for="tab in tabs" :key="tab.name">
             <a class="nav-link m-2" :class="{ active: activeTab === tab.name }" @click="setActiveTab(tab.name)" href="#">
               {{ tab.label }}
               <span class="badge bg-primary text-white rounded-pill">{{ allStatistic[tab.label.toUpperCase()] ?? 0 }}</span>
             </a>
           </li>
-        </ul>
+        </ul> -->
+        <div class="row">
+                    <div v-for="tab in tabs" :key="tab.name" class="col-lg-2 mb-3">
+                        <div class="card shadow box" :class="{ active: activeTab === tab.name }" 
+                            @click="setActiveTab(tab.name)"
+                            :style="{ cursor: 'pointer' }">
+                            <div class="card-body d-flex align-items-center p-2">
+                                <i :class="tab.icon + ' fs-2 me-2'"></i>
+                                <div>
+                                    <h6 class="card-title"
+                                        :class="{ active: activeTab === tab.name }">
+                                        {{ tab.label }}
+                                    </h6>
+
+                                    <p class="card-text">
+                                        {{ allStatistic[tab.label.toUpperCase()] ?? 0 }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         <table class="table table-bordered">
           <thead>
             <tr>
@@ -52,13 +73,18 @@
               <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
               <td>
                 <span class="rounded-pill text-white p-1" :class="{
-                  'bg-warning': ticket.status.toLowerCase() === 'assigned',
-                  'bg-primary': ticket.status.toLowerCase() === 'submitted',
-                  'bg-secondary': ticket.status.toLowerCase() === 'generated',
-                  'bg-success': ticket.status.toLowerCase() === 'approved',
-                  'bg-dark': ticket.status.toLowerCase() === 'rejected',
-                  'bg-danger': ticket.status.toLowerCase() === 'cancelled'
-                }">{{ ticket.status }}</span>
+                  'bg-warning':
+                    ticket.status.toLowerCase() === 'assigned' ||
+                    ticket.status.toLowerCase() === 'deny',
+                  'bg-info': ticket.status.toLowerCase() === 'inprogress' || ticket.status.toLowerCase() === 're-assigned',
+                  'bg-primary': ticket.status.toLowerCase() === 'created' || ticket.status.toLowerCase() === 're-opened',
+                  'bg-secondary':
+                    ticket.status.toLowerCase() === 'in-verify',
+                  'bg-success': ticket.status.toLowerCase() === 'closed',
+                  'bg-danger': ticket.status.toLowerCase() === 'cancelled',
+                  'bg-dark': ticket.status.toLowerCase() === 'rejected'
+                }">{{ ticket.status }}
+                </span>
               </td>
               <td>
                 <a  v-if="ticket.status === 'INPROGRESS' || ticket.status === 'COMPILED'" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="openModal(ticket)">
@@ -266,12 +292,15 @@
               comment: '',
               companyId: '',
               tabs: [
-                  { name: 'ALL', label: 'ALL' },
-                  { name: 'ASSIGNED', label: 'ASSIGNED' },
-                  { name: 'GENERATED', label: 'GENERATED' },
-                  { name: 'APPROVED', label: 'APPROVED' },
-                  { name: 'REJECTED', label: 'REJECTED' },
-                  { name: 'CANCELLED', label: 'CANCELLED' },
+              { name: 'ALL', label: 'ALL' ,icon: 'bi bi-list-check'},
+        { name: 'ASSIGNED', label: 'ASSIGNED', icon: 'bi bi-person-check' },
+        { name: 'RE-ASSIGN', label: 'RE-ASSIGN', icon: 'bi bi-calendar2-x' },
+        { name: 'INPROGRESS', label: 'INPROGRESS', icon: 'bi bi-person-check' },
+        { name: 'IN-VERIFY', label: 'IN-VERIFY', icon: 'bi bi-bar-chart' },
+        { name: 'CLOSED', label: 'CLOSED' , icon: 'bi bi-journal-check'},
+        { name: 'DENY', label: 'DENY', icon: 'bi bi-calendar2-x' },
+        { name: 'REJECTED', label: 'REJECTED' , icon: 'bi bi-x-circle'},
+        { name: 'CANCELLED', label: 'CANCELLED', icon: 'bi bi-x-circle-fill' },
               ],
               companies: [],
               selectedCompany: '',
@@ -281,7 +310,9 @@
       },
       created() {
           this.fetchTicketList();
-          this.fetchCompanyList();
+          this.companyWiseRequest();
+          this.getDashboardStatistics();
+          // this.fetchCompanyList();
           this.fetchEmployeeList();
       },
       computed: {
@@ -329,7 +360,11 @@
                   .catch(error => console.error(error));
           },
           getDashboardStatistics() {
-              axios.get('/api/getDashboardStatistics')
+              axios.get('/api/getDashboardStatistics', {
+                  params: {
+                      companyId: this.selectedCompany,
+                  },
+              })
                   .then(response => {
                       const statistic = response.data.data;
                       this.allStatistic = { ...statistic, ALL: response.data.val };
@@ -662,8 +697,35 @@
               const month = String(d.getMonth() + 1).padStart(2, '0');
               const year = d.getFullYear();
               return `${day}-${month}-${year}`; // Format date as DD-MM-YYYY
-          }
+          },
+          handleCompanyChange(valueOrEvent) {
+            const value = valueOrEvent.target ? valueOrEvent.target.value : valueOrEvent;
+            this.selectedCompany = value;
+            console.log(this.selectedCompany)
+            this.getDashboardStatistics();
+            this.fetchTicketList();
+            // Perform any additional logic here, such as making API calls
+        },
+        companyWiseRequest() {
+            axios.get('api/getCompanylist')
+                .then(response => {
+                    this.companies = response.data.data;
+                    console.log(this.companies)
+                    // return response
+                    if (this.companies.length > 0) {
+                        this.selectedCompany= this.companies[0].id;
+                        this.$nextTick(() => {
+                            this.handleCompanyChange(this.selectedCompany);
+                        });
+                    }
+                })
+                .catch(error => {
+                    return error
+                });
+        },
+         
       },
+      
   };
   </script>
   
@@ -692,5 +754,19 @@ th {
 .priority-high {
     font-weight: bold;
     color: red;
+}
+.card.active {
+    color: #ffffff;
+    background-color: #385c92;
+    h6.active {
+        color: #ffffff;    
+    }
+}
+.box {
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+h6 {
+    color: #385c92;
 }
 </style>
