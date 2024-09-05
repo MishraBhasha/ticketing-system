@@ -22,17 +22,16 @@
                 </ul> -->
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <!-- <div class="chart-container"> -->
+                        <h5 class="text-center">Ticket Status</h5>
                         <DoughnutChart :chartData="doughnutChartData" :options="doughnutChartOptions" />
-                        <!-- </div> -->
                     </div>
                     <div class="col-md-6">
+                        <h5 class="text-center">Ticket Progress</h5>
                         <LineChart :chartData="lineChartData" :options="lineChartOptions" />
                     </div>
                 </div>
 
-
-                <table class="table table-bordered">
+                <table class="table table-bordered mt-2">
                     <thead>
                         <tr>
                             <th>Sl No</th>
@@ -342,17 +341,17 @@ export default {
             requestFormCode: '',
 
             tabs: [
-                { name: 'ALL', color: 'rgba(255, 99, 132, 0.8)' },
-                { name: 'CREATED', color: 'rgba(0, 255, 0, 0.8)' },
-                { name: 'ASSIGNED', color: 'rgba(255, 159, 64, 0.8)' },
-                { name: 'INPROGRESS', color: 'rgba(54, 162, 235, 0.8)' },
-                { name: 'IN-VERIFY', color: 'rgba(75, 192, 192, 0.8)' },
-                { name: 'DENY', color: 'rgba(153, 102, 255, 0.8)' },
-                { name: 'RE-ASSIGNED', color: 'rgba(255, 159, 64, 0.8)' },
-                { name: 'RE-OPENED', color: 'rgba(255, 99, 132, 0.8)' },
-                { name: 'CLOSED', color: 'rgba(255, 205, 86, 0.8)' },
-                { name: 'REJECTED', color: 'rgba(201, 203, 207, 0.8)' },
-                { name: 'DEFERRED', color: 'rgba(75, 192, 192, 0.8)' },
+                { name: 'ALL', color: 'rgba(255, 99, 132, 0.8)', borderColor: 'rgba(255, 99, 132, 1)' },
+                { name: 'CREATED', color: 'rgba(0, 255, 0, 0.8)', borderColor: 'rgba(0, 255, 0, 1)' },
+                { name: 'ASSIGNED', color: 'rgba(255, 159, 64, 0.8)', borderColor: 'rgba(255, 159, 64, 1)' },
+                { name: 'INPROGRESS', color: 'rgba(54, 162, 235, 0.8)', borderColor: 'rgba(54, 162, 235, 1)' },
+                { name: 'IN-VERIFY', color: 'rgba(75, 192, 192, 0.8)', borderColor: 'rgba(75, 192, 192, 1)' },
+                { name: 'DENY', color: 'rgba(153, 102, 255, 0.8)', borderColor: 'rgba(153, 102, 255, 1)' },
+                { name: 'RE-ASSIGNED', color: 'rgba(255, 19, 46, 0.8)', borderColor: 'rgba(255, 19, 46, 1)' },
+                { name: 'RE-OPENED', color: 'rgba(255, 99, 32, 0.8)', borderColor: 'rgba(255, 99, 32, 1)' },
+                { name: 'CLOSED', color: 'rgba(255, 205, 86, 0.8)', borderColor: 'rgba(255, 205, 86, 1)' },
+                { name: 'REJECTED', color: 'rgba(201, 203, 207, 0.8)', borderColor: 'rgba(201, 203, 207, 1)' },
+                { name: 'DEFERRED', color: 'rgba(75, 92, 92, 0.8)', borderColor: 'rgba(75, 92, 92, 1)' },
             ],
 
             doughnutChartData: {
@@ -360,9 +359,9 @@ export default {
                 datasets: [
                     {
                         label: "# of Votes",
-                        data: [], // Initialize with zeros
+                        data: [],
                         backgroundColor: [],
-                        borderColor: ["rgba(255, 99, 132, 1)"],
+                        borderColor: [],
                         borderWidth: 1,
                     },
                 ],
@@ -713,6 +712,8 @@ export default {
             console.log(this.doughnutChartData.datasets[0].data)
             this.doughnutChartData.datasets[0].backgroundColor = this.tabs.map(tab => tab.color);
             console.log(this.doughnutChartData.datasets[0].backgroundColor)
+            this.doughnutChartData.datasets[0].borderColor = this.tabs.map(tab => tab.borderColor);
+            console.log(this.doughnutChartData.datasets[0].borderColor)
         },
 
         saveComment() {
