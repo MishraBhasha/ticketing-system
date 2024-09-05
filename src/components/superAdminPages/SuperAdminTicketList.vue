@@ -62,7 +62,8 @@
                                 <span class="rounded-pill text-white p-1" :class="{
                                     'bg-warning': ticket.status.toLowerCase() === 'assigned',
                                     'bg-primary': ticket.status.toLowerCase() === 'created',
-                                    'bg-secondary': ticket.status.toLowerCase() === 'generated',
+                                    'bg-secondary': ticket.status.toLowerCase() === 'generated' ||
+                                    ticket.status.toLowerCase() === 'in-verify',
                                     'bg-success': ticket.status.toLowerCase() === 'approved',
                                     'bg-dark': ticket.status.toLowerCase() === 'rejected',
                                     'bg-danger': ticket.status.toLowerCase() === 'cancelled'
