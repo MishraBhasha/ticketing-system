@@ -238,7 +238,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3" v-if="activeTab === 'GENERATED'">
+                                <div class="col-md-3" v-if="activeTab === 'INVERIFY'">
                                     <div class="form-group">
                                         <label for="fileView" class="form-label">Resolved File</label>
                                         <div class="file-item">
