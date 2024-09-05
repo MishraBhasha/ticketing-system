@@ -319,7 +319,7 @@ export default {
             allStatistic: {},
             requestData: 'CREATED',
             isLoading: false,
-            activeTab: 'SUBMITTED',
+            activeTab: 'CREATED',
             showEmployeeList: false,
             companyId: localStorage.getItem('companyId'),
             selectedTicket: {
