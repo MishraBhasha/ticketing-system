@@ -593,41 +593,70 @@ export default {
       this.reopenEnabled = event.target.checked;
     },
     reopenTicket() {
-      if (this.reopenEnabled && this.selectedTicket) {
-        const updatedTicket = { ...this.selectedTicket, status: 'RE-OPENED' };
-        axios.put(`/api/updateRequestFormData`, updatedTicket)
-          .then(() => {
-            this.fetchTicketList();
-            Swal.fire({
-              icon: 'success',
-              title: 'Reopened',
-              text: 'The ticket was reopened successfully',
-            }).then(() => {
-              const modalElement = document.getElementById('exampleModal');
-              if (modalElement) {
-                const modalInstance = Modal.getInstance(modalElement);
-                if (modalInstance) {
-                  modalInstance.hide();
-                }
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                  backdrop.parentNode.removeChild(backdrop);
-                }
-              }
-            });
-          })
-          .catch(error => {
-            console.error('There was an error reopening the ticket:', error);
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'There was a problem reopening the ticket',
-            });
-          });
-      } else {
-        console.error('Reopen enabled is false or selectedTicket is undefined');
+    if (this.reopenEnabled && this.selectedTicket) {
+      const formData = new FormData();
+      
+      // Append JSON data as a string
+      formData.append('requestFormDTO', JSON.stringify({
+        companyName: this.selectedTicket.companyName, // Ensure this is included if needed
+        address: this.selectedTicket.address,
+        userName: this.selectedTicket.userName,
+        personName: this.selectedTicket.personName,
+        expectedDeliveryDate: this.selectedTicket.expectedDeliveryDate,
+        phoneNumber: this.selectedTicket.phoneNumber,
+        emailId: this.selectedTicket.emailId,
+        commentBox: this.selectedTicket.commentBox,
+        ticketId: this.selectedTicket.ticketId,
+        priorityId: this.selectedTicket.priorityId,
+        requestFormCode: this.selectedTicket.requestFormCode
+      }));
+
+      // If you need to append a file or other fields, do so here
+      if (this.selectedFile) {
+        formData.append('file', this.selectedFile);
       }
+      
+      // Append status
+      formData.append('status', 'RE-OPENED');
+
+      // Perform the PUT request
+      axios.put('/api/updateRequestFormData', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data' // Ensure correct content type for FormData
+        }
+      })
+      .then(() => {
+        this.fetchTicketList();
+        Swal.fire({
+          icon: 'success',
+          title: 'Reopened',
+          text: 'The ticket was reopened successfully',
+        }).then(() => {
+          const modalElement = document.getElementById('exampleModal');
+          if (modalElement) {
+            const modalInstance = Modal.getInstance(modalElement);
+            if (modalInstance) {
+              modalInstance.hide();
+            }
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+              backdrop.parentNode.removeChild(backdrop);
+            }
+          }
+        });
+      })
+      .catch(error => {
+        console.error('There was an error reopening the ticket:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'There was a problem reopening the ticket',
+        });
+      });
+    } else {
+      console.error('Reopen enabled is false or selectedTicket is undefined');
     }
+  }
   },
 };
 </script>
