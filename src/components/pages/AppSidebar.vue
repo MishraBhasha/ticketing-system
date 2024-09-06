@@ -4,15 +4,18 @@
             <li v-if="userRole === 'SUPERADMIN'" class="nav-item" :class="{ active: isActive('/user/superAdmin/list') }">
                 <router-link to="/user/superAdmin/list" class="nav-link">Dashboard</router-link>
             </li>
-            <li v-if="userRole === 'SUPERADMIN'" class="nav-item" :class="{ active: isActive('/user/superAdmin/companyList') }">
-                <router-link to="/user/superAdmin/companyList" class="nav-link">Manage Company</router-link>
+            <li v-if="userRole === 'SUPERADMIN'" class="nav-item" :class="{ active: isActive('/user/employeelist') }">
+                <router-link to="/user/employeelist" class="nav-link">User Creation</router-link>
             </li>
+            <li v-if="userRole === 'SUPERADMIN'" class="nav-item" :class="{ active: isActive('/user/companylist') }">
+                <router-link to="/user/companylist" class="nav-link">Manage Company</router-link>
+            </li>    
 
             <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/list') }">
                 <router-link to="/user/admin/list" class="nav-link">Dashboard</router-link>
             </li>
-            <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/employeelist') }">
-                <router-link to="/user/admin/employeelist" class="nav-link">Employee List</router-link>
+            <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/employeelist') }">
+                <router-link to="/user/employeelist" class="nav-link">Employee Creation</router-link>
             </li>
             <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/ticket/list') }">
                 <router-link to="/user/admin/ticket/list" class="nav-link">Manage Ticket</router-link>
@@ -20,8 +23,8 @@
             <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/priority/list') }">
                 <router-link to="/user/admin/priority/list" class="nav-link">Manage Prority Type</router-link>
             </li>
-            <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/company/list') }">
-                <router-link to="/user/admin/company/list" class="nav-link">Manage Company</router-link>
+            <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/companylist') }">
+                <router-link to="/user/companylist" class="nav-link">Manage Company</router-link>
             </li>          
 
             <li v-if="userRole === 'Employee'" class="nav-item" :class="{ active: isActive('/user/emp/list') }">

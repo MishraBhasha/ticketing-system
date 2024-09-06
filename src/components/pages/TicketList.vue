@@ -26,14 +26,12 @@
                 </ul> -->
                 <div class="row">
                     <div v-for="tab in tabs" :key="tab.name" class="col-lg-2 mb-3">
-                        <div class="card shadow box" :class="{ active: activeTab === tab.name }" 
-                            @click="setActiveTab(tab.name)"
-                            :style="{ cursor: 'pointer' }">
+                        <div class="card shadow box" :class="{ active: activeTab === tab.name }"
+                            @click="setActiveTab(tab.name)" :style="{ cursor: 'pointer' }">
                             <div class="card-body d-flex align-items-center p-2">
                                 <i :class="tab.icon + ' fs-2 me-2'"></i>
                                 <div>
-                                    <h6 class="card-title"
-                                        :class="{ active: activeTab === tab.name }">
+                                    <h6 class="card-title" :class="{ active: activeTab === tab.name }">
                                         {{ tab.label }}
                                     </h6>
 
@@ -74,12 +72,14 @@
                             <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
                             <td>
                                 <span class="badge rounded-pill text-white" :class="{
-                                    'bg-warning': ticket.status.toLowerCase() === 'assigned',
-                                    'bg-primary': ticket.status.toLowerCase() === 'created',
-                                    'bg-secondary': ticket.status.toLowerCase() === 'generated',
-                                    'bg-success': ticket.status.toLowerCase() === 'approved',
-                                    'bg-dark': ticket.status.toLowerCase() === 'rejected',
-                                    'bg-danger': ticket.status.toLowerCase() === 'cancelled'
+                                    ' bg-warning': ticket.status.toLowerCase() === 'assigned',
+                                    ' bg-info': ticket.status.toLowerCase() === 'inprogress' || ticket.status.toLowerCase() === 'deferred',
+                                    ' bg-primary':
+                                        ticket.status.toLowerCase() === 'created' || ticket.status.toLowerCase() === 'forwarded',
+                                    ' bg-secondary':
+                                        ticket.status.toLowerCase() === 'in-verify',
+                                    ' bg-success': ticket.status.toLowerCase() === 'closed',
+                                    'bg-dark': ticket.status.toLowerCase() === 'rejected' || ticket.status.toLowerCase() === 're-opened',
                                 }">{{ ticket.status }}
                                 </span>
                             </td>

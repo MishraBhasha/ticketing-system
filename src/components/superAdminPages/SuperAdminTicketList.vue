@@ -9,6 +9,16 @@
                         <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
                             @input="filterTickets">
                     </div>
+                    <div class="col-md-4 mb-3">
+                <select id="companyName" class="form-select"
+                    :class="{ 'is-invalid': submitted && errors.companyName }" @change="handleCompanyChange($event)"
+                    v-model="selectedCompanyId">
+                    <option value="" disabled selected>Select your company</option>
+                    <option v-for="item in companies" :key="item.id" :value="item.id">
+                        {{ item.name }}
+                    </option>
+                </select>
+            </div>
                 </div>
                 <!-- <ul class="nav nav-underline">
                     <li class="nav-item" v-for="tab in tabs" :key="tab.name">
@@ -59,13 +69,19 @@
                             <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
                             <td>
                                 <span class="rounded-pill text-white p-1" :class="{
-                                    'bg-warning': ticket.status.toLowerCase() === 'assigned',
-                                    'bg-primary': ticket.status.toLowerCase() === 'created',
-                                    'bg-secondary': ticket.status.toLowerCase() === 'generated' ||
-                                    ticket.status.toLowerCase() === 'in-verify',
-                                    'bg-success': ticket.status.toLowerCase() === 'approved',
-                                    'bg-dark': ticket.status.toLowerCase() === 'rejected',
-                                    'bg-danger': ticket.status.toLowerCase() === 'cancelled'
+                                     'bg-warning':
+                     ticket.status.toLowerCase() === 'assigned' ||
+                     ticket.status.toLowerCase() === 'deny' ||
+                     ticket.status.toLowerCase() === 're-assigned',
+                    'bg-info':ticket.status.toLowerCase() === 'inprogress',
+                    'bg-primary':ticket.status.toLowerCase() === 'created' ||ticket.status.toLowerCase() === 'forwarded',
+                    'bg-secondary':
+                     ticket.status.toLowerCase() === 'in-verify' ||
+                     ticket.status.toLowerCase() === 'deferred' ||
+                     ticket.status.toLowerCase() === 're-opened',
+                    'bg-success':ticket.status.toLowerCase() === 'closed',
+                    'bg-dark':ticket.status.toLowerCase() === 'rejected',
+                    'bg-danger':ticket.status.toLowerCase() === 'cancelled'
                                 }">{{ ticket.status }}
                                 </span>
                             </td>
@@ -263,8 +279,8 @@
                                         <textarea v-model="commentForm.empComment" class="form-control"></textarea>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mt-5">
-                                    <button class="btn btn-primary" type="submit">
+                                <div class="col-md-6 mt-5 d-flex">
+                                    <button class="btn btn-primary me-2" type="submit">
                                         Add Comments
                                     </button>
                                     <button type="button" class="btn btn-secondary"
@@ -339,6 +355,7 @@ export default {
                 empComment: ''
             },
             requestFormCode: '',
+            selectedCompanyId: '',
 
             tabs: [
                 { name: 'ALL', color: 'rgba(255, 99, 132, 0.8)', borderColor: 'rgba(255, 99, 132, 1)' },
@@ -436,6 +453,7 @@ export default {
     created() {
         this.fetchTicketList();
         this.getDashboardStatistics();
+        this.companyWiseRequest();
     },
     computed: {
         formattedUserSubmissionDate() {
@@ -519,7 +537,7 @@ export default {
             axios.get('api/getRequestFormData', {
                 params: {
                     // status: this.activeTab,
-                    companyId: this.companyId // or simply companyId if the key and variable name are the same
+                    companyId: this.selectedCompanyId // or simply companyId if the key and variable name are the same
                 }
             })
                 .then(response => {
@@ -638,7 +656,8 @@ export default {
                 assignedTo: this.activeTab === 'GENERATED' ? 0 : this.assignedTo,
                 comment: this.comment,
                 requestFormCode: this.selectedTicket.requestFormCode,
-                assignedBy: localStorage.getItem('userId')
+                assignedBy: localStorage.getItem('userId'),
+                companyId: this.selectedCompanyId
             };
 
             Swal.fire({
@@ -688,7 +707,7 @@ export default {
         getDashboardStatistics() {
             axios.get('api/getDashboardStatistics', {
                 params: {
-                    companyId: this.companyId // or simply companyId if the key and variable name are the same
+                    companyId: this.selectedCompanyId // or simply companyId if the key and variable name are the same
                 }
             })
                 .then(response => {
@@ -715,6 +734,15 @@ export default {
             console.log(this.doughnutChartData.datasets[0].backgroundColor)
             this.doughnutChartData.datasets[0].borderColor = this.tabs.map(tab => tab.borderColor);
             console.log(this.doughnutChartData.datasets[0].borderColor)
+            const totalData = this.doughnutChartData.datasets[0].data.reduce((sum, value) => sum + value, 0);
+
+            // If no data is available, show "No Data Found"
+            if (totalData === 0) {
+                this.doughnutChartData.labels = ['No Data Found'];
+                this.doughnutChartData.datasets[0].data = [1]; // Set 1 to show a small segment
+                this.doughnutChartData.datasets[0].backgroundColor = ['#3085d6'];
+                this.doughnutChartData.datasets[0].borderColor = ['#3085d6'];
+            }
         },
 
         saveComment() {
@@ -764,6 +792,30 @@ export default {
                     });
                 }
             );
+        },
+        handleCompanyChange(valueOrEvent) {
+            const value = valueOrEvent.target ? valueOrEvent.target.value : valueOrEvent;
+            this.selectedCompanyId = value;
+            this.getDashboardStatistics();
+            this.fetchTicketList();
+            // Perform any additional logic here, such as making API calls
+        },
+        companyWiseRequest() {
+            axios.get('api/getCompanylist')
+                .then(response => {
+                    this.companies = response.data.data;
+                    console.log(this.companies)
+                    // return response
+                    if (this.companies.length > 0) {
+                        this.selectedCompanyId = this.companies[0].id;
+                        this.$nextTick(() => {
+                            this.handleCompanyChange(this.selectedCompanyId);
+                        });
+                    }
+                })
+                .catch(error => {
+                    return error
+                });
         },
 
         // changePage(page) {
