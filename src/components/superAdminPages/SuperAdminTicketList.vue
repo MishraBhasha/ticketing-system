@@ -59,13 +59,19 @@
                             <td>{{ formatDate(ticket.expectedDeliveryDate) }}</td>
                             <td>
                                 <span class="rounded-pill text-white p-1" :class="{
-                                    'bg-warning': ticket.status.toLowerCase() === 'assigned',
-                                    'bg-primary': ticket.status.toLowerCase() === 'created',
-                                    'bg-secondary': ticket.status.toLowerCase() === 'generated' ||
-                                    ticket.status.toLowerCase() === 'in-verify',
-                                    'bg-success': ticket.status.toLowerCase() === 'approved',
-                                    'bg-dark': ticket.status.toLowerCase() === 'rejected',
-                                    'bg-danger': ticket.status.toLowerCase() === 'cancelled'
+                                     'bg-warning':
+                     ticket.status.toLowerCase() === 'assigned' ||
+                     ticket.status.toLowerCase() === 'deny' ||
+                     ticket.status.toLowerCase() === 're-assigned',
+                    'bg-info':ticket.status.toLowerCase() === 'inprogress',
+                    'bg-primary':ticket.status.toLowerCase() === 'created' ||ticket.status.toLowerCase() === 'forwarded',
+                    'bg-secondary':
+                     ticket.status.toLowerCase() === 'in-verify' ||
+                     ticket.status.toLowerCase() === 'deferred' ||
+                     ticket.status.toLowerCase() === 're-opened',
+                    'bg-success':ticket.status.toLowerCase() === 'closed',
+                    'bg-dark':ticket.status.toLowerCase() === 'rejected',
+                    'bg-danger':ticket.status.toLowerCase() === 'cancelled'
                                 }">{{ ticket.status }}
                                 </span>
                             </td>
