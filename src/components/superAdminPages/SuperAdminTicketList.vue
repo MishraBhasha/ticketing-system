@@ -734,6 +734,15 @@ export default {
             console.log(this.doughnutChartData.datasets[0].backgroundColor)
             this.doughnutChartData.datasets[0].borderColor = this.tabs.map(tab => tab.borderColor);
             console.log(this.doughnutChartData.datasets[0].borderColor)
+            const totalData = this.doughnutChartData.datasets[0].data.reduce((sum, value) => sum + value, 0);
+
+            // If no data is available, show "No Data Found"
+            if (totalData === 0) {
+                this.doughnutChartData.labels = ['No Data Found'];
+                this.doughnutChartData.datasets[0].data = [1]; // Set 1 to show a small segment
+                this.doughnutChartData.datasets[0].backgroundColor = ['#3085d6'];
+                this.doughnutChartData.datasets[0].borderColor = ['#d3d3d3'];
+            }
         },
 
         saveComment() {
