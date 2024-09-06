@@ -1,10 +1,18 @@
- <template>
+<template>
   <layout-div>
     <div class="container">
       <h2 class="text-center mt-5 mb-3 rounded shadow" :style="{ color: '#060389' }">Company List</h2>
       <div class="card">
         <div class="card-body">
-          <button type="button" class="btn btn-primary" @click="openModal()">Create Company</button>
+          <div class="row justify-content-between mb-3">
+            <div class="col-md-4">
+              <button type="button" class="btn btn-outline-primary" @click="openModal()">Create Company</button>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" placeholder="search..." v-model="searchQuery"
+                @input="filterTickets">
+            </div>
+          </div>
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -25,7 +33,8 @@
                 <td>{{ company.email }}</td>
                 <td>{{ company.phone }}</td>
                 <td>
-                  <button @click="openModal(company)" class="btn btn-outline-info mx-1">Edit</button>
+                  <!-- <button @click="openModal(company)" class="btn btn-outline-info mx-1">Edit</button> -->
+                  <i class="bi bi-pencil-fill text-primary mx-1" @click="openModal(company)"></i>
                   <i class="bi bi-trash3-fill text-danger" @click="deleteCompany(company.id)"></i>
                 </td>
               </tr>
@@ -55,7 +64,8 @@
     </div>
 
     <!-- Create/Edit Company Modal -->
-    <div class="modal fade" id="editCompanyModal" tabindex="-1" aria-labelledby="editCompanyModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editCompanyModal" tabindex="-1" aria-labelledby="editCompanyModalLabel"
+      aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -85,8 +95,8 @@
   </layout-div>
 </template>
 
-  
-  <script>
+
+<script>
 import axios from 'axios';
 import LayoutDiv from '../LayoutDiv.vue';
 import Swal from 'sweetalert2';
@@ -109,6 +119,7 @@ export default {
       isEditing: false,
       currentPage: 1,
       itemsPerPage: 5,
+      searchQuery: '',
     };
   },
   created() {
@@ -125,6 +136,15 @@ export default {
     },
   },
   methods: {
+    filteredTickets() {
+      const query = this.searchQuery.toLowerCase();
+      return this.companies.filter(company => {
+        const matchesQuery = (
+          (company.name?.toLowerCase().includes(query) || '')
+        );
+        return matchesQuery;
+      });
+    },
     fetchCompanyList() {
       axios.get('/api/getCompanylist')
         .then(response => {
@@ -237,19 +257,18 @@ export default {
 };
 </script>
 
-  
-  <style scoped>
-  th {
-    color: rgb(255, 255, 255);
-    background-color: #060389;
-  }
-  
-  .text-danger {
-    cursor: pointer;
-  }
-  
-  .table-bordered {
-    border: 1px solid #dee2e6;
-  }
-  </style>
-  
+
+<style scoped>
+th {
+  color: rgb(255, 255, 255);
+  background-color: #060389;
+}
+
+.text-danger {
+  cursor: pointer;
+}
+
+.table-bordered {
+  border: 1px solid #dee2e6;
+}
+</style>

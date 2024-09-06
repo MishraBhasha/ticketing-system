@@ -1,7 +1,8 @@
 <template>
     <div :class="['sidebar', { 'sidebar-collapsed': isCollapsed }]">
         <ul class="sidebar-menu">
-            <li v-if="userRole === 'SUPERADMIN'" class="nav-item" :class="{ active: isActive('/user/superAdmin/list') }">
+            <li v-if="userRole === 'SUPERADMIN'" class="nav-item"
+                :class="{ active: isActive('/user/superAdmin/list') }">
                 <router-link to="/user/superAdmin/list" class="nav-link">Dashboard</router-link>
             </li>
             <li v-if="userRole === 'SUPERADMIN'" class="nav-item" :class="{ active: isActive('/user/employeelist') }">
@@ -9,7 +10,7 @@
             </li>
             <li v-if="userRole === 'SUPERADMIN'" class="nav-item" :class="{ active: isActive('/user/companylist') }">
                 <router-link to="/user/companylist" class="nav-link">Manage Company</router-link>
-            </li>    
+            </li>
 
             <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/admin/list') }">
                 <router-link to="/user/admin/list" class="nav-link">Dashboard</router-link>
@@ -25,7 +26,7 @@
             </li>
             <li v-if="userRole === 'ADMIN'" class="nav-item" :class="{ active: isActive('/user/companylist') }">
                 <router-link to="/user/companylist" class="nav-link">Manage Company</router-link>
-            </li>          
+            </li>
 
             <li v-if="userRole === 'Employee'" class="nav-item" :class="{ active: isActive('/user/emp/list') }">
                 <router-link to="/user/emp/list" class="nav-link">Dashboard</router-link>
@@ -77,7 +78,8 @@ export default {
     position: fixed;
     top: 0;
     left: 0;
-    background-color: #c5b3e6;
+    /* background-color: #c5b3e6; */
+    background: linear-gradient(180deg, #e19dd2, #7e64a8);
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     transition: width 0.3s;
     overflow: hidden;

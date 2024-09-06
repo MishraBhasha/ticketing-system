@@ -12,28 +12,44 @@
         </li>
       </ul>
 
-      <ul class="navbar-nav ms-auto">
-        <!-- <li class="nav-item dropdown d-lg-block user-dropdown">
-          <a class="nav-link dropdown-toggle text-white" id="UserDropdown" href="#" data-bs-toggle="dropdown"
-            aria-expanded="false">         
-            <i class="bi bi-person-circle fs-2"></i>{{formattedEmail}}
-          </a>
-          <ul class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-            <li>
-              <a class="dropdown-item text-center" @click="logout">
-                <i class="bi bi-sign-turn-slight-right me-md-2"></i>Logout
-              </a>
-            </li>
-          </ul>
-        </li> -->
-        <li class="nav-item dropdown d-lg-block user-dropdown">
-          <div @click="toggleDropdown" class="nav-link text-white dropdown-toggle" ref="dropdownTrigger">
-            <i class="bi bi-person-circle fs-2"></i> {{ user }}
+      <ul class="navbar ms-auto m-1">
+        <li v-if="userRole === 'SUPERADMIN'" class="nav-item dropdown d-lg-block user-dropdown me-4" @mouseover="isNotificationDropdownOpen = true"
+          @mouseleave="isNotificationDropdownOpen = false">
+          <!-- <div @click="toggleNotificationDropdown" class="nav-link text-white dropdown-toggle no-caret" -->
+          <div class="nav-link text-white" ref="notificationTrigger">
+            <i class="bi bi-bell"></i>
+            <span v-if="notificationCount > 0"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {{ notificationCount }}
+            </span>
           </div>
-          <div v-if="isDropdownOpen" class="dropdown-menu dropdown-menu-end" ref="dropdownMenu">
-            <a class="dropdown-item text-center" @click="logout">
+          <div v-if="isNotificationDropdownOpen" class="dropdown-menu dropdown-menu-end" ref="notificationMenu">
+            <ul class="list-unstyled">
+              <li v-for="item in notifications" :key="item.id" class="dropdown-item">
+                  <div class="fw-bold" :style="{ color: '#060389' }">
+                    {{ item.contents }}
+                  </div>
+                  <div>{{ formatDate(item.notificationDate) }}</div>
+              </li>
+            </ul>
+          </div>
+        </li>
+
+        <!-- <li class="nav-item"> -->
+        <li class="nav-item dropdown d-lg-block user-dropdown" @mouseover="isDropdownOpen = true"
+          @mouseleave="isDropdownOpen = false">
+          <!-- <div @click="toggleDropdown" class="nav-link text-white dropdown-toggle" ref="dropdownTrigger"> -->
+          <div class="nav-link text-white" ref="dropdownTrigger">
+            <i class="bi bi-person-circle fs-3 me-3"></i>
+          </div>
+
+          <div v-if="isDropdownOpen" class="dropdown-menu dropdown-menu-end p-2" ref="dropdownMenu">
+            <div class="text-center fw-bold" :style="{ color: '#060389' }">
+              Hi, {{ user }}
+              </div>
+            <button class="btn btn-primary dropdown-item" @click="logout" type="button">
               <i class="bi bi-sign-turn-slight-right me-md-2"></i> Logout
-            </a>
+            </button>
           </div>
         </li>
       </ul>
@@ -43,6 +59,7 @@
 
 <script>
 import logo from '@/assets/Tlogo.png';
+import axios from 'axios';
 
 export default {
   name: 'AppHeader',
@@ -55,7 +72,10 @@ export default {
   data() {
     return {
       logoSrc: logo,
-      isDropdownOpen: false
+      isDropdownOpen: false,
+      isNotificationDropdownOpen: false,
+      notifications: [],
+      notificationCount: 0,
     };
   },
   computed: {
@@ -73,6 +93,11 @@ export default {
     //   return this.user.split('@')[0]; // Extract the part before '@'
     // }
   },
+  created() {
+    if(this.userRole === "SUPERADMIN") {
+      this.getAllNotification();
+    }
+  },
   mounted() {
     console.log('UUUU:', this.user);
     // console.log('User:', this.user.replace(/"/g, ''));
@@ -86,33 +111,59 @@ export default {
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
     },
+    toggleNotificationDropdown() {
+      this.isNotificationDropdownOpen = !this.isNotificationDropdownOpen;
+    },
     logout() {
       this.$store.dispatch('logout');
       this.$router.push('/');
     },
     closeDropdown() {
       this.isDropdownOpen = false;
+      this.isNotificationDropdownOpen = false;
     },
     handleClickOutside(event) {
       const dropdownTrigger = this.$refs.dropdownTrigger;
       const dropdownMenu = this.$refs.dropdownMenu;
-      
+
       // Check if the click was outside both the trigger and the menu
       if (dropdownTrigger && !dropdownTrigger.contains(event.target) &&
-          dropdownMenu && !dropdownMenu.contains(event.target)) {
+        dropdownMenu && !dropdownMenu.contains(event.target)) {
         this.closeDropdown();
       }
     },
+    getAllNotification() {
+      axios.get('/api/getAllNotifications')
+        .then(response => {
+          this.notifications = response.data;
+          this.notificationCount = this.notifications.length;
+          console.log(this.notificationCount)
+          console.log(this.notifications)
+        })
+        .catch(error => {
+          console.error('Error fetching companies:', error);
+        });
+    },
+    formatDate(date) {
+      const d = new Date(date);
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`; // Format date as DD-MM-YYYY
+    },
   }
-  
+
 };
 </script>
 
 <style scoped>
 .header {
   /* background-color: #c5b3e6; */
-  background-color: #b590fa;
+  /* background-color: #b590fa; */
+  /* background-color: #8B2D6C;  */
+  background: linear-gradient(90deg, #e19dd2, #7e64a8);
 }
+
 .dropdown-menu {
   display: block;
   position: absolute;
@@ -120,6 +171,7 @@ export default {
   border: 1px solid #ccc;
   z-index: 1000;
 }
+
 .dropdown-menu-end {
   right: 0;
 }

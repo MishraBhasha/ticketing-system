@@ -1,9 +1,9 @@
 <template>
   <footer class="footer text-center">
-    <span class="text-muted text-sm-left d-block d-sm-inline-block">
+    <span class="text-white text-sm-left d-block d-sm-inline-block">
       © 2024 Gemini Consulting & Services India Pvt Ltd
     </span>
-    <span class="text-muted end">
+    <span class="text-white end">
       (By BBYF)
     </span>
   </footer>
@@ -20,7 +20,8 @@ export default {
   position: fixed;
   bottom: 0;
   width: 100%;
-  background-color: #d7d1e2;
+  /* background-color: #d7d1e2; */
+  background: linear-gradient(90deg, #e19dd2, #7e64a8);
 }
 
 .end {
