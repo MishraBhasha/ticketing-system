@@ -80,7 +80,7 @@
                                         ticket.status.toLowerCase() === 'in-verify',
                                     ' bg-success': ticket.status.toLowerCase() === 'closed',
                                     'bg-dark': ticket.status.toLowerCase() === 'rejected' || ticket.status.toLowerCase() === 're-opened',
-                                }">{{ ticket.status }}
+                               }">{{ ticket.status }}
                                 </span>
                             </td>
                             <td>
