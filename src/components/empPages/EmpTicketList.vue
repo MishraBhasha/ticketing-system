@@ -314,7 +314,7 @@ export default {
       tabs: [
         { name: 'ALL', label: 'ALL', icon: 'bi bi-list-check' },
         { name: 'ASSIGNED', label: 'ASSIGNED', icon: 'bi bi-person-check' },
-        { name: 'RE-ASSIGN', label: 'RE-ASSIGN', icon: 'bi bi-calendar2-x' },
+        { name: 'RE-ASSIGNED', label: 'RE-ASSIGNED', icon: 'bi bi-calendar2-x' },
         { name: 'INPROGRESS', label: 'INPROGRESS', icon: 'bi bi-person-check' },
         { name: 'IN-VERIFY', label: 'IN-VERIFY', icon: 'bi bi-bar-chart' },
         { name: 'CLOSED', label: 'CLOSED', icon: 'bi bi-journal-check' },
