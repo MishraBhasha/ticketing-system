@@ -6,129 +6,112 @@
         <form @submit.prevent="handleSubmit">
           <div class="row">
             <div class="col-md-4 mb-3">
-              <!-- <div class="mb-3"> -->
-                <label for="companyName" class="form-label">Company Name</label>
-                <input
-                  type="text"
-                  id="companyName"
-                  v-model="form.companyName"
-                  @input="clearError('companyName')"
-                  class="form-control shadow"
-                  :class="{ 'is-invalid': errors.companyName }"
-                />
-                <div v-if="errors.companyName" class="text-danger">{{ errors.companyName }}</div>
-              </div>
+              <label for="companyName" class="form-label">Company Name</label>
+              <input
+                type="text"
+                id="companyName"
+                v-model="form.companyName"
+                @input="clearError('companyName')"
+                class="form-control shadow"
+                :class="{ 'is-invalid': errors.companyName }"
+              />
+              <div v-if="errors.companyName" class="text-danger">{{ errors.companyName }}</div>
+            </div>
             <div class="col-md-4 mb-3">
-
-              <!-- <div class="mb-3"> -->
-                <label for="address" class="form-label">Address</label>
-                <input
-                  type="text"
-                  id="address"
-                  v-model="form.address"
-                  @input="clearError('address')"
-                  class="form-control shadow"
-                  :class="{ 'is-invalid': errors.address }"
-                />
-                <div v-if="errors.address" class="text-danger">{{ errors.address }}</div>
-              </div>
+              <label for="address" class="form-label">Address</label>
+              <input
+                type="text"
+                id="address"
+                v-model="form.address"
+                @input="clearError('address')"
+                class="form-control shadow"
+                :class="{ 'is-invalid': errors.address }"
+              />
+              <div v-if="errors.address" class="text-danger">{{ errors.address }}</div>
+            </div>
             <div class="col-md-4 mb-3">
-
-              <!-- <div class="mb-3"> -->
-                <label for="personName" class="form-label">Person Name</label>
-                <input
-                  type="text"
-                  id="personName"
-                  v-model="form.personName"
-                  @input="clearError('personName')"
-                  class="form-control shadow"
-                  :class="{ 'is-invalid': errors.personName }"
-                />
-                <div v-if="errors.personName" class="text-danger">{{ errors.personName }}</div>
-              </div>
-            <!-- </div> -->
+              <label for="personName" class="form-label">Person Name</label>
+              <input
+                type="text"
+                id="personName"
+                v-model="form.personName"
+                @input="clearError('personName')"
+                class="form-control shadow"
+                :class="{ 'is-invalid': errors.personName }"
+              />
+              <div v-if="errors.personName" class="text-danger">{{ errors.personName }}</div>
+            </div>
             <div class="col-md-4 mb-3">
-              <!-- <div class="mb-3"> -->
-                <label for="phoneNumber" class="form-label">Mobile Number</label>
-                <input
-                  type="tel"
-                  id="phoneNumber"
-                  v-model="form.phoneNumber"
-                  @input="clearError('phoneNumber')"
-                  class="form-control shadow"
-                  :class="{ 'is-invalid': errors.phoneNumber }"
-                />
-                <div v-if="errors.phoneNumber" class="text-danger">{{ errors.phoneNumber }}</div>
-              </div>
+              <label for="phoneNumber" class="form-label">Mobile Number</label>
+              <input
+                type="tel"
+                id="phoneNumber"
+                v-model="form.phoneNumber"
+                @input="clearError('phoneNumber')"
+                class="form-control shadow"
+                :class="{ 'is-invalid': errors.phoneNumber }"
+              />
+              <div v-if="errors.phoneNumber" class="text-danger">{{ errors.phoneNumber }}</div>
+            </div>
             <div class="col-md-4 mb-3">
-
-              <!-- <div class="mb-3"> -->
-                <label for="emailId" class="form-label">Email Id</label>
-                <input
-                  type="email"
-                  id="emailId"
-                  v-model="form.emailId"
-                  @input="clearError('emailId')"
-                  class="form-control shadow"
-                  :class="{ 'is-invalid': errors.emailId }"
-                />
-                <div v-if="errors.emailId" class="text-danger">{{ errors.emailId }}</div>
-              </div>
+              <label for="emailId" class="form-label">Email Id</label>
+              <input
+                type="email"
+                id="emailId"
+                v-model="form.emailId"
+                @input="clearError('emailId')"
+                class="form-control shadow"
+                :class="{ 'is-invalid': errors.emailId }"
+              />
+              <div v-if="errors.emailId" class="text-danger">{{ errors.emailId }}</div>
+            </div>
             <div class="col-md-4 mb-3">
-
-              <!-- <div class="mb-3"> -->
-                <label for="expectedDeliveryDate" class="form-label">Expected Delivery Date</label>
-                <input
-                  type="date"
-                  id="expectedDeliveryDate"
-                  v-model="form.expectedDeliveryDate"
-                  @input="clearError('expectedDeliveryDate')"
-                  class="form-control shadow"
-                  :class="{ 'is-invalid': errors.expectedDeliveryDate }"
-                />
-                <div v-if="errors.expectedDeliveryDate" class="text-danger">{{ errors.expectedDeliveryDate }}</div>
-              </div>
-            <!-- </div> -->
+              <label for="expectedDeliveryDate" class="form-label">Expected Delivery Date</label>
+              <input
+                type="date"
+                id="expectedDeliveryDate"
+                v-model="form.expectedDeliveryDate"
+                @input="clearError('expectedDeliveryDate')"
+                class="form-control shadow"
+                :class="{ 'is-invalid': errors.expectedDeliveryDate }"
+              />
+              <div v-if="errors.expectedDeliveryDate" class="text-danger">{{ errors.expectedDeliveryDate }}</div>
+            </div>
             <div class="col-md-4 mb-3">
-              <!-- <div class="mb-3"> -->
-                <label for="ticketType" class="form-label">Ticket Type</label>
-                <select
-                  id="ticketType"
-                  v-model="form.ticketId"
-                  @change="clearError('ticketId')"
-                  class="form-select shadow"
-                  :class="{ 'is-invalid': errors.ticketId }"
-                >
-                  <option value="" disabled>Select Ticket Type</option>
-                  <option value="1">Bug</option>
-                </select>
-                <div v-if="errors.ticketId" class="text-danger">{{ errors.ticketId }}</div>
-              </div>
+              <label for="ticketType" class="form-label">Ticket Type</label>
+              <select
+                id="ticketType"
+                v-model="form.ticketId"
+                @change="clearError('ticketId')"
+                class="form-select shadow"
+                :class="{ 'is-invalid': errors.ticketId }"
+              >
+                <option value="" disabled>Select Ticket Type</option>
+                <option value="1">Bug</option>
+                <!-- Add other ticket types as needed -->
+              </select>
+              <div v-if="errors.ticketId" class="text-danger">{{ errors.ticketId }}</div>
+            </div>
             <div class="col-md-4 mb-3">
-
-              <!-- <div class="mb-3"> -->
-                <label for="priority" class="form-label">Priority</label>
-                <select
-                  id="priorityId"
-                  v-model="form.priorityId"
-                  @change="clearError('priorityId')"
-                  class="form-select shadow"
-                  :class="{ 'is-invalid': errors.priorityId }"
-                >
-                  <option value="" disabled>Select Priority</option>
-                  <option value="1">Low</option>
-                  <option value="2">Medium</option>
-                  <option value="3">High</option>
-                </select>
-                <div v-if="errors.priorityId" class="text-danger">{{ errors.priorityId }}</div>
-              </div>
+              <label for="priority" class="form-label">Priority</label>
+              <select
+                id="priorityId"
+                v-model="form.priorityId"
+                @change="clearError('priorityId')"
+                class="form-select shadow"
+                :class="{ 'is-invalid': errors.priorityId }"
+              >
+                <option value="" disabled>Select Priority</option>
+                <option value="1">Low</option>
+                <option value="2">Medium</option>
+                <option value="3">High</option>
+              </select>
+              <div v-if="errors.priorityId" class="text-danger">{{ errors.priorityId }}</div>
+            </div>
             <div class="col-md-4 mb-3">
-
-              <!-- <div class="mb-3"> -->
-                <label for="fileUpload" class="form-label">Upload File</label>
-                <input type="file" id="fileUpload" @change="handleFileUpload" class="form-control shadow" />
-              </div>
-            <!-- </div> -->
+              <label for="fileUpload" class="form-label">Upload File</label>
+              <input type="file" id="fileUpload" @change="handleFileUpload" class="form-control shadow" />
+            </div>
             <div class="col-md-12">
               <div class="mb-3">
                 <label for="commentBox" class="form-label">Comment Box</label>
@@ -154,12 +137,13 @@
 <script>
 import LayoutDiv from '../LayoutDiv.vue';
 import axios from 'axios';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+
 export default {
-    name: 'TicketCreate',
-    components: {
-        LayoutDiv,
-    },
+  name: 'TicketCreate',
+  components: {
+    LayoutDiv,
+  },
   data() {
     return {
       form: {
@@ -173,13 +157,11 @@ export default {
         priorityId: '',
         commentBox: '',
         userName: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : '',
-        
+        file: null, // Ensure file is included in the form
       },
-      // userDetails:localStorage.getItem('userDetails') ? JSON.parse(localStorage.getItem('userDetails')):'',
       errors: {},
       isSaving: false,
       submitted: false // Added flag
-
     };
   },
   created() {
@@ -188,23 +170,40 @@ export default {
   methods: {
     loadFormData() {
       const userDetails = sessionStorage.getItem('userDetails') ? JSON.parse(sessionStorage.getItem('userDetails')) : {};
-      // const userName = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : '';
-console.log(userDetails)
+      
       this.form = {
-        companyName: userDetails.data.companyName || '',
+        companyName: 'N/A', // Default value
         address: userDetails.data.address || '',
         personName: userDetails.data.firstName || '',
         phoneNumber: userDetails.data.phoneNumber || '',
         emailId: userDetails.data.emailId || '',
-        // expectedDeliveryDate: userDetails.expectedDeliveryDate || ''
-        // ticketId: userDetails.ticketId || '',
-         priorityId: userDetails.data.priorityId || '',
-        // commentBox: userDetails.commentBox || '',
-        // userName: userName || ''
+        expectedDeliveryDate: userDetails.data.expectedDeliveryDate || '',
+        ticketId: userDetails.data.ticketId || '',
+        priorityId: userDetails.data.priorityId || '',
+        commentBox: userDetails.data.commentBox || '',
+        userName: userDetails.data.userName || '',
+        file: null, // Ensure file is included in the form
       };
+
+      // Fetch company details if companyid exists
+      if (userDetails.data.companyid) {
+        this.fetchCompanyDetails(userDetails.data.companyid);
+      }
     },
+
+    fetchCompanyDetails(companyId) {
+      axios.get('/api/getCompanyDetails', { params: { id: companyId } })
+        .then(response => {
+          if (response.data && response.data.data) {
+            this.form.companyName = response.data.data.name || 'No Company Name'; // Update companyName
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching company details:', error);
+        });
+    },
+
     handleSubmit() {
-      alert( this.da)
       this.submitted = true; // Set flag to true when form is submitted
       this.errors = {}; // Clear previous errors
 
@@ -223,7 +222,7 @@ console.log(userDetails)
       } else if (!/^\d{10}$/.test(this.form.phoneNumber)) {
         this.errors.phoneNumber = 'Mobile Number must be exactly 10 digits';
       }
-       if (!this.form.emailId) {
+      if (!this.form.emailId) {
         this.errors.emailId = 'Email Id is required';
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.emailId)) {
         this.errors.emailId = 'Email Id must be a valid email address';
@@ -242,18 +241,13 @@ console.log(userDetails)
       if (Object.keys(this.errors).length === 0) {
         this.isSaving = true;
 
-        // const formData = new FormData();
-        // formData.append('requestFormDTO', JSON.stringify(this.form));
-        // if (this.form.file) {
-        //   formData.append('file', this.form.file);
-        // }
         const { file, ...formWithoutFile } = this.form; // Exclude file from form data
 
-      const formData = new FormData();
-      formData.append('requestFormDTO', JSON.stringify(formWithoutFile)); // Append the form data excluding the file
-      if (file) {
-        formData.append('file', file); // Append the file separately
-      }
+        const formData = new FormData();
+        formData.append('requestFormDTO', JSON.stringify(formWithoutFile)); // Append the form data excluding the file
+        if (file) {
+          formData.append('file', file); // Append the file separately
+        }
 
         axios.post('/api/requestFormSave', formData, {
           headers: {
@@ -283,9 +277,11 @@ console.log(userDetails)
         });
       }
     },
+
     clearError(field) {
       this.errors[field] = '';
     },
+
     resetForm() {
       this.form = {
         companyName: '',
@@ -302,9 +298,14 @@ console.log(userDetails)
       this.errors = {};
       this.submitted = false; // Reset flag
     },
+
     handleFileUpload(event) {
       this.form.file = event.target.files[0];
     }
   }
 };
 </script>
+
+<style scoped>
+/* Add any additional styles here */
+</style>
