@@ -226,11 +226,11 @@
       </div>
     </div>
     <!-- Modal for Acceptance of Work -->
-    <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">
+            <h1 class="modal-title fs-5" id="exampleModalLabel1">
               Acceptance of Work
             </h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -239,10 +239,10 @@
             Are you sure?
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="sureToDeny">
+            <button type="submit" class="btn btn-secondary" @click="sureToDeny">
               No
             </button>
-            <button type="button" class="btn btn-primary" @click="sureToSubmit">
+            <button type="submit" class="btn btn-primary" @click="sureToSubmit">
               Yes
             </button>
           </div>
@@ -278,17 +278,13 @@
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
               No
             </button>
-            <button type="button" class="btn btn-primary" @click="sureToTransfer">
+            <button type="submit" class="btn btn-primary" @click="sureToTransfer">
               Yes
             </button>
           </div>
         </div>
       </div>
     </div>
-
-
-
-
 
   </layout-div>
 </template>
@@ -298,7 +294,7 @@
 import axios from 'axios';
 import LayoutDiv from '../LayoutDiv.vue';
 import Swal from 'sweetalert2';
-import { Modal } from 'bootstrap';
+import { Modal } from 'bootstrap'
 
 export default {
   name: 'TicketList',
@@ -402,17 +398,12 @@ export default {
       }
     },
     openModal(ticket) {
-      this.selectedTicket = { ...ticket };
+      // this.selectedTicket = { ...ticket };
+      this.selectedTicket = ticket
       console.log(this.selectedTicket);
-      // Show the modal using Bootstrap's modal methods
-      const modalElement = document.getElementById('exampleModal');
-      if (modalElement) {
-        const modalInstance = new Modal(modalElement);
-        modalInstance.show();
-      }
     },
     confirm(ticket) {
-      this.selectedTicket = { ...ticket };
+      this.selectedTicket = ticket;
     },
     async sureToTransfer() {
       const emp_id = localStorage.getItem('userId');
@@ -458,18 +449,9 @@ export default {
           if (result.isConfirmed) {
             this.fetchTicketList();
 
+
+            this.closeModal('transfer');
             Swal.close();
-            const modalElement = document.getElementById('transfer');
-            if (modalElement) {
-              const modalInstance = Modal.getInstance(modalElement);
-              if (modalInstance) {
-                modalInstance.hide();
-              }
-            }
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-              backdrop.parentNode.removeChild(backdrop);
-            }
           }
         });
       } catch (error) {
@@ -516,19 +498,8 @@ export default {
         }).then((result) => {
           if (result.isConfirmed) {
             this.fetchTicketList();
+            this.closeModal('exampleModal1');
             Swal.close();
-            const modalElement = document.getElementById('exampleModal1');
-            if (modalElement) {
-              const modalInstance = Modal.getInstance(modalElement);
-              if (modalInstance) {
-                modalInstance.hide();
-              }
-            }
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-              backdrop.parentNode.removeChild(backdrop);
-            }
-            this.closeModal('exampleModal1'); // Close the modal
           }
         });
       } catch (error) {
@@ -575,21 +546,8 @@ export default {
         }).then((result) => {
           if (result.isConfirmed) {
             this.fetchTicketList();
-
+            this.closeModal('exampleModal1');
             Swal.close();
-            // Hide the modal and remove the backdrop using Bootstrap's methods
-            const modalElement = document.getElementById('exampleModal1');
-            if (modalElement) {
-              const modalInstance = Modal.getInstance(modalElement);
-              if (modalInstance) {
-                modalInstance.hide();
-              }
-            }
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-              backdrop.parentNode.removeChild(backdrop);
-            }
-
             // this.closeModal('exampleModal1');  // Closes modal with ID 'exampleModal'
 
           }
@@ -624,18 +582,11 @@ export default {
             icon: 'success',
             title: 'Resolved',
             text: 'The ticket was resolved successfully',
-          }).then(() => {
-            // Hide the modal and remove the backdrop using Bootstrap's methods
-            const modalElement = document.getElementById('exampleModal');
-            if (modalElement) {
-              const modalInstance = Modal.getInstance(modalElement);
-              if (modalInstance) {
-                modalInstance.hide();
-              }
-            }
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-              backdrop.parentNode.removeChild(backdrop);
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.closeModal('exampleModal');
+              // this.fetchTicketList();
+              Swal.close();
             }
           });
         })
@@ -711,21 +662,8 @@ export default {
             }).then(() => {
               // Fetch the updated ticket list
               this.fetchTicketList();
-
-              // Hide the modal and clean up
-              const modalElement = document.getElementById('exampleModal');
-              if (modalElement) {
-                const modalInstance = Modal.getInstance(modalElement);
-                if (modalInstance) {
-                  modalInstance.hide();
-                }
-              }
-
-              // Remove the modal backdrop if it exists
-              const backdrop = document.querySelector('.modal-backdrop');
-              if (backdrop) {
-                backdrop.parentNode.removeChild(backdrop);
-              }
+              this.closeModal('exampleModal');
+              Swal.close();
             });
           } else {
             console.error('Unexpected response format:', response.data);
@@ -748,15 +686,28 @@ export default {
           });
         });
     },
-    closeModal() {
-      const modalElement = document.getElementById('exampleModal');
-      if (modalElement) {
-        const modalInstance = Modal.getInstance(modalElement);
-        if (modalInstance) {
-          modalInstance.hide();
-        }
+    closeModal(modalId) {
+      const modalElement = document.getElementById(modalId);
+      const modalInstance = Modal.getInstance(modalElement);
+
+      if (modalInstance) {
+        modalInstance.hide();
+      } else {
+        const modal = new Modal(modalElement);
+        modal.hide();
       }
+
+      // Ensure the backdrop is removed
+      const backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop) {
+        backdrop.remove();
+      }
+
+      // Remove the 'modal-open' class from the body to avoid blurring effect
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = ''; // Reset the overflow to allow scrolling
     },
+
 
 
     handleDelete(id) {
