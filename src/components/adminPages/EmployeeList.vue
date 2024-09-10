@@ -6,7 +6,7 @@
         <div class="card-body">
           <div class="row justify-content-between mb-3">
             <div class="col-md-2">
-              <router-link to="../admin/employeecreate" class="btn btn-outline-primary">
+              <router-link to="./employeecreate" class="btn btn-outline-primary">
                 Create Employee
               </router-link>
             </div>
