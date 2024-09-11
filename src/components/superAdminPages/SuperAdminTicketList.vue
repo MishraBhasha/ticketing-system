@@ -243,7 +243,7 @@
                                         <label for="status">Status</label>
                                         <select v-model="status" class="form-select" @change="onStatusChange">
                                             <option value="" disabled selected>Select</option>
-                                            <option value="ASSIGNED" v-if="isStatusSelectable()">ASSIGN</option>
+                                            <!-- <option value="ASSIGNED" v-if="isStatusSelectable()">ASSIGN</option> -->
 
                                             <option value="CLOSED" v-if="requestData === 'IN-VERIFY'">CLOSE</option>
                                             <option value="REJECTED">REJECT</option>
